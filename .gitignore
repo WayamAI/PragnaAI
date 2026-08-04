@@ -38,3 +38,5 @@ coverage
 *.sln
 *.sw?
 .vercel/
+.vercel
+.env*

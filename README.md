@@ -2,7 +2,9 @@
 
 An AI-assisted DFMEA (Design Failure Mode and Effects Analysis) platform for medical device risk analysis, built by Wayam AI. Tracks failure modes, risk scoring (RPN), mitigations, traceability, and AI-generated suggestions across a product hierarchy.
 
-**Live demo (GitHub Pages):** **https://arkabera2004.github.io/FMEA/**
+**Live demo (Vercel, full SSR app):** **https://fmea-risklens-ai.vercel.app/**
+
+**Live demo (GitHub Pages, static SPA build):** **https://arkabera2004.github.io/FMEA/**
 
 ## Screenshots
 
@@ -71,6 +73,16 @@ This is the full TanStack Start SSR build (Nitro, `cloudflare-module` preset by 
 ```bash
 npm run preview
 ```
+
+## Deploying to Vercel
+
+Vercel runs the real SSR app (no workaround needed) — `vite.config.ts` auto-selects Nitro's `vercel` preset whenever the `VERCEL` env var is present (Vercel sets this during its own build), otherwise it defaults to `cloudflare-module`. Deploy with the Vercel CLI:
+
+```bash
+vercel --prod
+```
+
+Live at: **https://fmea-risklens-ai.vercel.app/**
 
 ## Deploying to GitHub Pages
 

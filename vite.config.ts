@@ -5,6 +5,11 @@ import tsConfigPaths from "vite-tsconfig-paths";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { nitro } from "nitro/vite";
 
+// Vercel sets VERCEL=1 during its build; honor NITRO_PRESET first so it can
+// still be overridden explicitly, and fall back to cloudflare-module for
+// everywhere else (matches this project's non-Vercel deploy target).
+const nitroPreset = process.env.NITRO_PRESET || (process.env.VERCEL ? "vercel" : "cloudflare-module");
+
 export default defineConfig(({ command }) => ({
   css: { transformer: "lightningcss" },
   resolve: {
@@ -41,7 +46,7 @@ export default defineConfig(({ command }) => ({
       },
     }),
     // nitro builds the deployable server bundle; only needed for `vite build`.
-    ...(command === "build" ? [nitro({ preset: "cloudflare-module" })] : []),
+    ...(command === "build" ? [nitro({ preset: nitroPreset })] : []),
     viteReact(),
   ],
 }));

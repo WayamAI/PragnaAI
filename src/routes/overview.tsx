@@ -167,12 +167,18 @@ function Overview() {
         <Card className="lg:col-span-5">
           <h2 className="mb-3 font-display text-base font-semibold">Completion by Level</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {RINGS.map((r) => (
+            {RINGS.map((r, i) => (
               <div key={r.level} className="text-center">
                 <ResponsiveContainer width="100%" height={80}>
                   <PieChart>
+                    <defs>
+                      <linearGradient id={`ringGradient-${i}`} x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stopColor="var(--primary-gradient-from)" />
+                        <stop offset="100%" stopColor="var(--primary-gradient-to)" />
+                      </linearGradient>
+                    </defs>
                     <Pie data={[{ v: r.pct }, { v: 100 - r.pct }]} dataKey="v" innerRadius={22} outerRadius={32} startAngle={90} endAngle={-270}>
-                      <Cell fill="var(--primary)" />
+                      <Cell fill={`url(#ringGradient-${i})`} />
                       <Cell fill="#E5E7EB" />
                     </Pie>
                   </PieChart>

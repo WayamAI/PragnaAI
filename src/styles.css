@@ -34,6 +34,8 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-gradient-from: var(--primary-gradient-from);
+  --color-primary-gradient-to: var(--primary-gradient-to);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -79,20 +81,24 @@
   --card-foreground: oklch(0.211 0.02 264);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.211 0.02 264);
-  /* Primary = vivid orange #EA580C */
-  --primary: oklch(0.646 0.194 41.1);
-  --primary-foreground: oklch(0.99 0 0);
+  /* Primary = lighter orange #FB923C, with a light-peach-to-orange gradient
+     (see .bg-primary / .bg-sidebar-primary overrides below) for filled surfaces */
+  --primary: oklch(0.758 0.159 55.9);
+  --primary-foreground: oklch(0.24 0.05 41);
+  --primary-gradient-from: oklch(0.901 0.073 70.7);  /* #FED7AA light peach */
+  --primary-gradient-to: oklch(0.705 0.187 47.6);    /* #F97316 medium orange */
+  --primary-gradient: linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to));
   --secondary: oklch(0.965 0.005 247);
   --secondary-foreground: oklch(0.211 0.02 264);
   --muted: oklch(0.965 0.005 247);
   --muted-foreground: oklch(0.503 0.014 258);  /* #6B7280 */
-  --accent: oklch(0.94 0.05 41.1);         /* light orange wash */
-  --accent-foreground: oklch(0.35 0.13 41.1);
+  --accent: oklch(0.96 0.04 55.9);         /* light orange wash */
+  --accent-foreground: oklch(0.35 0.12 55.9);
   --destructive: oklch(0.577 0.238 27);    /* #DC2626 */
   --destructive-foreground: oklch(0.99 0 0);
   --border: oklch(0.915 0.008 258);        /* #E5E7EB */
   --input: oklch(0.915 0.008 258);
-  --ring: oklch(0.646 0.194 41.1);
+  --ring: oklch(0.758 0.159 55.9);
   /* Risk tokens */
   --risk-critical: oklch(0.577 0.238 27);   /* #DC2626 */
   --risk-high: oklch(0.646 0.166 51);       /* #D97706 amber */
@@ -101,7 +107,7 @@
   --ai-accent: oklch(0.531 0.244 293);      /* #7C3AED */
   --ai-bg: oklch(0.968 0.02 293);           /* #F5F3FF */
   /* Chart colors */
-  --chart-1: oklch(0.646 0.194 41.1);
+  --chart-1: oklch(0.758 0.159 55.9);
   --chart-2: oklch(0.531 0.244 293);
   --chart-3: oklch(0.646 0.166 51);
   --chart-4: oklch(0.616 0.183 148);
@@ -109,12 +115,12 @@
   /* Sidebar (dark navy #1E2D40) */
   --sidebar: oklch(0.285 0.032 258);
   --sidebar-foreground: oklch(0.79 0.028 247);   /* #A8BBCF */
-  --sidebar-primary: oklch(0.646 0.194 41.1);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-primary: oklch(0.758 0.159 55.9);
+  --sidebar-primary-foreground: oklch(0.24 0.05 41);
   --sidebar-accent: oklch(0.34 0.03 258);
   --sidebar-accent-foreground: oklch(0.99 0 0);
   --sidebar-border: oklch(0.34 0.03 258);
-  --sidebar-ring: oklch(0.646 0.194 41.1);
+  --sidebar-ring: oklch(0.758 0.159 55.9);
 }
 
 .dark {
@@ -126,6 +132,9 @@
   --popover-foreground: oklch(0.984 0.003 247.858);
   --primary: oklch(0.705 0.187 47.6);
   --primary-foreground: oklch(0.99 0 0);
+  --primary-gradient-from: oklch(0.837 0.117 66.3);  /* #FDBA74 light orange */
+  --primary-gradient-to: oklch(0.646 0.194 41.1);    /* #EA580C */
+  --primary-gradient: linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to));
   --secondary: oklch(0.279 0.041 260.031);
   --secondary-foreground: oklch(0.984 0.003 247.858);
   --muted: oklch(0.279 0.041 260.031);
@@ -150,6 +159,18 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.705 0.187 47.6);
+}
+
+/*
+ * Unlayered on purpose: this must win over Tailwind's generated
+ * `.bg-primary` / `.bg-sidebar-primary` utilities (which live in an
+ * implicit cascade layer) without needing !important, so every filled
+ * "primary" surface (buttons, badges, active nav) renders the orange
+ * gradient instead of a flat fill.
+ */
+.bg-primary,
+.bg-sidebar-primary {
+  background-image: var(--primary-gradient);
 }
 
 @layer base {

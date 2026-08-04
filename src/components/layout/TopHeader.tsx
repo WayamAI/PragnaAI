@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, HelpCircle, ChevronDown, X, AlertTriangle, Sparkles, FileDown, BookOpen, ExternalLink } from "lucide-react";
+import { Bell, HelpCircle, ChevronDown, X, AlertTriangle, Sparkles, FileDown, BookOpen, ExternalLink, Menu } from "lucide-react";
 import { CURRENT_USER } from "@/data/team";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ const HELP_LINKS = [
   { icon: BookOpen, title: "How RPN is calculated", detail: "RPN = Severity × Occurrence × Detection." },
 ];
 
-export function TopHeader() {
+export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
   const [panel, setPanel] = useState<Panel>(null);
   const toggle = (p: Panel) => {
     setPanel((cur) => (cur === p ? null : p));
@@ -28,9 +28,16 @@ export function TopHeader() {
 
   return (
     <header className="sticky top-0 z-20 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/85">
-      <div className="flex h-[72px] items-center justify-between gap-4 px-6">
+      <div className="flex h-16 items-center justify-between gap-4 px-4 sm:h-[72px] sm:px-6">
         <div className="flex min-w-0 items-center gap-4">
-          <div className="min-w-0 leading-tight">
+          <button
+            onClick={onMenuClick}
+            aria-label="Open menu"
+            className="rounded-md p-2 hover:bg-muted md:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <div className="hidden min-w-0 leading-tight sm:block">
             <div className="truncate text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
               RiskLens AI control room
             </div>

@@ -53,7 +53,7 @@ export function AIAssistantPanel() {
         <Sparkles className="h-5 w-5" />
       </button>
       {open && (
-        <div className="fixed inset-y-0 right-0 z-50 flex w-[400px] flex-col border-l bg-card shadow-2xl animate-in slide-in-from-right">
+        <div className="fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l bg-card shadow-2xl animate-in slide-in-from-right sm:w-[400px]">
           <div className="flex h-[52px] items-center justify-between border-b bg-[color:var(--ai-bg)] px-4">
             <div className="flex items-center gap-2 font-semibold">
               <Sparkles className="h-4 w-4 text-[color:var(--ai-accent)]" />

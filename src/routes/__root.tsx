@@ -4,10 +4,11 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportAppError } from "../lib/error-reporting";
@@ -125,13 +126,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = useRouterState({ select: (r) => r.location.pathname });
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen bg-background font-sans text-foreground">
-        <AppSidebar />
-        <div className="pl-60">
-          <TopHeader />
+        <AppSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="md:pl-60">
+          <TopHeader onMenuClick={() => setSidebarOpen((o) => !o)} />
           <main>
             <Outlet />
           </main>

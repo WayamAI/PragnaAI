@@ -91,7 +91,7 @@ function Workspace() {
       </div>
 
       {sel && (
-        <div className="fixed inset-y-0 right-0 z-40 w-[480px] overflow-y-auto border-l bg-card shadow-2xl">
+        <div className="fixed inset-y-0 right-0 z-40 w-full overflow-y-auto border-l bg-card shadow-2xl sm:w-[480px]">
           <div className="sticky top-0 flex items-center justify-between border-b bg-card px-4 py-3">
             <div>
               <div className="font-mono text-xs text-primary">{sel.id}</div>

@@ -26,21 +26,36 @@ const secondary = [
   { title: "Help & Standards", url: "#", icon: HelpCircle },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ open = false, onClose }: { open?: boolean; onClose?: () => void }) {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const isActive = (u: string) => pathname === u || (u === "/overview" && pathname === "/");
   const [modal, setModal] = useState<"Settings" | "Help & Standards" | null>(null);
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 flex w-60 flex-col bg-sidebar text-sidebar-foreground">
+    <>
+      {open && (
+        <div className="fixed inset-0 z-20 bg-black/40 md:hidden" onClick={onClose} aria-hidden="true" />
+      )}
+      <aside
+        className={`fixed inset-y-0 left-0 z-30 flex w-60 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 md:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
       <div className="flex h-[64px] items-center gap-3 border-b border-sidebar-border bg-white/95 px-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white shadow-sm ring-1 ring-black/5">
           <img src={logoSrc} alt="RiskLens AI" className="h-8 w-8 object-contain" />
         </div>
-        <div className="min-w-0 leading-tight">
+        <div className="min-w-0 flex-1 leading-tight">
           <div className="truncate text-sm font-semibold text-slate-900">RiskLens AI</div>
           <div className="text-[11px] uppercase tracking-[0.18em] text-slate-500">FMEA Intelligence</div>
         </div>
+        <button
+          onClick={onClose}
+          aria-label="Close menu"
+          className="rounded p-1 text-slate-500 hover:bg-slate-100 md:hidden"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
       <nav className="flex-1 overflow-y-auto px-2 py-3">
         <ul className="space-y-0.5">
@@ -97,7 +112,8 @@ export function AppSidebar() {
 
       {modal === "Settings" && <SettingsModal onClose={() => setModal(null)} />}
       {modal === "Help & Standards" && <HelpModal onClose={() => setModal(null)} />}
-    </aside>
+      </aside>
+    </>
   );
 }
 

@@ -62,6 +62,7 @@ function Reports() {
 
         <Card className="lg:col-span-5 !p-0">
           <h2 className="p-5 pb-3 font-display text-lg font-semibold">Recent Reports</h2>
+          <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead className="bg-muted/50 text-left text-[11px] uppercase text-muted-foreground">
               <tr>
@@ -79,6 +80,7 @@ function Reports() {
               ))}
             </tbody>
           </table>
+          </div>
         </Card>
       </div>
     </PageContainer>

@@ -6,7 +6,7 @@ import {
   BookOpen, FolderOpen, FileDown, Settings, HelpCircle, X, ExternalLink, Plug,
 } from "lucide-react";
 
-const logoSrc = "/brand/wayam-logo-light.svg";
+const logoSrc = `${import.meta.env.BASE_URL}brand/wayam-logo-light.svg`;
 
 const items = [
   { title: "Project Overview", url: "/overview", icon: LayoutDashboard },

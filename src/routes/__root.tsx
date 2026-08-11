@@ -22,6 +22,7 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { TopHeader } from "@/components/layout/TopHeader";
 import { AIAssistantPanel } from "@/components/layout/AIAssistantPanel";
 import { Toaster } from "@/components/ui/sonner";
+import { isAuthenticated } from "@/lib/auth";
 
 function NotFoundComponent() {
   return (
@@ -88,10 +89,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "RiskLens AI" },
+      { title: "PragnaAI" },
       { name: "description", content: "AI-assisted DFMEA platform for medical device risk analysis." },
       { name: "author", content: "" },
-      { property: "og:title", content: "RiskLens AI" },
+      { property: "og:title", content: "PragnaAI" },
       { property: "og:description", content: "AI-assisted DFMEA platform for medical device risk analysis." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -128,10 +129,37 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const router = useRouter();
+  // null = not yet checked (avoids an SSR/localStorage mismatch flash),
+  // true/false = known auth state once mounted on the client.
+  const [authed, setAuthed] = useState<boolean | null>(null);
 
   useEffect(() => {
     setSidebarOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const ok = isAuthenticated();
+    setAuthed(ok);
+    if (!ok && pathname !== "/login") {
+      router.navigate({ to: "/login" });
+    }
+  }, [pathname]);
+
+  if (pathname === "/login") {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+        <Toaster position="bottom-right" />
+      </QueryClientProvider>
+    );
+  }
+
+  if (!authed) {
+    // Either still checking auth on first client render, or a redirect to
+    // /login is in flight — render nothing to avoid a dashboard flash.
+    return null;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

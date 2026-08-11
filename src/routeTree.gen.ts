@@ -15,6 +15,7 @@ import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as HierarchyRouteImport } from './routes/hierarchy'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as KnowledgeBaseRouteImport } from './routes/knowledge-base'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RiskRegisterRouteImport } from './routes/risk-register'
@@ -51,6 +52,11 @@ const KnowledgeBaseRoute = KnowledgeBaseRouteImport.update({
   path: '/knowledge-base',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OverviewRoute = OverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/hierarchy': typeof HierarchyRoute
   '/integrations': typeof IntegrationsRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
+  '/login': typeof LoginRoute
   '/overview': typeof OverviewRoute
   '/reports': typeof ReportsRoute
   '/risk-register': typeof RiskRegisterRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/hierarchy': typeof HierarchyRoute
   '/integrations': typeof IntegrationsRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
+  '/login': typeof LoginRoute
   '/overview': typeof OverviewRoute
   '/reports': typeof ReportsRoute
   '/risk-register': typeof RiskRegisterRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/hierarchy': typeof HierarchyRoute
   '/integrations': typeof IntegrationsRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
+  '/login': typeof LoginRoute
   '/overview': typeof OverviewRoute
   '/reports': typeof ReportsRoute
   '/risk-register': typeof RiskRegisterRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/hierarchy'
     | '/integrations'
     | '/knowledge-base'
+    | '/login'
     | '/overview'
     | '/reports'
     | '/risk-register'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/hierarchy'
     | '/integrations'
     | '/knowledge-base'
+    | '/login'
     | '/overview'
     | '/reports'
     | '/risk-register'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/hierarchy'
     | '/integrations'
     | '/knowledge-base'
+    | '/login'
     | '/overview'
     | '/reports'
     | '/risk-register'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   HierarchyRoute: typeof HierarchyRoute
   IntegrationsRoute: typeof IntegrationsRoute
   KnowledgeBaseRoute: typeof KnowledgeBaseRoute
+  LoginRoute: typeof LoginRoute
   OverviewRoute: typeof OverviewRoute
   ReportsRoute: typeof ReportsRoute
   RiskRegisterRoute: typeof RiskRegisterRoute
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KnowledgeBaseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/overview': {
       id: '/overview'
       path: '/overview'
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   HierarchyRoute: HierarchyRoute,
   IntegrationsRoute: IntegrationsRoute,
   KnowledgeBaseRoute: KnowledgeBaseRoute,
+  LoginRoute: LoginRoute,
   OverviewRoute: OverviewRoute,
   ReportsRoute: ReportsRoute,
   RiskRegisterRoute: RiskRegisterRoute,

@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Bell, HelpCircle, ChevronDown, X, AlertTriangle, Sparkles, FileDown, BookOpen, ExternalLink, Menu } from "lucide-react";
+import { useRouter } from "@tanstack/react-router";
+import { Bell, HelpCircle, ChevronDown, X, AlertTriangle, Sparkles, FileDown, BookOpen, ExternalLink, Menu, LogOut } from "lucide-react";
 import { CURRENT_USER } from "@/data/team";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
+import { logout } from "@/lib/auth";
 import { toast } from "sonner";
 
 type Panel = "notifications" | "help" | null;
@@ -21,9 +23,14 @@ const HELP_LINKS = [
 
 export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
   const [panel, setPanel] = useState<Panel>(null);
+  const router = useRouter();
   const toggle = (p: Panel) => {
     setPanel((cur) => (cur === p ? null : p));
     console.log(`[TopHeader] ${p} panel ${panel === p ? "closed" : "opened"}`);
+  };
+  const handleLogout = () => {
+    logout();
+    router.navigate({ to: "/login" });
   };
 
   return (
@@ -39,7 +46,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
           </button>
           <div className="hidden min-w-0 leading-tight sm:block">
             <div className="truncate text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-              RiskLens AI control room
+              PragnaAI control room
             </div>
           </div>
           <div className="hidden h-8 w-px bg-border md:block" />
@@ -110,6 +117,14 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
           <span className="hidden rounded-md border border-primary/30 bg-accent px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-primary md:inline-flex">
             MediCore Systems
           </span>
+          <button
+            onClick={handleLogout}
+            aria-label="Log out"
+            title="Log out"
+            className="rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </header>

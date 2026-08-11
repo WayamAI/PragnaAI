@@ -2,7 +2,7 @@
 
 An AI-assisted DFMEA (Design Failure Mode and Effects Analysis) platform for medical device risk analysis, built by Wayam AI. Tracks failure modes, risk scoring (RPN), mitigations, traceability, and AI-generated suggestions across a product hierarchy.
 
-**Live demo (Vercel, full SSR app):** **https://fmea-risklens-ai.vercel.app/**
+**Live demo (Vercel, full SSR app):** **https://pragnaai.vercel.app/**
 
 **Live demo (GitHub Pages, static SPA build):** **https://arkabera2004.github.io/FMEA/**
 
@@ -82,7 +82,7 @@ Vercel runs the real SSR app (no workaround needed) — `vite.config.ts` auto-se
 vercel --prod
 ```
 
-Live at: **https://fmea-risklens-ai.vercel.app/**
+Live at: **https://pragnaai.vercel.app/**
 
 ## Deploying to GitHub Pages
 

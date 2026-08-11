@@ -181,5 +181,26 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    /* Prevent iOS Safari from rubber-banding/scrolling the whole page
+       sideways if any element momentarily overflows the viewport. */
+    overflow-x: hidden;
+  }
+
+  html {
+    /* Prevents a page-wide horizontal scrollbar from ever appearing. */
+    overflow-x: hidden;
+  }
+
+  /* Form controls throughout the app use text-xs/text-sm (12-14px) for a
+     compact desktop density. Below 16px, iOS Safari auto-zooms the whole
+     page on focus, which is what "the app looks broken on my phone" is
+     usually caused by. Force a readable, zoom-safe minimum on touch-sized
+     viewports without changing the desktop appearance. */
+  @media (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
   }
 }

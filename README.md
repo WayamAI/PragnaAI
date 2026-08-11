@@ -1,4 +1,4 @@
-# RiskLens AI — FMEA Intelligence
+# PragnaAI — FMEA Intelligence
 
 An AI-assisted DFMEA (Design Failure Mode and Effects Analysis) platform for medical device risk analysis, built by Wayam AI. Tracks failure modes, risk scoring (RPN), mitigations, traceability, and AI-generated suggestions across a product hierarchy.
 

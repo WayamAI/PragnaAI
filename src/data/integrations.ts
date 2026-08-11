@@ -19,7 +19,7 @@ export type Integration = {
 };
 
 /**
- * Systems RiskLens AI is connected to. Each one pushes engineering / quality
+ * Systems PragnaAI is connected to. Each one pushes engineering / quality
  * data into the platform, which the AI agents turn into DFMEA content.
  */
 export const INTEGRATIONS: Integration[] = [

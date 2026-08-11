@@ -57,7 +57,7 @@ export function AIAssistantPanel() {
           <div className="flex h-[52px] items-center justify-between border-b bg-[color:var(--ai-bg)] px-4">
             <div className="flex items-center gap-2 font-semibold">
               <Sparkles className="h-4 w-4 text-[color:var(--ai-accent)]" />
-              RiskLens AI Assistant
+              PragnaAI Assistant
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => setMsgs(msgs.slice(0, 1))} className="text-xs text-muted-foreground hover:text-foreground">Clear</button>

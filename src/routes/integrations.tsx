@@ -45,7 +45,7 @@ function Integrations() {
         <div className="flex-1">
           <div className="text-sm font-semibold">{connected} of {INTEGRATIONS.length} systems connected</div>
           <p className="text-xs text-muted-foreground">
-            RiskLens AI pulls product structure, requirements, field-quality and regulatory data
+            PragnaAI pulls product structure, requirements, field-quality and regulatory data
             from these systems, then the AI agents turn them into failure modes, S/O/D scores and traceability.
           </p>
         </div>

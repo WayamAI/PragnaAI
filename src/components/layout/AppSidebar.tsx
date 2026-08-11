@@ -43,10 +43,10 @@ export function AppSidebar({ open = false, onClose }: { open?: boolean; onClose?
       >
       <div className="flex h-[64px] items-center gap-3 border-b border-sidebar-border bg-white/95 px-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white shadow-sm ring-1 ring-black/5">
-          <img src={logoSrc} alt="RiskLens AI" className="h-8 w-8 object-contain" />
+          <img src={logoSrc} alt="PragnaAI" className="h-8 w-8 object-contain" />
         </div>
         <div className="min-w-0 flex-1 leading-tight">
-          <div className="truncate text-sm font-semibold text-slate-900">RiskLens AI</div>
+          <div className="truncate text-sm font-semibold text-slate-900">PragnaAI</div>
           <div className="text-[11px] uppercase tracking-[0.18em] text-slate-500">FMEA Intelligence</div>
         </div>
         <button
@@ -153,7 +153,7 @@ function Toggle({ label, defaultOn = false }: { label: string; defaultOn?: boole
 
 function SettingsModal({ onClose }: { onClose: () => void }) {
   return (
-    <ModalShell title="Settings" subtitle="Preferences for RiskLens AI (saved locally in this demo)" onClose={onClose}>
+    <ModalShell title="Settings" subtitle="Preferences for PragnaAI (saved locally in this demo)" onClose={onClose}>
       <div className="space-y-5">
         <section>
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Account</h3>

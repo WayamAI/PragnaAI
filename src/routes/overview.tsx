@@ -262,7 +262,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
                 </span>
               </h2>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                RiskLens AI pulls data from your PLM, requirements, quality, ERP and regulatory systems — the AI agents turn it into this DFMEA.
+                PragnaAI pulls data from your PLM, requirements, quality, ERP and regulatory systems — the AI agents turn it into this DFMEA.
               </p>
             </div>
           </div>

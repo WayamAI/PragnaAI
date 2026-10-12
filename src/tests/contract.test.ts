@@ -1,0 +1,76 @@
+/// <reference types="node" />
+import { readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
+import { severityTone } from "@/lib/severity";
+
+const src = join(process.cwd(), "src");
+const read = (p: string) => readFileSync(join(src, p), "utf8");
+
+describe("login contract", () => {
+  const login = read("routes/login.tsx");
+
+  it("keeps the #email and #password ids with matching labels", () => {
+    expect(login).toMatch(/htmlFor="email"/);
+    expect(login).toMatch(/id="email"/);
+    expect(login).toMatch(/htmlFor="password"/);
+    expect(login).toMatch(/id="password"/);
+    expect(login).toMatch(/>\s*Email\s*</);
+    expect(login).toMatch(/>\s*Password\s*</);
+  });
+
+  it("keeps the Sign in heading, button and empty-field message", () => {
+    expect(login).toMatch(/<h1[^>]*>\s*Sign in\s*<\/h1>/);
+    expect(login).toMatch(/type="submit"[\s\S]*?Sign in\s*<\/button>/);
+    expect(login).toContain("Enter any email and password to continue.");
+  });
+});
+
+describe("route list", () => {
+  const files = readdirSync(join(src, "routes"))
+    .filter((f) => f.endsWith(".tsx") && f !== "__root.tsx")
+    .map((f) => f.replace(/\.tsx$/, ""))
+    .sort();
+
+  const expected = [
+    "ai-analysis",
+    "documents",
+    "hierarchy",
+    "index",
+    "integrations",
+    "knowledge-base",
+    "login",
+    "overview",
+    "reports",
+    "risk-register",
+    "traceability",
+    "workspace",
+  ];
+
+  it("has exactly the expected route files", () => {
+    expect(files).toEqual(expected);
+  });
+
+  it("registers every route path in the generated route tree", () => {
+    const tree = read("routeTree.gen.ts");
+    for (const name of expected.filter((n) => n !== "index")) {
+      expect(tree).toContain(`path: '/${name}'`);
+    }
+    expect(tree).toContain("path: '/'");
+  });
+
+  it("redirects / to /overview", () => {
+    expect(read("routes/index.tsx")).toContain('redirect({ to: "/overview" })');
+  });
+});
+
+describe("severity mapping", () => {
+  it("maps critical to error, high to warning, medium to info, low to neutral", () => {
+    expect(severityTone).toEqual({
+      Critical: "error",
+      High: "warning",
+      Medium: "info",
+      Low: "neutral",
+    });
+  });
+});

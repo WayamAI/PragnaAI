@@ -3,6 +3,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { severityTone } from "@/lib/severity";
+import { THEME_INIT_SCRIPT, THEME_STORAGE_KEY } from "@/components/theme/theme";
 
 const src = join(process.cwd(), "src");
 const read = (p: string) => readFileSync(join(src, p), "utf8");
@@ -72,5 +73,13 @@ describe("severity mapping", () => {
       Medium: "info",
       Low: "neutral",
     });
+  });
+});
+
+describe("theme", () => {
+  it("defaults to light and reads the pragnaai-theme key before first paint", () => {
+    expect(THEME_STORAGE_KEY).toBe("pragnaai-theme");
+    expect(THEME_INIT_SCRIPT).toContain('localStorage.getItem("pragnaai-theme")');
+    expect(THEME_INIT_SCRIPT).toContain('t==="dark"?"dark":"light"');
   });
 });

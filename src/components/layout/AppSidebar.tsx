@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
   LayoutDashboard, GitBranch, Table2, Sparkles, ShieldAlert, Link as LinkIcon,
   BookOpen, FolderOpen, FileDown, Settings, HelpCircle, X, ExternalLink, Plug,
@@ -107,6 +108,9 @@ export function AppSidebar({ open = false, onClose }: { open?: boolean; onClose?
               </button>
             </li>
           ))}
+            <li>
+              <ThemeToggle className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-white" />
+            </li>
         </ul>
       </nav>
 

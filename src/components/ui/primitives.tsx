@@ -71,7 +71,7 @@ export const KpiTile = ({
 }) => {
   const body = (
     <>
-      <span className="type-eyebrow truncate text-quaternary">{label}</span>
+      <span className="type-eyebrow text-quaternary">{label}</span>
       <span
         className={cn(
           "type-display-xl sm:type-display-2xl tabular text-foreground",
@@ -82,9 +82,9 @@ export const KpiTile = ({
         {unit && <Unit>{unit}</Unit>}
       </span>
       {(delta || hint) && (
-        <span className="flex items-baseline gap-2">
+        <span className="flex flex-wrap items-baseline gap-x-2">
           {delta && <span className={cn("type-body-sm tabular", toneText[tone])}>{delta}</span>}
-          {hint && <span className="type-caption truncate text-quaternary">{hint}</span>}
+          {hint && <span className="type-caption text-quaternary">{hint}</span>}
         </span>
       )}
     </>

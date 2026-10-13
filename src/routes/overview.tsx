@@ -1,38 +1,102 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { PageContainer, Card } from "@/components/shared/PageContainer";
+import { PageContainer } from "@/components/shared/PageContainer";
 import { ACTIVITY } from "@/data/misc";
 import { INTEGRATIONS } from "@/data/integrations";
-import { Sparkles, Search, Shield, Plug, X, CheckCircle2, RefreshCw, ArrowRight } from "lucide-react";
+import { Sparkles, Search, Shield, Plug, X, RefreshCw, ChevronRight } from "lucide-react";
 import { zoneTint } from "@/components/dashboard/zoneTint";
-import { Unit } from "@/components/ui/primitives";
-import { axisTick, chartTooltipLabelStyle, chartTooltipStyle } from "@/components/dashboard/chartTheme";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell, PieChart, Pie } from "recharts";
+import {
+  KpiTile,
+  Panel,
+  QuietStatus,
+  StatusDot,
+  ToneBadge,
+  Unit,
+  type Tone,
+} from "@/components/ui/primitives";
+import { buttonClass } from "@/components/ui/button-styles";
+import {
+  axisTick,
+  chartTooltipLabelStyle,
+  chartTooltipStyle,
+} from "@/components/dashboard/chartTheme";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+  PieChart,
+  Pie,
+} from "recharts";
 
 export const Route = createFileRoute("/overview")({ component: Overview });
 
-const KPI = [
-  { label: "Total DFMEA Items", value: "280", sub: "Across all levels", tone: "" },
-  { label: "Critical Risks (S≥9)", value: "14", sub: "Require immediate action", tone: "text-red-600" },
-  { label: "AI Suggestions Pending", value: "23", sub: "Awaiting engineer review", tone: "text-[color:var(--ai-accent)]" },
-  { label: "Mitigations Pending", value: "31", sub: "Open action items", tone: "text-amber-600" },
-  { label: "DFMEA Completion", value: "67%", sub: "188 of 280 approved", tone: "text-primary" },
-  { label: "Residual RPN Reduced", value: "43%", sub: "Avg reduction post-mitigation", tone: "text-emerald-600" },
-];
+const KPI: { label: string; value: string; unit?: string; sub: string; valueClassName?: string }[] =
+  [
+    { label: "Total DFMEA Items", value: "280", sub: "Across all levels" },
+    {
+      label: "Critical Risks (S≥9)",
+      value: "14",
+      sub: "Require immediate action",
+      valueClassName: "text-error",
+    },
+    { label: "AI Suggestions Pending", value: "23", sub: "Awaiting engineer review" },
+    {
+      label: "Mitigations Pending",
+      value: "31",
+      sub: "Open action items",
+      valueClassName: "text-warning",
+    },
+    { label: "DFMEA Completion", value: "67", unit: "%", sub: "188 of 280 approved" },
+    { label: "Residual RPN Reduced", value: "43", unit: "%", sub: "Avg reduction post-mitigation" },
+  ];
 
 const HEATMAP = [
-  { row: "S9-10", tier: "Catastrophic", desc: "Patient death / life-threatening", cells: [0, 2, 5, 4, 3], avgD: 3.1 },
-  { row: "S7-8", tier: "Critical", desc: "Serious injury, little/no warning", cells: [1, 6, 12, 9, 4], avgD: 3.6 },
-  { row: "S5-6", tier: "Major", desc: "Moderate injury / therapy interruption", cells: [3, 9, 18, 11, 6], avgD: 4.0 },
-  { row: "S3-4", tier: "Moderate", desc: "Minor injury / degraded performance", cells: [5, 14, 22, 16, 8], avgD: 4.3 },
-  { row: "S1-2", tier: "Minor", desc: "Negligible / cosmetic", cells: [8, 19, 28, 21, 12], avgD: 4.6 },
+  {
+    row: "S9-10",
+    tier: "Catastrophic",
+    desc: "Patient death / life-threatening",
+    cells: [0, 2, 5, 4, 3],
+    avgD: 3.1,
+  },
+  {
+    row: "S7-8",
+    tier: "Critical",
+    desc: "Serious injury, little/no warning",
+    cells: [1, 6, 12, 9, 4],
+    avgD: 3.6,
+  },
+  {
+    row: "S5-6",
+    tier: "Major",
+    desc: "Moderate injury / therapy interruption",
+    cells: [3, 9, 18, 11, 6],
+    avgD: 4.0,
+  },
+  {
+    row: "S3-4",
+    tier: "Moderate",
+    desc: "Minor injury / degraded performance",
+    cells: [5, 14, 22, 16, 8],
+    avgD: 4.3,
+  },
+  {
+    row: "S1-2",
+    tier: "Minor",
+    desc: "Negligible / cosmetic",
+    cells: [8, 19, 28, 21, 12],
+    avgD: 4.6,
+  },
 ];
-// Zone tints share the severity tone map: High is error, Medium is info, Low is neutral.
+// Zone tints share the severity tone map: High is warning, Medium is info, Low is neutral.
 const ZONE_TINT = { High: zoneTint("High"), Medium: zoneTint("Medium"), Low: zoneTint("Low") };
-// Proper S×O risk matrix: high severity + high occurrence = high-priority (red) zone.
+// Proper S×O risk matrix: high severity + high occurrence = high-priority zone.
 function riskZone(ri: number, ci: number) {
-  const sev = 5 - ri;    // ri 0 (S9-10) → 5 … ri 4 (S1-2) → 1
-  const occ = ci + 1;    // O1 → 1 … O5 → 5
+  const sev = 5 - ri; // ri 0 (S9-10) → 5 … ri 4 (S1-2) → 1
+  const occ = ci + 1; // O1 → 1 … O5 → 5
   const score = sev * occ;
   if (score >= 12) return { bg: ZONE_TINT.High.bg, text: ZONE_TINT.High.text, band: "High" };
   if (score >= 6) return { bg: ZONE_TINT.Medium.bg, text: ZONE_TINT.Medium.text, band: "Medium" };
@@ -56,10 +120,39 @@ const RPN_BUCKETS = [
   { range: "200+", count: 14, fill: "var(--feedback-error-content)" },
 ];
 
-const AGENTS = [
-  { icon: Sparkles, name: "Structure Analysis Agent", status: "COMPLETE", statusColor: "bg-emerald-100 text-emerald-800", detail: "Processed 14 documents, 114 hierarchy nodes identified", last: "Today 09:15", accent: "text-[color:var(--ai-accent)]" },
-  { icon: Search, name: "Knowledge Retrieval Agent", status: "ACTIVE", statusColor: "bg-primary/15 text-primary", detail: "Querying FDA MDR database and internal knowledge base — queue: 23 suggestions pending review", last: "Running", accent: "text-primary" },
-  { icon: Shield, name: "Risk Scoring Agent", status: "IDLE", statusColor: "bg-slate-100 text-slate-700", detail: "143 S/O/D recommendations generated, 89 accepted", last: "Today 11:30", accent: "text-sky-600" },
+const AGENTS: {
+  icon: typeof Sparkles;
+  name: string;
+  status: string;
+  tone: Tone;
+  detail: string;
+  last: string;
+}[] = [
+  {
+    icon: Sparkles,
+    name: "Structure Analysis Agent",
+    status: "Complete",
+    tone: "success",
+    detail: "Processed 14 documents, 114 hierarchy nodes identified",
+    last: "Today 09:15",
+  },
+  {
+    icon: Search,
+    name: "Knowledge Retrieval Agent",
+    status: "Active",
+    tone: "success",
+    detail:
+      "Querying FDA MDR database and internal knowledge base — queue: 23 suggestions pending review",
+    last: "Running",
+  },
+  {
+    icon: Shield,
+    name: "Risk Scoring Agent",
+    status: "Idle",
+    tone: "neutral",
+    detail: "143 S/O/D recommendations generated, 89 accepted",
+    last: "Today 11:30",
+  },
 ];
 
 function Overview() {
@@ -73,172 +166,234 @@ function Overview() {
   }, []);
   const connected = INTEGRATIONS.filter((i) => i.status === "connected").length;
   const highCount = HEATMAP.reduce(
-    (sum, row, ri) => sum + row.cells.reduce((s, v, ci) => (riskZone(ri, ci).band === "High" ? s + v : s), 0),
+    (sum, row, ri) =>
+      sum + row.cells.reduce((s, v, ci) => (riskZone(ri, ci).band === "High" ? s + v : s), 0),
     0,
   );
 
   return (
     <PageContainer title="Project Overview" subtitle="CardioGuard 3000 · Rev B · DFMEA-2025-001">
-      {/* Live data-source status banner */}
-      <button
-        onClick={() => setShowIntegrations(true)}
-        className="mb-4 flex w-full items-center gap-3 rounded-lg border bg-[color:var(--ai-bg)]/40 p-3 text-left transition hover:bg-[color:var(--ai-bg)]/70"
-      >
-        <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary"><Plug className="h-4 w-4" /></span>
-        <span className="flex items-center gap-2 text-sm">
-          <span className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="font-semibold">{connected} of {INTEGRATIONS.length} data sources live</span>
-          <span className="hidden text-muted-foreground sm:inline">· Teamcenter (PLM), Jama, Greenlight Guru, FDA MAUDE, SAP, Polarion</span>
-        </span>
-        <span className="ml-auto text-xs font-semibold text-primary">View integrations →</span>
-      </button>
+      <div className="flex flex-col gap-4">
+        {/* Live data-source status banner */}
+        <button
+          onClick={() => setShowIntegrations(true)}
+          className="flex w-full items-center gap-3 rounded-lg border border-hairline bg-container p-3 text-left outline-none transition-colors duration-[150ms] hover:border-strong focus-visible:ring-2 focus-visible:ring-active"
+        >
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
+            <Plug className="size-[17px]" aria-hidden="true" />
+          </span>
+          <span className="type-body-md flex min-w-0 items-center gap-2">
+            <StatusDot tone="success" />
+            <span className="font-medium whitespace-nowrap text-foreground">
+              {connected} of {INTEGRATIONS.length} data sources live
+            </span>
+            <span className="hidden truncate text-tertiary sm:inline">
+              · Teamcenter (PLM), Jama, Greenlight Guru, FDA MAUDE, SAP, Polarion
+            </span>
+          </span>
+          <span className="type-label-sm ml-auto inline-flex shrink-0 items-center gap-1 text-foreground">
+            View integrations <ChevronRight className="size-3" aria-hidden="true" />
+          </span>
+        </button>
 
-      {showIntegrations && <IntegrationsPopup onClose={() => setShowIntegrations(false)} />}
+        {showIntegrations && <IntegrationsPopup onClose={() => setShowIntegrations(false)} />}
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-6">
-        {KPI.map((k) => (
-          <Card key={k.label} className="!p-4">
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{k.label}</div>
-            <div className={`mt-1 font-display text-2xl font-semibold ${k.tone}`}>{k.value}</div>
-            <div className="mt-1 text-xs text-muted-foreground">{k.sub}</div>
-          </Card>
-        ))}
-      </div>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+          {KPI.map((k) => (
+            <KpiTile
+              key={k.label}
+              label={k.label}
+              value={k.value}
+              unit={k.unit}
+              hint={k.sub}
+              valueClassName={k.valueClassName}
+            />
+          ))}
+        </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Card className="lg:col-span-7">
-          <div className="mb-1 flex items-center justify-between">
-            <h2 className="font-display text-base font-semibold">Risk Distribution Matrix (Initial RPN)</h2>
-            {/* <span className="text-xs text-muted-foreground">Severity × Occurrence</span> */}
-          </div>
-          <p className="mb-3 text-xs text-muted-foreground">
-            Each cell counts the failure modes at that <span className="font-medium text-foreground">Severity (S)</span> ×{" "}
-            <span className="font-medium text-foreground">Occurrence (O)</span> combination. Full{" "}
-            <span className="font-medium text-foreground">RPN = S × O × Detection (D)</span> — the average Detection for each severity band is shown in the{" "}
-            <span className="font-medium text-foreground">Avg&nbsp;D</span> column (and per cell on hover). Colour marks the risk zone; the top-right red zone is highest priority.
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full border-separate border-spacing-1 text-center text-xs">
-              <thead>
-                <tr>
-                  <th className="pb-1 text-left text-[10px] font-semibold uppercase tracking-wide text-muted-foreground" colSpan={2}>Severity (S) ↓</th>
-                  <th className="pb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground" colSpan={5}>Occurrence (O) →</th>
-                  <th className="pb-1 pl-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Avg D</th>
-                </tr>
-              </thead>
-              <tbody>
-                {HEATMAP.map((row, ri) => (
-                  <tr key={row.row}>
-                    <td className="pr-2 text-right leading-tight">
-                      <div className="text-[11px] font-semibold text-foreground">{row.tier}</div>
-                      <div className="text-[9px] text-muted-foreground">{row.desc}</div>
-                    </td>
-                    <td className="pr-2 text-right font-mono text-[10px] text-muted-foreground">{row.row}</td>
-                    {row.cells.map((v, ci) => {
-                      const z = riskZone(ri, ci);
-                      return (
-                        <td
-                          key={ci}
-                          title={`${row.tier} (${row.row}) × O${ci + 1}: ${v} failure modes — ${z.band} risk zone · avg Detection D≈${row.avgD.toFixed(1)}`}
-                          style={{ background: z.bg, color: z.text }}
-                          className="h-11 w-14 rounded font-semibold"
-                        >
-                          {v}
-                        </td>
-                      );
-                    })}
-                    <td className="pl-2 font-mono text-[11px] font-semibold text-foreground">{row.avgD.toFixed(1)}</td>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+          <Panel title="Risk Distribution Matrix (Initial RPN)" className="lg:col-span-7">
+            <p className="type-body-sm mb-3 text-tertiary">
+              Each cell counts the failure modes at that{" "}
+              <span className="font-medium text-foreground">Severity (S)</span> ×{" "}
+              <span className="font-medium text-foreground">Occurrence (O)</span> combination. Full{" "}
+              <span className="font-medium text-foreground">RPN = S × O × Detection (D)</span>. The
+              average Detection for each severity band is shown in the{" "}
+              <span className="font-medium text-foreground">Avg&nbsp;D</span> column (and per cell
+              on hover). Colour marks the risk zone; the top-right zone is highest priority.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full border-separate border-spacing-1 text-center">
+                <thead>
+                  <tr>
+                    <th className="type-eyebrow pb-1 text-left text-quaternary" colSpan={2}>
+                      Severity (S) ↓
+                    </th>
+                    <th className="type-eyebrow pb-1 text-quaternary" colSpan={5}>
+                      Occurrence (O) →
+                    </th>
+                    <th className="type-eyebrow pb-1 pl-2 text-quaternary">Avg D</th>
                   </tr>
-                ))}
-                <tr>
-                  <td /><td />
-                  {["O1", "O2", "O3", "O4", "O5"].map((c) => (
-                    <td key={c} className="text-[10px] text-muted-foreground">{c}</td>
+                </thead>
+                <tbody>
+                  {HEATMAP.map((row, ri) => (
+                    <tr key={row.row}>
+                      <td className="pr-2 text-right leading-tight">
+                        <div className="type-label-sm text-foreground">{row.tier}</div>
+                        <div className="type-caption font-normal text-quaternary">{row.desc}</div>
+                      </td>
+                      <td className="type-caption tabular pr-2 text-right font-normal text-quaternary">
+                        {row.row}
+                      </td>
+                      {row.cells.map((v, ci) => {
+                        const z = riskZone(ri, ci);
+                        return (
+                          <td
+                            key={ci}
+                            title={`${row.tier} (${row.row}) × O${ci + 1}: ${v} failure modes · ${z.band} risk zone · avg Detection D≈${row.avgD.toFixed(1)}`}
+                            style={{ background: z.bg, color: z.text }}
+                            className="type-label-sm tabular h-11 w-14 rounded-md"
+                          >
+                            {v}
+                          </td>
+                        );
+                      })}
+                      <td className="type-label-sm tabular pl-2 text-foreground">
+                        {row.avgD.toFixed(1)}
+                      </td>
+                    </tr>
                   ))}
-                  <td />
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px]">
-            <span className="font-semibold text-muted-foreground">Risk zone:</span>
-            <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: ZONE_TINT.Low.bg }} /> Low (S×O &lt; 6)</span>
-            <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: ZONE_TINT.Medium.bg }} /> Medium (6–11)</span>
-            <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: ZONE_TINT.High.bg }} /> High (≥ 12)</span>
-            <span className="ml-auto font-semibold text-warning">{highCount} failure modes in the high zone</span>
-          </div>
-        </Card>
+                  <tr>
+                    <td />
+                    <td />
+                    {["O1", "O2", "O3", "O4", "O5"].map((c) => (
+                      <td key={c} className="type-caption font-normal text-quaternary">
+                        {c}
+                      </td>
+                    ))}
+                    <td />
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="type-caption mt-3 flex flex-wrap items-center gap-3 font-normal text-tertiary">
+              <span className="text-quaternary">Risk zone:</span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="size-3 rounded-sm" style={{ background: ZONE_TINT.Low.bg }} /> Low
+                (S×O &lt; 6)
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="size-3 rounded-sm" style={{ background: ZONE_TINT.Medium.bg }} />{" "}
+                Medium (6–11)
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="size-3 rounded-sm" style={{ background: ZONE_TINT.High.bg }} />{" "}
+                High (≥ 12)
+              </span>
+              <span className="tabular ml-auto font-medium text-warning">
+                {highCount} failure modes in the high zone
+              </span>
+            </div>
+          </Panel>
 
-        <Card className="lg:col-span-5">
-          <h2 className="mb-3 font-display text-base font-semibold">Completion by Level</h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {RINGS.map((r, i) => (
-              <div key={r.level} className="text-center">
-                <ResponsiveContainer width="100%" height={80}>
-                  <PieChart>
-                    <Pie data={[{ v: r.pct }, { v: 100 - r.pct }]} dataKey="v" innerRadius={22} outerRadius={32} startAngle={90} endAngle={-270} stroke="none" isAnimationActive={false}>
-                      <Cell fill="var(--action-primary-default)" />
-                      <Cell fill="var(--surface-raised-x2)" />
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="type-display-base tabular mt-1 text-foreground">{r.pct}<Unit>%</Unit></div>
-                <div className="text-[10px] text-muted-foreground">{r.level}</div>
-                <div className="text-[10px] text-muted-foreground">{r.done}/{r.total}</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      <Card className="mt-6">
-        <h2 className="mb-3 font-display text-base font-semibold">Failure Mode Distribution by RPN Range</h2>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={RPN_BUCKETS}>
-            <XAxis dataKey="range" axisLine={false} tickLine={false} tick={axisTick} />
-            <YAxis axisLine={false} tickLine={false} tick={axisTick} />
-            <Tooltip cursor={{ fill: "var(--surface-raised)" }} contentStyle={chartTooltipStyle} labelStyle={chartTooltipLabelStyle} />
-            <Bar dataKey="count" radius={[4, 4, 4, 4]} isAnimationActive={false}>
-              {RPN_BUCKETS.map((b, i) => <Cell key={i} fill={b.fill} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
-
-      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Card className="lg:col-span-7">
-          <h2 className="mb-3 font-display text-base font-semibold">Recent Activity</h2>
-          <ul className="divide-y text-sm">
-            {ACTIVITY.map(([t, who, what], i) => (
-              <li key={i} className="flex gap-3 py-2">
-                <span className="w-14 font-mono text-xs text-muted-foreground">{t}</span>
-                <span><span className="font-semibold">{who}</span> {what}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-        <Card className="lg:col-span-5">
-          <h2 className="mb-3 font-display text-base font-semibold">AI Agent Activity</h2>
-          <div className="space-y-3">
-            {AGENTS.map((a) => (
-              <div key={a.name} className="rounded-md border bg-[color:var(--ai-bg)]/40 p-3">
-                <div className="flex items-start gap-2">
-                  <a.icon className={`h-4 w-4 ${a.accent}`} />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-semibold">{a.name}</div>
-                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${a.statusColor}`}>{a.status}</span>
-                    </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{a.detail}</p>
-                    <p className="mt-1 text-[10px] text-muted-foreground">Last run: {a.last}</p>
+          <Panel title="Completion by Level" className="lg:col-span-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {RINGS.map((r) => (
+                <div key={r.level} className="text-center">
+                  <ResponsiveContainer width="100%" height={80}>
+                    <PieChart>
+                      <Pie
+                        data={[{ v: r.pct }, { v: 100 - r.pct }]}
+                        dataKey="v"
+                        innerRadius={22}
+                        outerRadius={32}
+                        startAngle={90}
+                        endAngle={-270}
+                        stroke="none"
+                        isAnimationActive={false}
+                      >
+                        <Cell fill="var(--action-primary-default)" />
+                        <Cell fill="var(--surface-raised-x2)" />
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="type-display-base tabular mt-1 text-foreground">
+                    {r.pct}
+                    <Unit>%</Unit>
+                  </div>
+                  <div className="type-caption font-normal text-tertiary">{r.level}</div>
+                  <div className="type-caption tabular font-normal text-quaternary">
+                    {r.done}/{r.total}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <Link to="/ai-analysis" className="mt-3 inline-block text-xs font-semibold text-primary hover:underline">Open AI Analysis →</Link>
-        </Card>
+              ))}
+            </div>
+          </Panel>
+        </div>
+
+        <Panel title="Failure Mode Distribution by RPN Range">
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={RPN_BUCKETS}>
+              <XAxis dataKey="range" axisLine={false} tickLine={false} tick={axisTick} />
+              <YAxis axisLine={false} tickLine={false} tick={axisTick} />
+              <Tooltip
+                cursor={{ fill: "var(--surface-raised)" }}
+                contentStyle={chartTooltipStyle}
+                labelStyle={chartTooltipLabelStyle}
+              />
+              <Bar dataKey="count" radius={[4, 4, 4, 4]} isAnimationActive={false}>
+                {RPN_BUCKETS.map((b, i) => (
+                  <Cell key={i} fill={b.fill} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Panel>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+          <Panel title="Recent Activity" className="lg:col-span-7">
+            <ul className="type-body-md divide-y divide-hairline">
+              {ACTIVITY.map(([t, who, what], i) => (
+                <li key={i} className="flex gap-3 py-2">
+                  <span className="type-caption tabular w-14 shrink-0 pt-0.5 font-normal text-quaternary">
+                    {t}
+                  </span>
+                  <span className="text-secondary-foreground">
+                    <span className="font-medium text-foreground">{who}</span> {what}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+
+          <Panel title="AI Agent Activity" className="lg:col-span-5">
+            <div className="flex flex-col gap-3">
+              {AGENTS.map((a) => (
+                <div key={a.name} className="rounded-lg border border-hairline bg-raised p-3">
+                  <div className="flex items-start gap-2">
+                    <a.icon className="mt-0.5 size-3.5 shrink-0 text-tertiary" aria-hidden="true" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="type-label-md text-foreground">{a.name}</div>
+                        <QuietStatus tone={a.tone}>{a.status}</QuietStatus>
+                      </div>
+                      <p className="type-body-sm mt-1 text-tertiary">{a.detail}</p>
+                      <p className="type-caption mt-1 font-normal text-quaternary">
+                        Last run: {a.last}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Link
+              to="/ai-analysis"
+              className={buttonClass("ghost", { size: "sm", className: "mt-3 -ml-3" })}
+            >
+              Open AI analysis <ChevronRight className="size-3" aria-hidden="true" />
+            </Link>
+          </Panel>
+        </div>
       </div>
     </PageContainer>
   );
@@ -248,54 +403,80 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
   const connected = INTEGRATIONS.filter((i) => i.status === "connected").length;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 text-foreground">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-2xl overflow-hidden rounded-xl border bg-card shadow-2xl">
-        <div className="flex items-start justify-between border-b bg-[color:var(--ai-bg)]/50 px-5 py-4">
+      <div className="absolute inset-0 bg-page/70" onClick={onClose} />
+      <div className="relative z-10 flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-strong bg-container">
+        <div className="flex items-start justify-between gap-3 border-b border-hairline px-5 py-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary"><Plug className="h-5 w-5" /></span>
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
+              <Plug className="size-[17px]" aria-hidden="true" />
+            </span>
             <div>
-              <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
+              <h2 className="type-display-lg flex flex-wrap items-center gap-x-3 gap-y-1 text-foreground">
                 Connected data sources
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-800">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> {connected} LIVE
-                </span>
+                <QuietStatus tone="success" className="font-sans">
+                  {connected} live
+                </QuietStatus>
               </h2>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                PragnaAI pulls data from your PLM, requirements, quality, ERP and regulatory systems — the AI agents turn it into this DFMEA.
+              <p className="type-body-sm mt-1 text-tertiary">
+                PragnaAI pulls data from your PLM, requirements, quality, ERP and regulatory systems
+                — the AI agents turn it into this DFMEA.
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="rounded p-1 hover:bg-muted" aria-label="Close"><X className="h-4 w-4" /></button>
+          <button
+            onClick={onClose}
+            className={buttonClass("icon", { className: "size-7" })}
+            aria-label="Close"
+          >
+            <X className="size-4" aria-hidden="true" />
+          </button>
         </div>
 
-        <div className="max-h-[55vh] space-y-2 overflow-y-auto p-4">
+        <div className="flex min-h-0 flex-col gap-2 overflow-y-auto p-4">
           {INTEGRATIONS.map((it) => (
-            <div key={it.name} className="flex items-start gap-3 rounded-md border p-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary"><it.icon className="h-4 w-4" /></span>
+            <div
+              key={it.name}
+              className="flex items-start gap-3 rounded-lg border border-hairline p-3"
+            >
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
+                <it.icon className="size-[17px]" aria-hidden="true" />
+              </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="truncate text-sm font-semibold">{it.name}</span>
+                  <span className="type-label-md truncate text-foreground">{it.name}</span>
                   {it.status === "syncing" ? (
-                    <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800"><RefreshCw className="h-3 w-3 animate-spin" /> SYNCING</span>
+                    <ToneBadge tone="info" className="shrink-0 gap-1">
+                      <RefreshCw className="size-3 animate-spin" aria-hidden="true" /> Syncing
+                    </ToneBadge>
                   ) : (
-                    <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-800"><CheckCircle2 className="h-3 w-3" /> CONNECTED</span>
+                    <QuietStatus tone="success" className="shrink-0">
+                      Connected
+                    </QuietStatus>
                   )}
                 </div>
-                <div className="text-[11px] text-muted-foreground">{it.category} · {it.vendor}</div>
-                <div className="mt-1 flex flex-wrap items-center gap-1 text-xs">
-                  <span className="text-muted-foreground">{it.feeds}</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                  <span className="font-medium text-primary">{it.into}</span>
+                <div className="type-caption font-normal text-quaternary">
+                  {it.category} · {it.vendor}
+                </div>
+                <div className="type-body-sm mt-1 flex flex-wrap items-center gap-1">
+                  <span className="text-tertiary">{it.feeds}</span>
+                  <ChevronRight className="size-3 text-quaternary" aria-hidden="true" />
+                  <span className="font-medium text-foreground">{it.into}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="flex items-center justify-between border-t bg-muted/20 px-5 py-3">
-          <span className="text-xs text-muted-foreground">Data flows in automatically — no manual re-entry.</span>
-          <Link to="/integrations" onClick={onClose} className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
-            Manage integrations <ArrowRight className="h-3 w-3" />
+        <div className="flex items-center justify-between gap-3 border-t border-hairline px-5 py-3">
+          <span className="type-body-sm text-tertiary">
+            Data flows in automatically — no manual re-entry.
+          </span>
+          <Link
+            to="/integrations"
+            onClick={onClose}
+            className={buttonClass("primary", { size: "sm", className: "shrink-0" })}
+          >
+            Manage integrations <ChevronRight className="size-3" aria-hidden="true" />
           </Link>
         </div>
       </div>

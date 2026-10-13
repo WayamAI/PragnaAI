@@ -22,5 +22,5 @@ export function PageContainer({
 }
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-lg border bg-card p-5 ${className}`}>{children}</div>;
+  return <div className={`rounded-lg border border-hairline bg-card p-5 ${className}`}>{children}</div>;
 }

@@ -10,3 +10,6 @@ export function inputClass(size: "sm" | "md" = "md", className?: string) {
 
 /** Field label: eyebrow style above the field. */
 export const labelClass = "type-eyebrow text-quaternary";
+
+/** Native select pill, toolbar size. */
+export const selectClass = inputClass("sm", "w-auto pr-8");

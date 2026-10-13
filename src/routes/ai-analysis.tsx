@@ -1,72 +1,129 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageContainer, Card } from "@/components/shared/PageContainer";
+import { PageContainer } from "@/components/shared/PageContainer";
 import { AI_SUGGESTIONS } from "@/data/ai-suggestions";
 import { RiskBadge, badgeForRpn } from "@/components/shared/RiskBadge";
+import { KpiTile } from "@/components/ui/primitives";
+import { buttonClass } from "@/components/ui/button-styles";
+import { selectClass } from "@/components/ui/input-styles";
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/ai-analysis")({ component: AI });
 
 const KPI = [
-  ["Total Generated", "143"], ["Accepted", "89"], ["Edited & Accepted", "12"], ["Pending Review", "23"], ["Rejected", "19"],
+  ["Total Generated", "143"],
+  ["Accepted", "89"],
+  ["Edited & Accepted", "12"],
+  ["Pending Review", "23"],
+  ["Rejected", "19"],
 ];
+
+const scoreChip =
+  "type-body-sm tabular rounded-md border border-hairline bg-raised px-2 py-0.5 font-mono text-secondary-foreground";
 
 function AI() {
   return (
-    <PageContainer title="AI Analysis Queue" subtitle="Review pending AI-generated failure mode suggestions across the device.">
+    <PageContainer
+      title="AI Analysis Queue"
+      subtitle="Review pending AI-generated failure mode suggestions across the device."
+    >
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {KPI.map(([l, v]) => (
-          <Card key={l} className="!p-4 text-center">
-            <div className="text-[11px] font-semibold uppercase text-muted-foreground">{l}</div>
-            <div className="mt-1 font-display text-2xl font-semibold">{v}</div>
-          </Card>
+          <KpiTile key={l} label={l} value={v} />
         ))}
       </div>
 
-      <Card className="mt-4 !p-3">
-        <div className="flex flex-wrap gap-2 text-sm">
-          <select className="rounded-md border bg-background px-2 py-1.5"><option>Subsystem: All</option></select>
-          <select className="rounded-md border bg-background px-2 py-1.5"><option>Severity ≥ any</option></select>
-          <select className="rounded-md border bg-background px-2 py-1.5"><option>Confidence ≥ any</option></select>
-          <select className="rounded-md border bg-background px-2 py-1.5"><option>Source: All</option></select>
-          <select className="rounded-md border bg-background px-2 py-1.5"><option>Show: Pending Only</option></select>
-        </div>
-      </Card>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <select aria-label="Subsystem" className={selectClass}>
+          <option>Subsystem: All</option>
+        </select>
+        <select aria-label="Severity" className={selectClass}>
+          <option>Severity ≥ any</option>
+        </select>
+        <select aria-label="Confidence" className={selectClass}>
+          <option>Confidence ≥ any</option>
+        </select>
+        <select aria-label="Source" className={selectClass}>
+          <option>Source: All</option>
+        </select>
+        <select aria-label="Show" className={selectClass}>
+          <option>Show: Pending Only</option>
+        </select>
+      </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         {AI_SUGGESTIONS.map((s) => {
           const rpn = s.s * s.o * s.d;
           return (
-            <div key={s.id} className="rounded-lg border bg-[color:var(--ai-bg)]/40 p-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                <span className="rounded bg-muted px-2 py-0.5 text-[11px] font-medium">{s.path}</span>
+            <section
+              key={s.id}
+              className="min-w-0 rounded-lg border border-hairline bg-container p-4"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="type-caption rounded-md bg-raised-2 px-2 py-0.5 text-secondary-foreground">
+                  {s.path}
+                </span>
                 <div className="flex items-center gap-2">
-                  <span className="rounded bg-[color:var(--ai-accent)] px-2 py-0.5 text-[10px] font-semibold text-white">Confidence {s.confidence}%</span>
-                  <span className="rounded border px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">{s.source}</span>
+                  <span className="type-caption tabular text-tertiary">
+                    Confidence {s.confidence}%
+                  </span>
+                  <span className="type-caption rounded-full border border-hairline px-2 py-0.5 text-tertiary">
+                    {s.source}
+                  </span>
                 </div>
               </div>
-              <div className="mt-2 flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-[color:var(--ai-accent)]" />
-                <span className="font-mono text-xs text-[color:var(--ai-accent)]">{s.id}</span>
-                <span className="font-semibold">{s.title}</span>
+              <div className="mt-3 flex items-start gap-2">
+                <Sparkles className="mt-0.5 size-4 shrink-0 text-tertiary" aria-hidden="true" />
+                <h3 className="type-label-md min-w-0 text-foreground">
+                  <span className="mr-2 font-mono font-normal text-tertiary">{s.id}</span>
+                  {s.title}
+                </h3>
               </div>
-              <div className="mt-2 flex items-center gap-2 text-xs">
-                <span className="rounded bg-white px-2 py-0.5 font-mono">S={s.s}</span>
-                <span className="rounded bg-white px-2 py-0.5 font-mono">O={s.o}</span>
-                <span className="rounded bg-white px-2 py-0.5 font-mono">D={s.d}</span>
-                <span className="rounded bg-white px-2 py-0.5 font-mono">RPN={rpn}</span>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className={scoreChip}>S={s.s}</span>
+                <span className={scoreChip}>O={s.o}</span>
+                <span className={scoreChip}>D={s.d}</span>
+                <span className={scoreChip}>RPN={rpn}</span>
                 <RiskBadge level={badgeForRpn(rpn, s.s)} />
-                <span className="ml-auto rounded bg-[color:var(--ai-accent)]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[color:var(--ai-accent)]">AI</span>
+                <span className="type-caption ml-auto text-quaternary">AI</span>
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">{s.reasoning}</p>
-              <p className="mt-1 text-[11px] italic text-muted-foreground">Source: {s.ref}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <button onClick={() => toast.success(`AI suggestion ${s.id} accepted and added to DFMEA Workspace.`)} className="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">Accept</button>
-                <button onClick={() => toast(`Editing ${s.id}...`)} className="rounded-md border px-3 py-1.5 text-xs font-semibold hover:bg-muted">Edit & Accept</button>
-                <button onClick={() => toast.error(`${s.id} rejected.`)} className="rounded-md border px-3 py-1.5 text-xs font-semibold hover:bg-muted">Reject</button>
-                <button onClick={() => toast(`${s.id} flagged for team review.`)} className="rounded-md border px-3 py-1.5 text-xs font-semibold hover:bg-muted">Flag for Team</button>
+              <p className="type-body-md mt-3 text-secondary-foreground">{s.reasoning}</p>
+              <p className="type-caption mt-1 font-normal text-quaternary italic">
+                Source: {s.ref}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    toast.success(`AI suggestion ${s.id} accepted and added to DFMEA Workspace.`)
+                  }
+                  className={buttonClass("secondary", { size: "sm" })}
+                >
+                  Accept
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toast(`Editing ${s.id}...`)}
+                  className={buttonClass("secondary", { size: "sm" })}
+                >
+                  Edit & Accept
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toast.error(`${s.id} rejected.`)}
+                  className={buttonClass("secondary", { size: "sm" })}
+                >
+                  Reject
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toast(`${s.id} flagged for team review.`)}
+                  className={buttonClass("secondary", { size: "sm" })}
+                >
+                  Flag for Team
+                </button>
               </div>
-            </div>
+            </section>
           );
         })}
       </div>

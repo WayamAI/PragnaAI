@@ -7,7 +7,7 @@ import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
 import { EmptyState } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button-styles";
-import { inputClass } from "@/components/ui/input-styles";
+import { inputClass, selectClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 import { Plus, Sparkles, Download, CheckCircle2, X } from "lucide-react";
@@ -20,7 +20,6 @@ const quiet = "text-tertiary";
 // Sticky first column is pure CSS: it needs its own background so scrolled cells pass beneath it.
 const stickyCell =
   "sticky left-0 z-[1] bg-container group-hover:bg-raised group-focus-visible:bg-raised";
-const selectClass = inputClass("sm", "w-auto pr-8");
 
 function Workspace() {
   const [q, setQ] = useState("");

@@ -4,6 +4,7 @@ import { PageContainer, Card } from "@/components/shared/PageContainer";
 import { ACTIVITY } from "@/data/misc";
 import { INTEGRATIONS } from "@/data/integrations";
 import { Sparkles, Search, Shield, Plug, X, CheckCircle2, RefreshCw, ArrowRight } from "lucide-react";
+import { zoneTint } from "@/components/dashboard/zoneTint";
 import { Unit } from "@/components/ui/primitives";
 import { axisTick, chartTooltipLabelStyle, chartTooltipStyle } from "@/components/dashboard/chartTheme";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell, PieChart, Pie } from "recharts";
@@ -26,12 +27,8 @@ const HEATMAP = [
   { row: "S3-4", tier: "Moderate", desc: "Minor injury / degraded performance", cells: [5, 14, 22, 16, 8], avgD: 4.3 },
   { row: "S1-2", tier: "Minor", desc: "Negligible / cosmetic", cells: [8, 19, 28, 21, 12], avgD: 4.6 },
 ];
-// Zone tints: high is error, medium is warning, low is neutral (Chronus feedback tokens).
-const ZONE_TINT = {
-  High: { bg: "var(--feedback-error-background)", text: "var(--feedback-error-content)" },
-  Medium: { bg: "var(--feedback-warning-background)", text: "var(--feedback-warning-content)" },
-  Low: { bg: "var(--feedback-neutral-background)", text: "var(--feedback-neutral-content)" },
-};
+// Zone tints share the severity tone map: High is error, Medium is info, Low is neutral.
+const ZONE_TINT = { High: zoneTint("High"), Medium: zoneTint("Medium"), Low: zoneTint("Low") };
 // Proper S×O risk matrix: high severity + high occurrence = high-priority (red) zone.
 function riskZone(ri: number, ci: number) {
   const sev = 5 - ri;    // ri 0 (S9-10) → 5 … ri 4 (S1-2) → 1
@@ -168,7 +165,7 @@ function Overview() {
             <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: ZONE_TINT.Low.bg }} /> Low (S×O &lt; 6)</span>
             <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: ZONE_TINT.Medium.bg }} /> Medium (6–11)</span>
             <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: ZONE_TINT.High.bg }} /> High (≥ 12)</span>
-            <span className="ml-auto font-semibold text-error">{highCount} failure modes in the high zone</span>
+            <span className="ml-auto font-semibold text-warning">{highCount} failure modes in the high zone</span>
           </div>
         </Card>
 

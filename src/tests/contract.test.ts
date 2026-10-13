@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { zoneTint } from "@/components/dashboard/zoneTint";
 import { tableStyles } from "@/components/ui/table-styles";
 import { KpiTile, Unit } from "@/components/ui/primitives";
 import { navGroups, navItems, findNav } from "@/components/layout/nav";
@@ -196,5 +197,20 @@ describe("table styles", () => {
     expect(tableStyles.tr()).not.toMatch(/odd:|even:/);
     expect(tableStyles.td({ numeric: true })).toContain("tabular");
     expect(tableStyles.td({ numeric: true })).toContain("text-right");
+  });
+});
+
+describe("risk zones", () => {
+  it("agree with RiskBadge on tone for High, Medium and Low", () => {
+    const tones = { High: "warning", Medium: "info", Low: "neutral" } as const;
+    for (const band of ["High", "Medium", "Low"] as const) {
+      expect(severityTone[band]).toBe(tones[band]);
+      const tint = zoneTint(band);
+      expect(tint.bg).toBe(`var(--feedback-${tones[band]}-background)`);
+      expect(tint.text).toBe(`var(--feedback-${tones[band]}-content)`);
+      expect(renderToStaticMarkup(createElement(RiskBadge, { level: band }))).toContain(
+        `bg-${tones[band]}-badge`,
+      );
+    }
   });
 });

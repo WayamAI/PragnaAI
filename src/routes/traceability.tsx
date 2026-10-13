@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { PageContainer, Card } from "@/components/shared/PageContainer";
+import { PageContainer } from "@/components/shared/PageContainer";
 import { REQUIREMENTS } from "@/data/misc";
 import { FAILURE_MODES } from "@/data/dfmea";
+import { Panel, ToneBadge } from "@/components/ui/primitives";
+import { buttonClass } from "@/components/ui/button-styles";
+import { selectClass } from "@/components/ui/input-styles";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/traceability")({ component: Traceability });
 
@@ -15,14 +19,48 @@ function shortLabel(text: string, maxLength = 24) {
   return text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
 }
 
-function cellState(reqIdx: number, fmIdx: number): "green" | "amber" | "red" | "empty" {
+type CellState = "green" | "amber" | "red" | "empty";
+
+function cellState(reqIdx: number, fmIdx: number): CellState {
   const key = (reqIdx * 7 + fmIdx * 3) % 11;
   if (key < 2) return "empty";
   if (key < 5) return "green";
   if (key < 8) return "amber";
   return "red";
 }
-const COLOR = { green: "bg-emerald-500", amber: "bg-amber-400", red: "bg-red-500", empty: "bg-slate-100" };
+
+// Coverage swatches share the feedback tone map: linked is success, partial is warning, gap is error.
+const COLOR: Record<CellState, string> = {
+  green: "bg-success-badge",
+  amber: "bg-warning-badge",
+  red: "bg-error-badge",
+  empty: "bg-raised-2",
+};
+
+type ChainTone = "success" | "warning" | "error";
+
+// Complete class strings only: Tailwind cannot see names assembled with template literals.
+const CHAIN_TONE: Record<ChainTone, string> = {
+  success: "border-success/40 bg-success-surface",
+  warning: "border-warning/40 bg-warning-surface",
+  error: "border-error/40 bg-error-surface",
+};
+
+const CHAIN_STATE: Record<ChainTone, string> = {
+  success: "Linked",
+  warning: "Partial",
+  error: "Gap",
+};
+
+const CHAIN: [string, string, ChainTone][] = [
+  ["REQ-PWR-001", "Requirement", "success"],
+  ["F-BAT-01", "Function", "success"],
+  ["FM-0031", "Failure Mode", "warning"],
+  ["CAUSE-031", "Root Cause", "warning"],
+  ["MIT-0031-B", "Mitigation", "warning"],
+  ["VT-0031", "Verification Test", "error"],
+  ["VR-2025-012", "Validation Report", "error"],
+];
 
 function Traceability() {
   const [view, setView] = useState<"matrix" | "chain">("matrix");
@@ -31,32 +69,49 @@ function Traceability() {
       title="Traceability"
       subtitle="Requirement-to-verification coverage · 171 of 280 fully traced (61%) · 42 partial · 67 gaps"
       actions={
-        <div className="flex overflow-hidden rounded-md border">
-          <button onClick={() => setView("matrix")} className={`px-3 py-1.5 text-sm font-semibold ${view === "matrix" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}>Matrix View</button>
-          <button onClick={() => setView("chain")} className={`px-3 py-1.5 text-sm font-semibold ${view === "chain" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}>Chain View</button>
+        <div className="flex items-center gap-1" role="group" aria-label="View">
+          <button
+            type="button"
+            aria-pressed={view === "matrix"}
+            onClick={() => setView("matrix")}
+            className={buttonClass("chip", { size: "sm", active: view === "matrix" })}
+          >
+            Matrix view
+          </button>
+          <button
+            type="button"
+            aria-pressed={view === "chain"}
+            onClick={() => setView("chain")}
+            className={buttonClass("chip", { size: "sm", active: view === "chain" })}
+          >
+            Chain view
+          </button>
         </div>
       }
     >
       {view === "matrix" && (
-        <Card>
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-3 text-xs">
-              <Legend color="bg-emerald-500" label="Linked" />
-              <Legend color="bg-amber-400" label="Partial" />
-              <Legend color="bg-red-500" label="Gap" />
-            </div>
-            <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">67 gaps</span>
+        <Panel
+          title="Coverage matrix"
+          action={<ToneBadge tone="error">67 gaps</ToneBadge>}
+          padded={false}
+        >
+          <div className="type-body-sm flex items-center gap-4 border-b border-hairline px-4 py-2.5 text-tertiary">
+            <Legend color={COLOR.green} label="Linked" />
+            <Legend color={COLOR.amber} label="Partial" />
+            <Legend color={COLOR.red} label="Gap" />
           </div>
           <div className="overflow-x-auto">
-            <table className="text-[11px]">
+            <table className="border-collapse">
               <thead>
                 <tr>
-                  <th className="sticky left-0 z-10 bg-card px-2 py-1 text-left">Requirement</th>
+                  <th className="type-eyebrow sticky left-0 z-10 bg-container px-3 py-2 text-left text-quaternary">
+                    Requirement
+                  </th>
                   {FM_COLUMNS.map(({ id, label }) => (
-                    <th key={id} className="w-24 px-1 pb-2 align-bottom text-center">
-                      <div className="mx-auto flex min-h-14 flex-col justify-end rounded-md bg-muted/40 px-1 py-2 text-[10px] leading-tight">
-                        <span className="font-mono font-semibold text-primary">{id}</span>
-                        <span className="mt-1 text-[10px] font-medium text-muted-foreground">
+                    <th key={id} className="w-24 px-1 pt-2 pb-2 align-bottom">
+                      <div className="mx-auto flex min-h-14 flex-col justify-end rounded-md bg-raised px-1 py-2 text-center">
+                        <span className="type-caption font-mono text-foreground">{id}</span>
+                        <span className="type-caption mt-1 text-[10px] leading-tight font-normal text-tertiary">
                           {shortLabel(label)}
                         </span>
                       </div>
@@ -66,48 +121,56 @@ function Traceability() {
               </thead>
               <tbody>
                 {REQUIREMENTS.map(([id, text], ri) => (
-                  <tr key={id} className="border-t">
-                    <td className="sticky left-0 z-10 min-w-[280px] bg-card px-2 py-1"><span className="font-mono text-primary">{id}</span> <span className="text-muted-foreground">{text}</span></td>
+                  <tr key={id} className="border-t border-hairline">
+                    <td className="type-body-sm sticky left-0 z-10 min-w-[280px] bg-container px-3 py-1">
+                      <span className="font-mono text-foreground">{id}</span>{" "}
+                      <span className="text-tertiary">{text}</span>
+                    </td>
                     {FM_COLUMNS.map((_, fi) => {
                       const st = cellState(ri, fi);
-                      return <td key={fi} className="p-0.5"><div className={`h-5 w-6 rounded ${COLOR[st]}`} /></td>;
+                      return (
+                        <td key={fi} className="p-0.5">
+                          <div className={cn("mx-auto h-5 w-6 rounded", COLOR[st])} />
+                        </td>
+                      );
                     })}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </Card>
+        </Panel>
       )}
 
       {view === "chain" && (
-        <Card>
-          <div className="mb-3 flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Select Failure Mode to Trace:</span>
-            <select className="rounded-md border bg-background px-2 py-1"><option>FM-0031 — Capacity degradation</option></select>
+        <Panel title="Trace chain">
+          <div className="type-body-md mb-4 flex flex-wrap items-center gap-2">
+            <span className="text-tertiary">Select a failure mode to trace</span>
+            <select aria-label="Failure mode to trace" className={selectClass}>
+              <option>FM-0031 — Capacity degradation</option>
+            </select>
           </div>
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-7">
-            {[
-              ["REQ-PWR-001", "Requirement", "emerald"],
-              ["F-BAT-01", "Function", "emerald"],
-              ["FM-0031", "Failure Mode", "amber"],
-              ["CAUSE-031", "Root Cause", "amber"],
-              ["MIT-0031-B", "Mitigation", "amber"],
-              ["VT-0031", "Verification Test", "red"],
-              ["VR-2025-012", "Validation Report", "red"],
-            ].map(([id, label, tone]) => (
-              <div key={id as string} className={`rounded-md border p-3 text-center border-${tone}-300 bg-${tone}-50`}>
-                <div className="font-mono text-xs text-primary">{id}</div>
-                <div className="mt-1 text-[11px] text-muted-foreground">{label}</div>
+            {CHAIN.map(([id, label, tone]) => (
+              <div key={id} className={cn("rounded-lg border p-3 text-center", CHAIN_TONE[tone])}>
+                <div className="type-body-sm font-mono text-foreground">{id}</div>
+                <div className="type-caption mt-1 font-normal text-tertiary">{label}</div>
+                <div className="type-caption mt-1 text-secondary-foreground">
+                  {CHAIN_STATE[tone]}
+                </div>
               </div>
             ))}
           </div>
-        </Card>
+        </Panel>
       )}
     </PageContainer>
   );
 }
 
 function Legend({ color, label }: { color: string; label: string }) {
-  return <span className="inline-flex items-center gap-1"><span className={`inline-block h-3 w-3 rounded ${color}`} /> {label}</span>;
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span className={cn("inline-block size-3 rounded", color)} /> {label}
+    </span>
+  );
 }

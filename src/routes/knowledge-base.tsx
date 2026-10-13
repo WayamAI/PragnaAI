@@ -1,13 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { PageContainer, Card } from "@/components/shared/PageContainer";
+import { PageContainer } from "@/components/shared/PageContainer";
 import { KB_RESULTS } from "@/data/misc";
-import { Search } from "lucide-react";
+import { Panel, QuietStatus } from "@/components/ui/primitives";
+import { buttonClass } from "@/components/ui/button-styles";
+import { inputClass } from "@/components/ui/input-styles";
+import { cn } from "@/lib/utils";
+import { icons } from "@/components/icons/iconMap";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/knowledge-base")({ component: KB });
 
-const SOURCES = ["All Sources", "Previous DFMEAs", "FDA MDR Database", "Medical Standards", "CAPA Records", "Lessons Learned"];
+const SOURCES = [
+  "All Sources",
+  "Previous DFMEAs",
+  "FDA MDR Database",
+  "Medical Standards",
+  "CAPA Records",
+  "Lessons Learned",
+];
+
+const SUGGESTIONS = [
+  "battery thermal runaway",
+  "alarm latency IEC 60601",
+  "electrode adhesion diaphoresis",
+  "leakage current isolation",
+  "watchdog timer software",
+];
+
+const INDEX = [
+  ["Previous DFMEAs", "47 documents"],
+  ["FDA MDR Records", "1,284 indexed"],
+  ["Medical Standards", "23 documents"],
+  ["CAPA Records", "89 records"],
+  ["Lessons Learned", "61 entries"],
+  ["Field Complaints", "142 records"],
+];
 
 function KB() {
   const [query, setQuery] = useState("battery charging safety");
@@ -19,66 +47,116 @@ function KB() {
   };
 
   return (
-    <PageContainer title="Knowledge Base" subtitle="Search organizational knowledge: prior DFMEAs, FDA MDR, standards, CAPA, lessons learned.">
+    <PageContainer
+      title="Knowledge Base"
+      subtitle="Search organizational knowledge: prior DFMEAs, FDA MDR, standards, CAPA, lessons learned."
+    >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-        <div className="lg:col-span-3">
+        <div className="min-w-0 lg:col-span-3">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <icons.search
+              className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-quaternary"
+              aria-hidden="true"
+            />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") runSearch(query); }}
-              className="h-[52px] w-full rounded-lg border bg-card pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              placeholder="Search failure modes, standards, recalls, lessons learned..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter") runSearch(query);
+              }}
+              aria-label="Search knowledge base"
+              className={inputClass("md", "pl-11")}
+              placeholder="Search failure modes, standards, recalls and lessons learned"
             />
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
-            {["battery thermal runaway","alarm latency IEC 60601","electrode adhesion diaphoresis","leakage current isolation","watchdog timer software"].map((c) => (
-              <button key={c} onClick={() => { setQuery(c); runSearch(c); }} className="rounded-full border bg-background px-3 py-1 text-xs hover:bg-muted">{c}</button>
+            {SUGGESTIONS.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => {
+                  setQuery(c);
+                  runSearch(c);
+                }}
+                className={buttonClass("chip")}
+              >
+                {c}
+              </button>
             ))}
           </div>
-          <div className="mt-3 flex flex-wrap gap-1">
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {SOURCES.map((s) => (
-              <button key={s} onClick={() => { setSource(s); console.log("[KnowledgeBase] Source filter", s); toast(`Filtering results by: ${s}`); }} className={`rounded-full border px-3 py-1 text-xs ${source === s ? "bg-primary text-primary-foreground border-primary" : "bg-background hover:bg-muted"}`}>{s}</button>
+              <button
+                key={s}
+                type="button"
+                aria-pressed={source === s}
+                onClick={() => {
+                  setSource(s);
+                  console.log("[KnowledgeBase] Source filter", s);
+                  toast(`Filtering results by: ${s}`);
+                }}
+                className={buttonClass("chip", { active: source === s })}
+              >
+                {s}
+              </button>
             ))}
           </div>
 
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 flex flex-col gap-3">
             {KB_RESULTS.map((r) => (
-              <Card key={r.title}>
-                <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="rounded bg-accent px-2 py-0.5 font-semibold text-primary">{r.source}</span>
-                  <span className="text-muted-foreground">Similarity: {r.similarity}%</span>
+              <section key={r.title} className="rounded-lg border border-hairline bg-container p-4">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <span className="type-caption rounded-md bg-raised-2 px-2 py-0.5 text-secondary-foreground">
+                    {r.source}
+                  </span>
+                  <span className="type-caption tabular text-tertiary">
+                    Similarity: {r.similarity}%
+                  </span>
                 </div>
-                <div className="font-display font-semibold">{r.title}</div>
-                <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{r.body}</p>
-                <div className="mt-2 flex gap-2 text-xs">
-                  <button onClick={() => { console.log("[KnowledgeBase] Use in DFMEA", r.title); toast.success(`"${r.title}" added to DFMEA Workspace.`); }} className="rounded-md bg-primary px-2 py-1 font-semibold text-primary-foreground">Use in DFMEA Workspace</button>
-                  <button onClick={() => { console.log("[KnowledgeBase] View Full Record", r.title); toast(`Opening full record: ${r.title}`); }} className="rounded-md border px-2 py-1 font-semibold hover:bg-muted">View Full Record</button>
+                <h3 className="type-label-md text-foreground">{r.title}</h3>
+                <p className="type-body-md mt-1 whitespace-pre-line text-tertiary">{r.body}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("[KnowledgeBase] Use in DFMEA", r.title);
+                      toast.success(`"${r.title}" added to DFMEA Workspace.`);
+                    }}
+                    className={buttonClass("secondary", { size: "sm" })}
+                  >
+                    Use in DFMEA workspace
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("[KnowledgeBase] View Full Record", r.title);
+                      toast(`Opening full record: ${r.title}`);
+                    }}
+                    className={buttonClass("ghost", { size: "sm" })}
+                  >
+                    View full record
+                  </button>
                 </div>
-              </Card>
+              </section>
             ))}
           </div>
         </div>
 
-        <Card>
-          <h3 className="mb-3 font-display font-semibold">Knowledge Base Index</h3>
-          <dl className="space-y-2 text-sm">
-            {[
-              ["Previous DFMEAs","47 documents"],
-              ["FDA MDR Records","1,284 indexed"],
-              ["Medical Standards","23 documents"],
-              ["CAPA Records","89 records"],
-              ["Lessons Learned","61 entries"],
-              ["Field Complaints","142 records"],
-            ].map(([l,v]) => (
-              <div key={l} className="flex justify-between border-b pb-1"><dt className="text-muted-foreground">{l}</dt><dd className="font-mono text-xs">{v}</dd></div>
+        <Panel title="Knowledge Base Index" className={cn("lg:self-start")}>
+          <dl className="type-body-md divide-y divide-hairline">
+            {INDEX.map(([l, v]) => (
+              <div key={l} className="flex justify-between gap-3 py-2 first:pt-0">
+                <dt className="text-tertiary">{l}</dt>
+                <dd className="type-body-sm tabular font-mono text-foreground">{v}</dd>
+              </div>
             ))}
           </dl>
-          <div className="mt-3 rounded bg-emerald-50 p-2 text-xs text-emerald-800">
-            Last updated: 2025-05-14 09:00 UTC · Index status: Current
+          <div className="mt-3 rounded-lg border border-hairline bg-raised p-3">
+            <QuietStatus tone="success" className="whitespace-normal">
+              Last updated: 2025-05-14 09:00 UTC · Index status: Current
+            </QuietStatus>
           </div>
-        </Card>
+        </Panel>
       </div>
     </PageContainer>
   );

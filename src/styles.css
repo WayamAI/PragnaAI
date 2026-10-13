@@ -1,21 +1,22 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "./styles/tokens.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /*
- * Design system definition.
+ * Chronus design system on Tailwind v4.
  *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
+ * Raw values live in styles/tokens.css (light on :root, dark on
+ * [data-theme="dark"]). This file only maps them to utility names.
  *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Naming: the shadcn names (background, foreground, card, muted, primary...)
+ * are kept and remapped to Chronus values so unconverted pages stay readable.
+ * Chronus names that do not collide are added as-is (page, container, raised,
+ * action, tertiary, quaternary, success...). Chronus "text-primary" is
+ * text-foreground here, "border-muted" is border-hairline, "border-default" is
+ * border-strong, and "ring-active" is unchanged.
  */
 
 @theme inline {
@@ -26,33 +27,35 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+
+  /* shadcn names, remapped to Chronus tokens */
+  --color-background: var(--surface-page-background);
+  --color-foreground: var(--text-primary);
+  --color-card: var(--surface-container);
+  --color-card-foreground: var(--text-primary);
+  --color-popover: var(--surface-container);
+  --color-popover-foreground: var(--text-primary);
+  --color-primary: var(--action-primary-default);
+  --color-primary-foreground: var(--action-primary-content);
   --color-primary-gradient-from: var(--primary-gradient-from);
   --color-primary-gradient-to: var(--primary-gradient-to);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-ring-offset-background: var(--background);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  --color-secondary: var(--surface-action);
+  --color-secondary-foreground: var(--text-secondary);
+  --color-muted: var(--surface-action);
+  --color-muted-foreground: var(--text-tertiary);
+  --color-accent: var(--surface-raised);
+  --color-accent-foreground: var(--text-primary);
+  --color-destructive: var(--feedback-error-badge);
+  --color-destructive-foreground: var(--feedback-badge-content);
+  --color-border: var(--stroke-muted);
+  --color-input: var(--stroke-default);
+  --color-ring: var(--stroke-active);
+  --color-ring-offset-background: var(--surface-page-background);
+  --color-chart-1: var(--analytics-series-1);
+  --color-chart-2: var(--analytics-series-2);
+  --color-chart-3: var(--analytics-series-3);
+  --color-chart-4: var(--analytics-series-4);
+  --color-chart-5: var(--analytics-series-5);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -61,116 +64,172 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --color-risk-critical: var(--risk-critical);
-  --color-risk-high: var(--risk-high);
-  --color-risk-medium: var(--risk-medium);
-  --color-risk-low: var(--risk-low);
+  --color-risk-critical: var(--feedback-error-content);
+  --color-risk-high: var(--feedback-warning-content);
+  --color-risk-medium: var(--feedback-info-content);
+  --color-risk-low: var(--feedback-neutral-content);
   --color-ai-accent: var(--ai-accent);
   --color-ai-bg: var(--ai-bg);
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Chronus surface ladder: page > container > raised > action > raised-2 */
+  --color-page: var(--surface-page-background);
+  --color-container: var(--surface-container);
+  --color-raised: var(--surface-raised);
+  --color-raised-2: var(--surface-raised-x2);
+  --color-action: var(--surface-action);
+  --color-action-primary: var(--action-primary-default);
+  --color-action-primary-hover: var(--action-primary-hover);
+  --color-action-primary-disabled: var(--action-primary-disabled);
+
+  /* Text hierarchy beyond foreground (primary) and secondary-foreground */
+  --color-tertiary: var(--text-tertiary);
+  --color-quaternary: var(--text-quaternary);
+  --color-on-color: var(--text-on-color);
+
+  /* Strokes: border-hairline (default divider), border-strong (hover), ring-active (focus) */
+  --color-hairline: var(--stroke-muted);
+  --color-strong: var(--stroke-default);
+  --color-active: var(--stroke-active);
+
+  /* Feedback: text-success, bg-success-badge, bg-success-surface ... */
+  --color-success: var(--feedback-success-content);
+  --color-success-badge: var(--feedback-success-badge);
+  --color-success-surface: var(--feedback-success-background);
+  --color-info: var(--feedback-info-content);
+  --color-info-badge: var(--feedback-info-badge);
+  --color-info-surface: var(--feedback-info-background);
+  --color-warning: var(--feedback-warning-content);
+  --color-warning-badge: var(--feedback-warning-badge);
+  --color-warning-surface: var(--feedback-warning-background);
+  --color-error: var(--feedback-error-content);
+  --color-error-badge: var(--feedback-error-badge);
+  --color-error-surface: var(--feedback-error-background);
+  --color-neutral: var(--feedback-neutral-content);
+  --color-neutral-badge: var(--feedback-neutral-badge);
+  --color-neutral-surface: var(--feedback-neutral-background);
+  --color-badge: var(--feedback-badge-content);
+
+  /* Chart series */
+  --color-series-1: var(--analytics-series-1);
+  --color-series-2: var(--analytics-series-2);
+  --color-series-3: var(--analytics-series-3);
+  --color-series-4: var(--analytics-series-4);
+  --color-series-5: var(--analytics-series-5);
+  --color-series-6: var(--analytics-series-6);
+
+  /* Chronus has two families. Part numbers use Geist with tabular figures. */
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Michroma", "Geist", sans-serif;
+  --font-mono: "Geist", ui-sans-serif, system-ui, sans-serif;
+  /* Documented exception: assistant chat replies rely on column alignment. */
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 :root {
-  --radius: 0.5rem;
-  /* Base page + surface */
-  --background: oklch(0.977 0.003 247);   /* #F7F8FA */
-  --foreground: oklch(0.211 0.02 264);    /* #111827 */
-  --card: oklch(1 0 0);                    /* #FFFFFF */
-  --card-foreground: oklch(0.211 0.02 264);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.211 0.02 264);
-  /* Primary = lighter orange #FB923C, with a light-peach-to-orange gradient
-     (see .bg-primary / .bg-sidebar-primary overrides below) for filled surfaces */
-  --primary: oklch(0.758 0.159 55.9);
-  --primary-foreground: oklch(0.24 0.05 41);
-  --primary-gradient-from: oklch(0.901 0.073 70.7);  /* #FED7AA light peach */
-  --primary-gradient-to: oklch(0.705 0.187 47.6);    /* #F97316 medium orange */
-  --primary-gradient: linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to));
-  --secondary: oklch(0.965 0.005 247);
-  --secondary-foreground: oklch(0.211 0.02 264);
-  --muted: oklch(0.965 0.005 247);
-  --muted-foreground: oklch(0.503 0.014 258);  /* #6B7280 */
-  --accent: oklch(0.96 0.04 55.9);         /* light orange wash */
-  --accent-foreground: oklch(0.35 0.12 55.9);
-  --destructive: oklch(0.577 0.238 27);    /* #DC2626 */
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.915 0.008 258);        /* #E5E7EB */
-  --input: oklch(0.915 0.008 258);
-  --ring: oklch(0.758 0.159 55.9);
-  /* Risk tokens */
-  --risk-critical: oklch(0.577 0.238 27);   /* #DC2626 */
-  --risk-high: oklch(0.646 0.166 51);       /* #D97706 amber */
-  --risk-medium: oklch(0.671 0.14 79);      /* #CA8A04 yellow */
-  --risk-low: oklch(0.616 0.183 148);       /* #16A34A green */
-  --ai-accent: oklch(0.531 0.244 293);      /* #7C3AED */
-  --ai-bg: oklch(0.968 0.02 293);           /* #F5F3FF */
-  /* Chart colors */
-  --chart-1: oklch(0.758 0.159 55.9);
-  --chart-2: oklch(0.531 0.244 293);
-  --chart-3: oklch(0.646 0.166 51);
-  --chart-4: oklch(0.616 0.183 148);
-  --chart-5: oklch(0.577 0.238 27);
-  /* Sidebar (dark navy #1E2D40) */
-  --sidebar: oklch(0.285 0.032 258);
-  --sidebar-foreground: oklch(0.79 0.028 247);   /* #A8BBCF */
-  --sidebar-primary: oklch(0.758 0.159 55.9);
-  --sidebar-primary-foreground: oklch(0.24 0.05 41);
-  --sidebar-accent: oklch(0.34 0.03 258);
-  --sidebar-accent-foreground: oklch(0.99 0 0);
-  --sidebar-border: oklch(0.34 0.03 258);
-  --sidebar-ring: oklch(0.758 0.159 55.9);
+  --radius: 0.5rem; /* cards 8px, inner 6px, small 4px */
+
+  /* Neutral stand-ins for the retired orange primary and violet AI accent.
+     Pages not yet converted still reference these. */
+  --primary-gradient-from: var(--action-primary-default);
+  --primary-gradient-to: var(--action-primary-default);
+  --primary: var(--feedback-neutral-badge); /* avatar fill in data/team.ts */
+  --ai-accent: var(--text-secondary);
+  --ai-bg: var(--surface-raised);
+
+  /* Transitional sidebar values until the shell step replaces the sidebar. */
+  --sidebar: var(--surface-container);
+  --sidebar-foreground: var(--text-secondary);
+  --sidebar-primary: var(--action-primary-default);
+  --sidebar-primary-foreground: var(--action-primary-content);
+  --sidebar-accent: var(--surface-raised-x2);
+  --sidebar-accent-foreground: var(--text-primary);
+  --sidebar-border: var(--stroke-muted);
+  --sidebar-ring: var(--stroke-active);
 }
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.705 0.187 47.6);
-  --primary-foreground: oklch(0.99 0 0);
-  --primary-gradient-from: oklch(0.837 0.117 66.3);  /* #FDBA74 light orange */
-  --primary-gradient-to: oklch(0.646 0.194 41.1);    /* #EA580C */
-  --primary-gradient: linear-gradient(135deg, var(--primary-gradient-from), var(--primary-gradient-to));
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.705 0.187 47.6);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.705 0.187 47.6);
+/* Chronus type roles. Named type-* (not text-*) on purpose: tailwind-merge in
+   cn() reads unknown text-* names as colours and would drop them next to a
+   colour class. Compose with a colour, e.g. "type-body-sm text-tertiary". */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
 }
 
-/*
- * Unlayered on purpose: this must win over Tailwind's generated
- * `.bg-primary` / `.bg-sidebar-primary` utilities (which live in an
- * implicit cascade layer) without needing !important, so every filled
- * "primary" surface (buttons, badges, active nav) renders the orange
- * gradient instead of a flat fill.
- */
-.bg-primary,
-.bg-sidebar-primary {
-  background-image: var(--primary-gradient);
+@utility type-caption {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+@utility type-eyebrow {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@utility type-label-sm {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+@utility type-label-md {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+@utility type-body-sm {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.01em;
+}
+
+@utility type-body-md {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.01em;
+}
+
+@utility type-body-lg {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.01em;
+}
+
+@utility type-display-base {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+@utility type-display-lg {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+@utility type-display-xl {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+@utility type-display-2xl {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 @layer base {
@@ -179,23 +238,50 @@
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--surface-page-background);
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.01em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     /* Prevent iOS Safari from rubber-banding/scrolling the whole page
        sideways if any element momentarily overflows the viewport. */
     overflow-x: hidden;
   }
 
   html {
+    -webkit-text-size-adjust: 100%;
     /* Prevents a page-wide horizontal scrollbar from ever appearing. */
     overflow-x: hidden;
   }
 
-  /* Form controls throughout the app use text-xs/text-sm (12-14px) for a
-     compact desktop density. Below 16px, iOS Safari auto-zooms the whole
-     page on focus, which is what "the app looks broken on my phone" is
-     usually caused by. Force a readable, zoom-safe minimum on touch-sized
-     viewports without changing the desktop appearance. */
+  /* Chronus has no heading defaults; pages set their own role classes. */
+
+  /* Chronus icon stroke */
+  svg.lucide {
+    stroke-width: 1.75;
+  }
+
+  ::placeholder {
+    color: var(--text-quaternary);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--stroke-active);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--stroke-active);
+  }
+
+  /* Form controls throughout the app use 12-14px type for a compact desktop
+     density. Below 16px, iOS Safari auto-zooms the whole page on focus.
+     Force a zoom-safe minimum on touch-sized viewports without changing the
+     desktop appearance. */
   @media (max-width: 767px) {
     input,
     select,

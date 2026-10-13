@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { tableStyles } from "@/components/ui/table-styles";
 import { KpiTile, Unit } from "@/components/ui/primitives";
 import { navGroups, navItems, findNav } from "@/components/layout/nav";
 import { severityTone } from "@/lib/severity";
@@ -182,5 +183,18 @@ describe("unit", () => {
       createElement(KpiTile, { label: "Completion", value: 67, unit: "%" }),
     );
     expect(html).toMatch(/type-display-xl[^>]*>67<span class="[^"]*font-sans[^"]*">%<\/span>/);
+  });
+});
+
+describe("table styles", () => {
+  it("uses eyebrow headers, hairline rows, raised hover and tabular right-aligned numbers", () => {
+    expect(tableStyles.th()).toContain("type-eyebrow");
+    expect(tableStyles.th()).toContain("sticky");
+    expect(tableStyles.th({ numeric: true })).toContain("text-right");
+    expect(tableStyles.tr()).toContain("border-hairline");
+    expect(tableStyles.tr()).toContain("hover:bg-raised");
+    expect(tableStyles.tr()).not.toMatch(/odd:|even:/);
+    expect(tableStyles.td({ numeric: true })).toContain("tabular");
+    expect(tableStyles.td({ numeric: true })).toContain("text-right");
   });
 });

@@ -82,7 +82,7 @@ function Workspace() {
             }}
             className={buttonClass("primary", { size: "sm" })}
           >
-            <Plus className="size-3.5" aria-hidden="true" /> Add Failure Mode
+            <Plus className="size-3.5" aria-hidden="true" /> Add failure mode
           </button>
           <button
             type="button"
@@ -92,7 +92,7 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <Sparkles className="size-3.5" aria-hidden="true" /> AI: Suggest for This Component
+            <Sparkles className="size-3.5" aria-hidden="true" /> Suggest for this component
           </button>
           <button
             type="button"
@@ -112,14 +112,14 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <CheckCircle2 className="size-3.5" aria-hidden="true" /> Approve All Reviewed
+            <CheckCircle2 className="size-3.5" aria-hidden="true" /> Approve all reviewed
           </button>
         </>
       }
     >
       <div className="flex flex-wrap gap-2">
         <input
-          placeholder="Search failure modes..."
+          placeholder="Search failure modes"
           aria-label="Search failure modes"
           value={q}
           onChange={(e) => setQ(e.target.value)}

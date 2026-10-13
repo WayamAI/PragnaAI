@@ -76,7 +76,7 @@ function Traceability() {
             onClick={() => setView("matrix")}
             className={buttonClass("chip", { size: "sm", active: view === "matrix" })}
           >
-            Matrix View
+            Matrix view
           </button>
           <button
             type="button"
@@ -84,7 +84,7 @@ function Traceability() {
             onClick={() => setView("chain")}
             className={buttonClass("chip", { size: "sm", active: view === "chain" })}
           >
-            Chain View
+            Chain view
           </button>
         </div>
       }
@@ -145,7 +145,7 @@ function Traceability() {
       {view === "chain" && (
         <Panel title="Trace chain">
           <div className="type-body-md mb-4 flex flex-wrap items-center gap-2">
-            <span className="text-tertiary">Select Failure Mode to Trace:</span>
+            <span className="text-tertiary">Select a failure mode to trace</span>
             <select aria-label="Failure mode to trace" className={selectClass}>
               <option>FM-0031 — Capacity degradation</option>
             </select>

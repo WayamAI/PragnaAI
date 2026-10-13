@@ -66,7 +66,7 @@ function Integrations() {
       </div>
 
       <section className="mb-4 rounded-lg border border-hairline bg-container p-4">
-        <h3 className="type-eyebrow mb-3 text-quaternary">How your DFMEA is assembled</h3>
+        <h3 className="type-eyebrow mb-3 text-quaternary">How Your DFMEA Is Assembled</h3>
         <ol className="type-body-md flex flex-wrap items-center gap-2">
           {FLOW.map((step, i) => (
             <li key={step} className="flex items-center gap-2">

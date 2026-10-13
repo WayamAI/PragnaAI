@@ -15,6 +15,7 @@ import {
   type Tone,
 } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button-styles";
+import { ModalShell } from "@/components/ui/modal";
 import {
   axisTick,
   chartTooltipLabelStyle,
@@ -402,72 +403,19 @@ function Overview() {
 function IntegrationsPopup({ onClose }: { onClose: () => void }) {
   const connected = INTEGRATIONS.filter((i) => i.status === "connected").length;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 text-foreground">
-      <div className="absolute inset-0 bg-page/70" onClick={onClose} />
-      <div className="relative z-10 flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-strong bg-container">
-        <div className="flex items-start justify-between gap-3 border-b border-hairline px-5 py-4">
-          <div className="flex items-center gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-              <Plug className="size-[17px]" aria-hidden="true" />
-            </span>
-            <div>
-              <h2 className="type-display-lg flex flex-wrap items-center gap-x-3 gap-y-1 text-foreground">
-                Connected data sources
-                <QuietStatus tone="success" className="font-sans">
-                  {connected} live
-                </QuietStatus>
-              </h2>
-              <p className="type-body-sm mt-1 text-tertiary">
-                PragnaAI pulls data from your PLM, requirements, quality, ERP and regulatory systems
-                — the AI agents turn it into this DFMEA.
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className={buttonClass("icon", { className: "size-7" })}
-            aria-label="Close"
-          >
-            <X className="size-4" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="flex min-h-0 flex-col gap-2 overflow-y-auto p-4">
-          {INTEGRATIONS.map((it) => (
-            <div
-              key={it.name}
-              className="flex items-start gap-3 rounded-lg border border-hairline p-3"
-            >
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-                <it.icon className="size-[17px]" aria-hidden="true" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="type-label-md truncate text-foreground">{it.name}</span>
-                  {it.status === "syncing" ? (
-                    <ToneBadge tone="info" className="shrink-0 gap-1">
-                      <RefreshCw className="size-3 animate-spin" aria-hidden="true" /> Syncing
-                    </ToneBadge>
-                  ) : (
-                    <QuietStatus tone="success" className="shrink-0">
-                      Connected
-                    </QuietStatus>
-                  )}
-                </div>
-                <div className="type-caption font-normal text-quaternary">
-                  {it.category} · {it.vendor}
-                </div>
-                <div className="type-body-sm mt-1 flex flex-wrap items-center gap-1">
-                  <span className="text-tertiary">{it.feeds}</span>
-                  <ChevronRight className="size-3 text-quaternary" aria-hidden="true" />
-                  <span className="font-medium text-foreground">{it.into}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-between gap-3 border-t border-hairline px-5 py-3">
+    <ModalShell
+      className="max-w-2xl"
+      icon={<Plug className="size-[17px]" aria-hidden="true" />}
+      title="Connected data sources"
+      titleExtra={
+        <QuietStatus tone="success" className="font-sans">
+          {connected} live
+        </QuietStatus>
+      }
+      subtitle="PragnaAI pulls data from your PLM, requirements, quality, ERP and regulatory systems — the AI agents turn it into this DFMEA."
+      onClose={onClose}
+      footer={
+        <>
           <span className="type-body-sm text-tertiary">
             Data flows in automatically — no manual re-entry.
           </span>
@@ -478,8 +426,43 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
           >
             Manage integrations <ChevronRight className="size-3" aria-hidden="true" />
           </Link>
-        </div>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-2">
+        {INTEGRATIONS.map((it) => (
+          <div
+            key={it.name}
+            className="flex items-start gap-3 rounded-lg border border-hairline p-3"
+          >
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
+              <it.icon className="size-[17px]" aria-hidden="true" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between gap-2">
+                <span className="type-label-md truncate text-foreground">{it.name}</span>
+                {it.status === "syncing" ? (
+                  <ToneBadge tone="info" className="shrink-0 gap-1">
+                    <RefreshCw className="size-3 animate-spin" aria-hidden="true" /> Syncing
+                  </ToneBadge>
+                ) : (
+                  <QuietStatus tone="success" className="shrink-0">
+                    Connected
+                  </QuietStatus>
+                )}
+              </div>
+              <div className="type-caption font-normal text-quaternary">
+                {it.category} · {it.vendor}
+              </div>
+              <div className="type-body-sm mt-1 flex flex-wrap items-center gap-1">
+                <span className="text-tertiary">{it.feeds}</span>
+                <ChevronRight className="size-3 text-quaternary" aria-hidden="true" />
+                <span className="font-medium text-foreground">{it.into}</span>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
+    </ModalShell>
   );
 }

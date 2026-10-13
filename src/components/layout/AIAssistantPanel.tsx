@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Sparkles, X, Send } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { buttonClass } from "@/components/ui/button-styles";
+import { inputClass } from "@/components/ui/input-styles";
+import { useOverlayDismiss } from "@/hooks/use-overlay-dismiss";
 
 type Msg = { role: "user" | "ai"; text: string };
 
@@ -16,6 +20,8 @@ export function AIAssistantPanel() {
     { role: "ai", text: "Hi R. Sharma — ask me anything about the CardioGuard 3000 DFMEA." },
   ]);
   const [thinking, setThinking] = useState(false);
+  const titleId = useId();
+  useOverlayDismiss(open, () => setOpen(false));
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -46,59 +52,112 @@ export function AIAssistantPanel() {
   return (
     <>
       <button
+        type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex size-11 items-center justify-center rounded-full border border-strong bg-action-primary text-on-color outline-none transition-colors duration-[180ms] ease-out hover:bg-action-primary-hover focus-visible:ring-2 focus-visible:ring-active"
+        className="fixed right-6 bottom-6 z-40 flex size-11 items-center justify-center rounded-full border border-strong bg-action-primary text-on-color outline-none transition-colors duration-[180ms] ease-out hover:bg-action-primary-hover focus-visible:ring-2 focus-visible:ring-active"
         aria-label="Open AI Assistant (Cmd+K)"
       >
-        <Sparkles className="h-5 w-5" />
+        <Sparkles className="size-5" aria-hidden="true" />
       </button>
       {open && (
-        <div className="fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l bg-card shadow-2xl animate-in slide-in-from-right sm:w-[400px]">
-          <div className="flex h-[52px] items-center justify-between border-b bg-[color:var(--ai-bg)] px-4">
-            <div className="flex items-center gap-2 font-semibold">
-              <Sparkles className="h-4 w-4 text-[color:var(--ai-accent)]" />
-              PragnaAI Assistant
-            </div>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setMsgs(msgs.slice(0, 1))} className="text-xs text-muted-foreground hover:text-foreground">Clear</button>
-              <button onClick={() => setOpen(false)} aria-label="Close" className="rounded p-1 hover:bg-muted">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-          <div className="flex-1 space-y-3 overflow-y-auto p-4">
-            {msgs.map((m, i) => (
-              <div key={i} className={`rounded-lg p-3 text-sm ${m.role === "user" ? "ml-auto max-w-[85%] bg-primary text-primary-foreground" : "mr-auto max-w-[95%] bg-muted whitespace-pre-wrap font-code text-xs leading-relaxed"}`}>
-                {m.text}
-              </div>
-            ))}
-            {thinking && (
-              <div className="mr-auto flex gap-1 rounded-lg bg-muted p-3">
-                <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground [animation-delay:0ms]" />
-                <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground [animation-delay:150ms]" />
-                <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground [animation-delay:300ms]" />
-              </div>
-            )}
-          </div>
-          <div className="border-t p-3">
-            <div className="mb-2 flex flex-wrap gap-1">
-              {["Show critical risks", "Pending mitigations", "Battery risks"].map((s) => (
-                <button key={s} onClick={() => send(s)} className="rounded-full border bg-background px-2 py-1 text-[11px] hover:bg-muted">
-                  {s}
+        <div className="fixed inset-0 z-50 text-foreground">
+          <div
+            className="absolute inset-0 bg-page/70"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            className="animate-in slide-in-from-right absolute inset-y-0 right-0 flex w-full flex-col border-l border-strong bg-container sm:w-[400px]"
+          >
+            <div className="flex h-14 shrink-0 items-center justify-between border-b border-hairline px-4">
+              <h2 id={titleId} className="type-label-md flex items-center gap-2 text-foreground">
+                <Sparkles className="size-4 text-tertiary" aria-hidden="true" />
+                PragnaAI Assistant
+              </h2>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setMsgs(msgs.slice(0, 1))}
+                  className={buttonClass("ghost", { size: "sm" })}
+                >
+                  Clear
                 </button>
-              ))}
+                <button
+                  type="button"
+                  autoFocus
+                  onClick={() => setOpen(false)}
+                  aria-label="Close"
+                  className={buttonClass("icon")}
+                >
+                  <X className="size-4" aria-hidden="true" />
+                </button>
+              </div>
             </div>
-            <form onSubmit={(e) => { e.preventDefault(); send(input); }} className="flex gap-2">
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask a question..."
-                className="flex-1 rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              />
-              <button type="submit" className="rounded-md bg-primary px-3 py-2 text-primary-foreground hover:opacity-90">
-                <Send className="h-4 w-4" />
-              </button>
-            </form>
+            <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+              {msgs.map((m, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "rounded-lg p-3",
+                    m.role === "user"
+                      ? "type-body-md ml-auto max-w-[85%] bg-action-primary text-on-color"
+                      : "type-body-sm mr-auto max-w-[95%] border border-hairline bg-raised font-mono leading-relaxed whitespace-pre-wrap text-secondary-foreground",
+                  )}
+                >
+                  {m.text}
+                </div>
+              ))}
+              {thinking && (
+                <div
+                  className="mr-auto flex gap-1 rounded-lg border border-hairline bg-raised p-3"
+                  role="status"
+                  aria-label="Assistant is typing"
+                >
+                  <span className="size-2 animate-bounce rounded-full bg-quaternary [animation-delay:0ms]" />
+                  <span className="size-2 animate-bounce rounded-full bg-quaternary [animation-delay:150ms]" />
+                  <span className="size-2 animate-bounce rounded-full bg-quaternary [animation-delay:300ms]" />
+                </div>
+              )}
+            </div>
+            <div className="shrink-0 border-t border-hairline p-3">
+              <div className="mb-2 flex flex-wrap gap-1.5">
+                {["Show critical risks", "Pending mitigations", "Battery risks"].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => send(s)}
+                    className={buttonClass("chip")}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  send(input);
+                }}
+                className="flex gap-2"
+              >
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask a question…"
+                  aria-label="Ask a question"
+                  className={inputClass("sm", "flex-1")}
+                />
+                <button
+                  type="submit"
+                  aria-label="Send message"
+                  className={buttonClass("primary", { className: "size-8 px-0" })}
+                >
+                  <Send className="size-4" aria-hidden="true" />
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       )}

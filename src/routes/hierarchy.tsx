@@ -96,7 +96,7 @@ function HierarchyPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         <Panel title="Device tree" className="lg:col-span-4 lg:self-start">
           <input
-            placeholder="Search components..."
+            placeholder="Search components"
             aria-label="Search components"
             className={inputClass("sm", "mb-3")}
           />
@@ -138,7 +138,7 @@ function HierarchyPage() {
             ))}
           </ul>
 
-          <h3 className="type-eyebrow mb-2 text-quaternary">Failure Modes (first 6 of 18)</h3>
+          <h3 className="type-eyebrow mb-2 text-quaternary">Failure Modes · First 6 of 18</h3>
           <div className={tableStyles.wrap}>
             <table className={tableStyles.table}>
               <thead>
@@ -195,7 +195,7 @@ function HierarchyPage() {
 
           <div className="mt-4 flex flex-wrap gap-2">
             <Link to="/workspace" className={buttonClass("primary", { size: "sm" })}>
-              Open DFMEA Workspace
+              Open DFMEA workspace
             </Link>
             <button
               type="button"
@@ -205,7 +205,7 @@ function HierarchyPage() {
               }}
               className={buttonClass("secondary", { size: "sm" })}
             >
-              <Sparkles className="size-3.5" aria-hidden="true" /> AI: Analyze This Component
+              <Sparkles className="size-3.5" aria-hidden="true" /> Analyze this component
             </button>
           </div>
         </Panel>

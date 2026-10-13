@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useRouter, useRouterState } from "@tanstack/react-router";
 import {
   Bell,
@@ -17,6 +17,8 @@ import { CURRENT_USER } from "@/data/team";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
 import { logout } from "@/lib/auth";
 import { toast } from "sonner";
+import { buttonClass } from "@/components/ui/button-styles";
+import { useOverlayDismiss } from "@/hooks/use-overlay-dismiss";
 import { findNav } from "./nav";
 
 type Panel = "notifications" | "help" | null;
@@ -24,21 +26,21 @@ type Panel = "notifications" | "help" | null;
 const NOTIFICATIONS = [
   {
     icon: AlertTriangle,
-    tone: "text-red-600",
+    tone: "text-error",
     title: "7 mitigations overdue",
     detail: "Oldest: MIT-0033-A (BMS watchdog validation) — 55 days late.",
     time: "just now",
   },
   {
     icon: Sparkles,
-    tone: "text-[color:var(--ai-accent)]",
+    tone: "text-tertiary",
     title: "23 AI suggestions pending review",
     detail: "New batch generated for Battery Pack and Signal Processing.",
     time: "2h ago",
   },
   {
     icon: FileDown,
-    tone: "text-emerald-600",
+    tone: "text-success",
     title: "Report ready to download",
     detail: "Risk Summary Report (PDF) finished generating.",
     time: "5h ago",
@@ -117,6 +119,8 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             onClick={() => toggle("notifications")}
             className={`${iconButton} ${panel === "notifications" ? "bg-raised-2 text-foreground" : ""}`}
             aria-label="Notifications"
+            aria-haspopup="dialog"
+            aria-expanded={panel === "notifications"}
           >
             <Bell className="size-4" aria-hidden="true" />
             <span className="type-caption tabular absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-error-surface text-error">
@@ -133,7 +137,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                     toast.success("All notifications marked as read.");
                     setPanel(null);
                   }}
-                  className="text-xs font-semibold text-primary hover:underline"
+                  className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
                 >
                   Mark all as read
                 </button>
@@ -146,15 +150,17 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                     console.log("[Notifications] clicked", n.title);
                     toast(n.title);
                   }}
-                  className="flex w-full gap-3 border-b px-4 py-3 text-left last:border-b-0 hover:bg-muted/50"
+                  className="flex w-full gap-3 border-b border-hairline px-4 py-3 text-left outline-none transition-colors duration-[150ms] last:border-b-0 hover:bg-raised focus-visible:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active"
                 >
-                  <n.icon className={`mt-0.5 h-4 w-4 shrink-0 ${n.tone}`} />
+                  <n.icon className={`mt-0.5 size-4 shrink-0 ${n.tone}`} aria-hidden="true" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="truncate text-sm font-semibold">{n.title}</span>
-                      <span className="shrink-0 text-[10px] text-muted-foreground">{n.time}</span>
+                      <span className="type-label-md truncate text-foreground">{n.title}</span>
+                      <span className="type-caption tabular shrink-0 font-normal text-quaternary">
+                        {n.time}
+                      </span>
                     </div>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{n.detail}</p>
+                    <p className="type-body-sm mt-0.5 text-tertiary">{n.detail}</p>
                   </div>
                 </button>
               ))}
@@ -167,6 +173,8 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             onClick={() => toggle("help")}
             className={`${iconButton} ${panel === "help" ? "bg-raised-2 text-foreground" : ""}`}
             aria-label="Help"
+            aria-haspopup="dialog"
+            aria-expanded={panel === "help"}
           >
             <HelpCircle className="size-4" aria-hidden="true" />
           </button>
@@ -180,9 +188,9 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                     toast("Opening full documentation…");
                     setPanel(null);
                   }}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                  className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
                 >
-                  Open documentation <ExternalLink className="h-3 w-3" />
+                  Open documentation <ExternalLink className="size-3" aria-hidden="true" />
                 </button>
               }
             >
@@ -193,12 +201,12 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                     console.log("[Help] clicked", h.title);
                     toast(`Opening: ${h.title}`);
                   }}
-                  className="flex w-full gap-3 border-b px-4 py-3 text-left last:border-b-0 hover:bg-muted/50"
+                  className="flex w-full gap-3 border-b border-hairline px-4 py-3 text-left outline-none transition-colors duration-[150ms] last:border-b-0 hover:bg-raised focus-visible:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active"
                 >
-                  <h.icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <h.icon className="mt-0.5 size-4 shrink-0 text-tertiary" aria-hidden="true" />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-semibold">{h.title}</div>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{h.detail}</p>
+                    <div className="type-label-md truncate text-foreground">{h.title}</div>
+                    <p className="type-body-sm mt-0.5 text-tertiary">{h.detail}</p>
                   </div>
                 </button>
               ))}
@@ -232,19 +240,32 @@ function Dropdown({
   footer?: React.ReactNode;
   onClose: () => void;
 }) {
+  const titleId = useId();
+  useOverlayDismiss(true, onClose);
   return (
     <>
       {/* click-outside overlay */}
-      <div className="fixed inset-0 z-30" onClick={onClose} />
-      <div className="absolute right-0 top-[calc(100%+8px)] z-40 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg border bg-card shadow-2xl">
-        <div className="flex items-center justify-between border-b bg-muted/40 px-4 py-2.5">
-          <span className="text-sm font-semibold">{title}</span>
-          <button onClick={onClose} className="rounded p-1 hover:bg-muted" aria-label="Close">
-            <X className="h-3.5 w-3.5" />
+      <div className="fixed inset-0 z-30" onClick={onClose} aria-hidden="true" />
+      <div
+        role="dialog"
+        aria-labelledby={titleId}
+        className="absolute top-[calc(100%+8px)] right-0 z-40 w-80 overflow-hidden rounded-lg border border-strong bg-container shadow-lg max-sm:fixed max-sm:top-[calc(3.5rem+8px)] max-sm:right-4 max-sm:left-4 max-sm:w-auto"
+      >
+        <div className="flex h-11 items-center justify-between border-b border-hairline px-4">
+          <h2 id={titleId} className="type-eyebrow text-quaternary">
+            {title}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className={buttonClass("icon", { className: "size-7" })}
+            aria-label="Close"
+          >
+            <X className="size-3.5" aria-hidden="true" />
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">{children}</div>
-        {footer && <div className="border-t bg-muted/20 px-4 py-2.5">{footer}</div>}
+        {footer && <div className="border-t border-hairline px-4 py-1.5">{footer}</div>}
       </div>
     </>
   );

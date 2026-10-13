@@ -38,16 +38,16 @@ function AI() {
           <option>Subsystem: All</option>
         </select>
         <select aria-label="Severity" className={selectClass}>
-          <option>Severity ≥ any</option>
+          <option>Severity: any</option>
         </select>
         <select aria-label="Confidence" className={selectClass}>
-          <option>Confidence ≥ any</option>
+          <option>Confidence: any</option>
         </select>
         <select aria-label="Source" className={selectClass}>
           <option>Source: All</option>
         </select>
         <select aria-label="Show" className={selectClass}>
-          <option>Show: Pending Only</option>
+          <option>Show: Pending only</option>
         </select>
       </div>
 
@@ -106,7 +106,7 @@ function AI() {
                   onClick={() => toast(`Editing ${s.id}...`)}
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Edit & Accept
+                  Edit and accept
                 </button>
                 <button
                   type="button"
@@ -120,7 +120,7 @@ function AI() {
                   onClick={() => toast(`${s.id} flagged for team review.`)}
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Flag for Team
+                  Flag for team
                 </button>
               </div>
             </section>

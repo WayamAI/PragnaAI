@@ -66,7 +66,7 @@ function KB() {
               }}
               aria-label="Search knowledge base"
               className={inputClass("md", "pl-11")}
-              placeholder="Search failure modes, standards, recalls, lessons learned..."
+              placeholder="Search failure modes, standards, recalls and lessons learned"
             />
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -124,7 +124,7 @@ function KB() {
                     }}
                     className={buttonClass("secondary", { size: "sm" })}
                   >
-                    Use in DFMEA Workspace
+                    Use in DFMEA workspace
                   </button>
                   <button
                     type="button"
@@ -134,7 +134,7 @@ function KB() {
                     }}
                     className={buttonClass("ghost", { size: "sm" })}
                   >
-                    View Full Record
+                    View full record
                   </button>
                 </div>
               </section>

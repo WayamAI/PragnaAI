@@ -38,7 +38,7 @@ function Docs() {
             }}
             className="rounded-sm underline underline-offset-2 outline-none hover:text-secondary-foreground focus-visible:ring-2 focus-visible:ring-active"
           >
-            Browse
+            browse
           </button>
         </p>
         <p className="type-caption mt-1 font-normal text-quaternary">
@@ -54,7 +54,7 @@ function Docs() {
               <th className={tableStyles.th()}>Type</th>
               <th className={tableStyles.th()}>Version</th>
               <th className={tableStyles.th()}>Pages</th>
-              <th className={tableStyles.th()}>Uploaded By</th>
+              <th className={tableStyles.th()}>Uploaded by</th>
               <th className={tableStyles.th()}>Date</th>
               <th className={tableStyles.th()}>Status</th>
               <th className={tableStyles.th()}>Entities</th>

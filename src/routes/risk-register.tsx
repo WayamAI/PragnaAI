@@ -15,7 +15,7 @@ export const Route = createFileRoute("/risk-register")({ component: RiskRegister
 const KPI: { label: string; value: string; valueClassName?: string }[] = [
   { label: "Total Risks", value: "280" },
   { label: "Critical (S≥9 or RPN≥200)", value: "14", valueClassName: "text-error" },
-  { label: "High (RPN 100-199)", value: "47", valueClassName: "text-warning" },
+  { label: "High (RPN 100–199)", value: "47", valueClassName: "text-warning" },
   { label: "Mitigations Overdue", value: "7" },
 ];
 
@@ -45,7 +45,7 @@ function RiskRegister() {
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <input
-          placeholder="Search risks..."
+          placeholder="Search risks"
           aria-label="Search risks"
           className={inputClass("sm", "min-w-[180px] flex-1")}
         />
@@ -65,7 +65,7 @@ function RiskRegister() {
             onChange={(e) => setShowResidual(e.target.checked)}
             className="size-4 accent-action-primary"
           />
-          Show Residual RPN
+          Show residual RPN
         </label>
       </div>
 

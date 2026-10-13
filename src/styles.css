@@ -132,6 +132,7 @@
      Pages not yet converted still reference these. */
   --primary-gradient-from: var(--action-primary-default);
   --primary-gradient-to: var(--action-primary-default);
+  --primary: var(--feedback-neutral-badge); /* avatar fill in data/team.ts */
   --ai-accent: var(--text-secondary);
   --ai-bg: var(--surface-raised);
 

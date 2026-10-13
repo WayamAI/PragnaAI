@@ -47,7 +47,7 @@ export function AIAssistantPanel() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--ai-accent)] text-white shadow-lg transition hover:scale-105"
+        className="fixed bottom-6 right-6 z-40 flex size-11 items-center justify-center rounded-full border border-strong bg-action-primary text-on-color outline-none transition-colors duration-[180ms] ease-out hover:bg-action-primary-hover focus-visible:ring-2 focus-visible:ring-active"
         aria-label="Open AI Assistant (Cmd+K)"
       >
         <Sparkles className="h-5 w-5" />
@@ -68,7 +68,7 @@ export function AIAssistantPanel() {
           </div>
           <div className="flex-1 space-y-3 overflow-y-auto p-4">
             {msgs.map((m, i) => (
-              <div key={i} className={`rounded-lg p-3 text-sm ${m.role === "user" ? "ml-auto max-w-[85%] bg-primary text-primary-foreground" : "mr-auto max-w-[95%] bg-muted whitespace-pre-wrap font-mono text-xs leading-relaxed"}`}>
+              <div key={i} className={`rounded-lg p-3 text-sm ${m.role === "user" ? "ml-auto max-w-[85%] bg-primary text-primary-foreground" : "mr-auto max-w-[95%] bg-muted whitespace-pre-wrap font-code text-xs leading-relaxed"}`}>
                 {m.text}
               </div>
             ))}

@@ -1,16 +1,22 @@
 import type { ReactNode } from "react";
+import { PageHeader, PageBody } from "@/components/layout/PageHeader";
 
-export function PageContainer({ title, subtitle, actions, children }: { title: string; subtitle?: string; actions?: ReactNode; children: ReactNode }) {
+/** Page wrapper: header (title, subtitle, actions) above a scrolling body. */
+export function PageContainer({
+  title,
+  subtitle,
+  actions,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  actions?: ReactNode;
+  children: ReactNode;
+}) {
   return (
-    <div className="p-4 sm:p-6">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-2xl font-semibold text-foreground">{title}</h1>
-          {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
-        </div>
-        {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
-      </div>
-      {children}
+    <div className="flex min-h-0 flex-1 flex-col">
+      <PageHeader title={title} subtitle={subtitle} actions={actions} />
+      <PageBody>{children}</PageBody>
     </div>
   );
 }

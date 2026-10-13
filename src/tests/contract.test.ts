@@ -2,6 +2,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { navGroups, navItems, findNav } from "@/components/layout/nav";
 import { severityTone } from "@/lib/severity";
 import { THEME_INIT_SCRIPT, THEME_STORAGE_KEY } from "@/components/theme/theme";
 
@@ -81,5 +82,34 @@ describe("theme", () => {
     expect(THEME_STORAGE_KEY).toBe("pragnaai-theme");
     expect(THEME_INIT_SCRIPT).toContain('localStorage.getItem("pragnaai-theme")');
     expect(THEME_INIT_SCRIPT).toContain('t==="dark"?"dark":"light"');
+  });
+});
+
+describe("navigation", () => {
+  it("keeps the same 10 items and urls in order, in the approved groups", () => {
+    expect(navItems.map((i) => i.url)).toEqual([
+      "/overview",
+      "/hierarchy",
+      "/workspace",
+      "/ai-analysis",
+      "/risk-register",
+      "/traceability",
+      "/knowledge-base",
+      "/documents",
+      "/integrations",
+      "/reports",
+    ]);
+    expect(navGroups.map((g) => [g.label, g.items.length])).toEqual([
+      ["Project", 2],
+      ["Analysis", 4],
+      ["Knowledge", 2],
+      ["Delivery", 2],
+    ]);
+  });
+
+  it("derives the group and title from the pathname, with / as Overview", () => {
+    expect(findNav("/")?.item.title).toBe("Project Overview");
+    expect(findNav("/risk-register")).toMatchObject({ group: "Analysis" });
+    expect(findNav("/nope")).toBeUndefined();
   });
 });

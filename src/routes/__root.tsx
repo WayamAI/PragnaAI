@@ -16,8 +16,7 @@ import "@fontsource/geist/400.css";
 import "@fontsource/geist/500.css";
 import "@fontsource/geist/600.css";
 import "@fontsource/michroma/400.css";
-import { AppSidebar } from "@/components/layout/AppSidebar";
-import { TopHeader } from "@/components/layout/TopHeader";
+import { AppShell } from "@/components/layout/AppShell";
 import { AIAssistantPanel } from "@/components/layout/AIAssistantPanel";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
@@ -26,7 +25,7 @@ import { isAuthenticated } from "@/lib/auth";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-full flex-1 items-center justify-center overflow-y-auto bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
@@ -164,17 +163,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background font-sans text-foreground">
-        <AppSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <div className="md:pl-60">
-          <TopHeader onMenuClick={() => setSidebarOpen((o) => !o)} />
-          <main>
-            <Outlet />
-          </main>
-        </div>
-        <AIAssistantPanel />
-        <Toaster position="bottom-right" />
-      </div>
+      <AppShell
+        mobileOpen={sidebarOpen}
+        onMobileClose={() => setSidebarOpen(false)}
+        onMobileToggle={() => setSidebarOpen((o) => !o)}
+      >
+        <Outlet />
+      </AppShell>
+      <AIAssistantPanel />
+      <Toaster position="bottom-right" />
     </QueryClientProvider>
   );
 }

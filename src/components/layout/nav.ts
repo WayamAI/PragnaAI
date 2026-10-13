@@ -1,10 +1,12 @@
 import type { LucideIcon } from "lucide-react";
-import { icons } from "@/components/icons/iconMap";
+import { icons, marks, type MarkId } from "@/components/icons/iconMap";
 
 export type NavItem = {
   title: string;
   url: string;
   icon: LucideIcon;
+  /** Illustration shown in the page header. */
+  mark: MarkId;
   /** Quiet count shown beside the label when the sidebar is expanded. */
   count?: string;
 };
@@ -19,31 +21,70 @@ export const navGroups: NavGroup[] = [
   {
     label: "Project",
     items: [
-      { title: "Project Overview", url: "/overview", icon: icons.overview },
-      { title: "Product Hierarchy", url: "/hierarchy", icon: icons.hierarchy },
+      { title: "Project Overview", url: "/overview", icon: icons.overview, mark: marks.overview },
+      {
+        title: "Product Hierarchy",
+        url: "/hierarchy",
+        icon: icons.hierarchy,
+        mark: marks.hierarchy,
+      },
     ],
   },
   {
     label: "Analysis",
     items: [
-      { title: "DFMEA Workspace", url: "/workspace", icon: icons.workspace, count: "280" },
-      { title: "AI Analysis", url: "/ai-analysis", icon: icons.aiAnalysis, count: "23" },
-      { title: "Risk Register", url: "/risk-register", icon: icons.riskRegister, count: "14" },
-      { title: "Traceability", url: "/traceability", icon: icons.traceability },
+      {
+        title: "DFMEA Workspace",
+        url: "/workspace",
+        icon: icons.workspace,
+        mark: marks.workspace,
+        count: "280",
+      },
+      {
+        title: "AI Analysis",
+        url: "/ai-analysis",
+        icon: icons.aiAnalysis,
+        mark: marks.aiAnalysis,
+        count: "23",
+      },
+      {
+        title: "Risk Register",
+        url: "/risk-register",
+        icon: icons.riskRegister,
+        mark: marks.riskRegister,
+        count: "14",
+      },
+      {
+        title: "Traceability",
+        url: "/traceability",
+        icon: icons.traceability,
+        mark: marks.traceability,
+      },
     ],
   },
   {
     label: "Knowledge",
     items: [
-      { title: "Knowledge Base", url: "/knowledge-base", icon: icons.knowledgeBase },
-      { title: "Document Vault", url: "/documents", icon: icons.documents },
+      {
+        title: "Knowledge Base",
+        url: "/knowledge-base",
+        icon: icons.knowledgeBase,
+        mark: marks.knowledgeBase,
+      },
+      { title: "Document Vault", url: "/documents", icon: icons.documents, mark: marks.documents },
     ],
   },
   {
     label: "Delivery",
     items: [
-      { title: "Integrations", url: "/integrations", icon: icons.integrations, count: "6" },
-      { title: "Reports", url: "/reports", icon: icons.reports },
+      {
+        title: "Integrations",
+        url: "/integrations",
+        icon: icons.integrations,
+        mark: marks.integrations,
+        count: "6",
+      },
+      { title: "Reports", url: "/reports", icon: icons.reports, mark: marks.reports },
     ],
   },
 ];

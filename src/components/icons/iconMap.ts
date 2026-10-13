@@ -90,3 +90,24 @@ export const icons = {
 } satisfies Record<string, LucideIcon>;
 
 export type IconKey = keyof typeof icons;
+
+/**
+ * Page marks: the 3D illustration shown in each page header, next to the lucide icon the
+ * sidebar keeps. Files live in public/images/marks as `<id>-88.png` and `<id>-144.png`.
+ * `empty` is the empty-state illustration. Marks are not used in rows, buttons, nav or tiles.
+ */
+export const marks = {
+  overview: "mark-overview",
+  hierarchy: "mark-hierarchy",
+  workspace: "mark-workspace",
+  aiAnalysis: "mark-ai-analysis",
+  riskRegister: "mark-risk-register",
+  traceability: "mark-traceability",
+  knowledgeBase: "mark-knowledge-base",
+  documents: "mark-documents",
+  integrations: "mark-integrations",
+  reports: "mark-reports",
+  empty: "mark-empty",
+} as const;
+
+export type MarkId = (typeof marks)[keyof typeof marks];

@@ -1,5 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { Mark } from "@/components/icons/Mark";
+import { marks } from "@/components/icons/iconMap";
 import type { Tone } from "@/lib/severity";
 import { toneBadge, toneDot, toneText } from "./tone-styles";
 
@@ -157,7 +159,7 @@ export const ToneBadge = ({
   </span>
 );
 
-/** Plain statement, no illustration, no call to action. */
+/** Short statement under the empty mark, no call to action. */
 export const EmptyState = ({
   title = "Nothing to show",
   detail,
@@ -173,6 +175,7 @@ export const EmptyState = ({
       className,
     )}
   >
+    <Mark id={marks.empty} size={72} className="mb-1" />
     <p className="type-body-md text-tertiary">{title}</p>
     {detail && <p className="type-body-sm text-quaternary">{detail}</p>}
   </div>

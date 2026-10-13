@@ -33,29 +33,40 @@ function LoginPage() {
 
   return (
     <div className="flex min-h-dvh w-full bg-page">
-      {/* Brand panel (large screens): solid, on the primary action colour */}
-      <div className="hidden flex-[1.4] flex-col justify-between bg-action-primary p-10 text-on-color lg:flex">
-        <div className="flex items-center gap-2.5">
-          {/* The panel is dark in light theme and light in dark theme, so the logo pairing is inverted. */}
-          <img
-            src={brand("wayam-mark-dark.svg")}
-            alt=""
-            className="h-auto w-8 shrink-0 dark:hidden"
+      {/* Brand panel (large screens): hero image under gradients. White text in both themes, since the image is dark. */}
+      <div className="relative hidden flex-[1.4] flex-col justify-between overflow-hidden bg-black p-10 text-white lg:flex">
+        <picture className="absolute inset-0">
+          <source
+            type="image/webp"
+            srcSet={`${brand("login-hero-1280.webp")} 1280w, ${brand("login-hero.webp")} 2560w`}
+            sizes="58vw"
           />
           <img
-            src={brand("wayam-mark-light.svg")}
+            src={brand("login-hero-1280.jpg")}
+            srcSet={`${brand("login-hero-1280.jpg")} 1280w, ${brand("login-hero.jpg")} 2560w`}
+            sizes="58vw"
+            width={2560}
+            height={1293}
             alt=""
-            className="hidden h-auto w-8 shrink-0 dark:block"
+            decoding="async"
+            draggable={false}
+            className="size-full object-cover object-[72%_center]"
           />
-          <img src={brand("wayam-wordmark-dark.svg")} alt="" className="h-5 w-auto dark:hidden" />
-          <img
-            src={brand("wayam-wordmark-light.svg")}
-            alt=""
-            className="hidden h-5 w-auto dark:block"
-          />
+        </picture>
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent"
+          aria-hidden="true"
+        />
+        <div className="relative flex items-center gap-2.5">
+          <img src={brand("wayam-mark-dark.svg")} alt="" className="h-auto w-8 shrink-0" />
+          <img src={brand("wayam-wordmark-dark.svg")} alt="" className="h-5 w-auto" />
         </div>
-        <div className="max-w-xl">
-          <p className="type-eyebrow opacity-70">PragnaAI</p>
+        <div className="relative max-w-xl">
+          <p className="type-eyebrow text-white/80">PragnaAI</p>
           <p className="type-display-2xl mt-3">
             AI-assisted DFMEA for medical device risk analysis.
           </p>

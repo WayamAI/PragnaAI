@@ -98,6 +98,17 @@ No other dependency changes. The old font packages (`@fontsource/inter`, `ibm-pl
 - **One icon, one meaning:** the standards/guide rows (Help modal, Help dropdown) use `standard` (document) instead of the book, which is reserved for the Knowledge Base. The overview agent rows use hierarchy, search and risk icons rather than a second Sparkles. `ai` and `aiAnalysis` are the same icon on purpose (the page is the AI queue); a test asserts no other two keys share a component.
 - **Sizes by role:** 17px nav and header pucks, 16px controls, 14px inline button icons, 12px chevrons and badge icons.
 
+## Login hero and page marks (Step 8)
+
+- **Assets:** generated with Google Flow. The raw sources (`login-hero.jpg`, `icons.jpg`, both 2752x1536) are kept outside the repo in `D:\PragnaAI-assets\` and were never committed. Only processed outputs are in the repo.
+- **Watermark:** the hero carried a Gemini sparkle at the bottom-right. It was removed by cropping only (bottom cropped to 1390px; nothing was painted over). The icon sheet had none in any cell.
+- **Hero:** `public/brand/login-hero.webp` (2560w, 159KB) and `.jpg` (290KB), plus `login-hero-1280.webp` (64KB) and `.jpg` (99KB). The same image is used in light and dark theme.
+- **Marks:** 11 transparent PNGs at 144px and 88px (2x sources for 72px and 44px display) in `public/images/marks/`, 6.6KB to 21KB each. The sheet was sliced on detected gaps; backgrounds and contact shadows were removed (no halo on dark); `mark-spare` is not shipped. No WebP: the PNGs are already tiny.
+- **Login:** hero in the left brand panel (`<picture>` WebP + JPG, 1280w and 2560w srcset, `object-cover`, `alt=""`, `decoding="async"`), bottom gradient `from-black/80 via-black/30 to-transparent` and a subtle top gradient. The panel text and logo are white in both themes because the image is dark (the old panel inverted with the theme). Measured contrast over the image: headline about 20:1, eyebrow about 8:1. Panel stays hidden below `lg`; form column, ids, labels and strings are unchanged.
+- **Marks in the app:** `Mark` component (`<img>` with width, height, `srcset`, `aria-hidden`, `draggable={false}`), mark ids next to the lucide icons in `iconMap.ts` (`marks`) and carried on each nav item. `PageHeader` shows the page mark at 44px in place of the lucide puck on all 10 pages; `EmptyState` shows `mark-empty` at 72px. The sidebar keeps the lucide icons. No marks in rows, buttons, nav or KPI tiles.
+- **Base path:** image URLs use `import.meta.env.BASE_URL`; the GitHub Pages build inlines `/FMEA/images/marks/...` and copies the files.
+- **Decision 13 reversed** for page headers and empty states only: they now carry an illustration. The rest of the app stays illustration-free.
+
 ## Design system pieces
 
 - **Tokens:** `src/styles/tokens.css` (two-tier, light default, dark via `data-theme`), mapped in `src/styles.css`. Type roles are `type-*` (not `text-*`) so tailwind-merge does not drop them next to colour classes.

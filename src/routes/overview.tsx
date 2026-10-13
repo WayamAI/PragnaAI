@@ -4,6 +4,8 @@ import { PageContainer, Card } from "@/components/shared/PageContainer";
 import { ACTIVITY } from "@/data/misc";
 import { INTEGRATIONS } from "@/data/integrations";
 import { Sparkles, Search, Shield, Plug, X, CheckCircle2, RefreshCw, ArrowRight } from "lucide-react";
+import { Unit } from "@/components/ui/primitives";
+import { axisTick, chartTooltipLabelStyle, chartTooltipStyle } from "@/components/dashboard/chartTheme";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell, PieChart, Pie } from "recharts";
 
 export const Route = createFileRoute("/overview")({ component: Overview });
@@ -24,14 +26,20 @@ const HEATMAP = [
   { row: "S3-4", tier: "Moderate", desc: "Minor injury / degraded performance", cells: [5, 14, 22, 16, 8], avgD: 4.3 },
   { row: "S1-2", tier: "Minor", desc: "Negligible / cosmetic", cells: [8, 19, 28, 21, 12], avgD: 4.6 },
 ];
+// Zone tints: high is error, medium is warning, low is neutral (Chronus feedback tokens).
+const ZONE_TINT = {
+  High: { bg: "var(--feedback-error-background)", text: "var(--feedback-error-content)" },
+  Medium: { bg: "var(--feedback-warning-background)", text: "var(--feedback-warning-content)" },
+  Low: { bg: "var(--feedback-neutral-background)", text: "var(--feedback-neutral-content)" },
+};
 // Proper S×O risk matrix: high severity + high occurrence = high-priority (red) zone.
 function riskZone(ri: number, ci: number) {
   const sev = 5 - ri;    // ri 0 (S9-10) → 5 … ri 4 (S1-2) → 1
   const occ = ci + 1;    // O1 → 1 … O5 → 5
   const score = sev * occ;
-  if (score >= 12) return { bg: "#FEE2E2", text: "#B91C1C", band: "High" };
-  if (score >= 6) return { bg: "#FEF3C7", text: "#B45309", band: "Medium" };
-  return { bg: "#DCFCE7", text: "#15803D", band: "Low" };
+  if (score >= 12) return { bg: ZONE_TINT.High.bg, text: ZONE_TINT.High.text, band: "High" };
+  if (score >= 6) return { bg: ZONE_TINT.Medium.bg, text: ZONE_TINT.Medium.text, band: "Medium" };
+  return { bg: ZONE_TINT.Low.bg, text: ZONE_TINT.Low.text, band: "Low" };
 }
 
 const RINGS = [
@@ -44,11 +52,11 @@ const RINGS = [
 ];
 
 const RPN_BUCKETS = [
-  { range: "0-49", count: 98, fill: "#16A34A" },
-  { range: "50-99", count: 89, fill: "#CA8A04" },
-  { range: "100-149", count: 52, fill: "#D97706" },
-  { range: "150-199", count: 27, fill: "#F97316" },
-  { range: "200+", count: 14, fill: "#DC2626" },
+  { range: "0-49", count: 98, fill: "var(--text-quaternary)" },
+  { range: "50-99", count: 89, fill: "var(--text-quaternary)" },
+  { range: "100-149", count: 52, fill: "var(--text-quaternary)" },
+  { range: "150-199", count: 27, fill: "var(--text-quaternary)" },
+  { range: "200+", count: 14, fill: "var(--feedback-error-content)" },
 ];
 
 const AGENTS = [
@@ -157,10 +165,10 @@ function Overview() {
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px]">
             <span className="font-semibold text-muted-foreground">Risk zone:</span>
-            <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: "#DCFCE7" }} /> Low (S×O &lt; 6)</span>
-            <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: "#FEF3C7" }} /> Medium (6–11)</span>
-            <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: "#FEE2E2" }} /> High (≥ 12)</span>
-            <span className="ml-auto font-semibold text-red-600">{highCount} failure modes in the high zone</span>
+            <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: ZONE_TINT.Low.bg }} /> Low (S×O &lt; 6)</span>
+            <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: ZONE_TINT.Medium.bg }} /> Medium (6–11)</span>
+            <span className="inline-flex items-center gap-1"><span className="h-3 w-3 rounded" style={{ background: ZONE_TINT.High.bg }} /> High (≥ 12)</span>
+            <span className="ml-auto font-semibold text-error">{highCount} failure modes in the high zone</span>
           </div>
         </Card>
 
@@ -171,19 +179,13 @@ function Overview() {
               <div key={r.level} className="text-center">
                 <ResponsiveContainer width="100%" height={80}>
                   <PieChart>
-                    <defs>
-                      <linearGradient id={`ringGradient-${i}`} x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="var(--primary-gradient-from)" />
-                        <stop offset="100%" stopColor="var(--primary-gradient-to)" />
-                      </linearGradient>
-                    </defs>
-                    <Pie data={[{ v: r.pct }, { v: 100 - r.pct }]} dataKey="v" innerRadius={22} outerRadius={32} startAngle={90} endAngle={-270}>
-                      <Cell fill={`url(#ringGradient-${i})`} />
-                      <Cell fill="#E5E7EB" />
+                    <Pie data={[{ v: r.pct }, { v: 100 - r.pct }]} dataKey="v" innerRadius={22} outerRadius={32} startAngle={90} endAngle={-270} stroke="none" isAnimationActive={false}>
+                      <Cell fill="var(--action-primary-default)" />
+                      <Cell fill="var(--surface-raised-x2)" />
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
-                <div className="mt-1 text-sm font-semibold">{r.pct}%</div>
+                <div className="type-display-base tabular mt-1 text-foreground">{r.pct}<Unit>%</Unit></div>
                 <div className="text-[10px] text-muted-foreground">{r.level}</div>
                 <div className="text-[10px] text-muted-foreground">{r.done}/{r.total}</div>
               </div>
@@ -196,10 +198,10 @@ function Overview() {
         <h2 className="mb-3 font-display text-base font-semibold">Failure Mode Distribution by RPN Range</h2>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={RPN_BUCKETS}>
-            <XAxis dataKey="range" stroke="#6B7280" fontSize={12} />
-            <YAxis stroke="#6B7280" fontSize={12} />
-            <Tooltip cursor={{ fill: "#F3F4F6" }} />
-            <Bar dataKey="count" radius={[4,4,0,0]}>
+            <XAxis dataKey="range" axisLine={false} tickLine={false} tick={axisTick} />
+            <YAxis axisLine={false} tickLine={false} tick={axisTick} />
+            <Tooltip cursor={{ fill: "var(--surface-raised)" }} contentStyle={chartTooltipStyle} labelStyle={chartTooltipLabelStyle} />
+            <Bar dataKey="count" radius={[4, 4, 4, 4]} isAnimationActive={false}>
               {RPN_BUCKETS.map((b, i) => <Cell key={i} fill={b.fill} />)}
             </Bar>
           </BarChart>

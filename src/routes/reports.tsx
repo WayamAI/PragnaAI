@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { PageContainer, Card } from "@/components/shared/PageContainer";
+import { PageContainer } from "@/components/shared/PageContainer";
 import { RECENT_REPORTS } from "@/data/misc";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
+import { Panel } from "@/components/ui/primitives";
+import { buttonClass } from "@/components/ui/button-styles";
+import { tableStyles } from "@/components/ui/table-styles";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/reports")({ component: Reports });
@@ -16,72 +20,123 @@ const TYPES = [
   ["Open Items Report", "PDF", "Mitigations pending, overdue, unlinked items"],
 ];
 
+const checkClass = "size-4 shrink-0 accent-action-primary";
+const optionRow = "type-body-md flex items-center gap-2 text-secondary-foreground";
+
 function Reports() {
   const [type, setType] = useState(0);
   return (
-    <PageContainer title="Reports" subtitle="Configure and generate DFMEA exports for submissions, reviews, and audit packages.">
+    <PageContainer
+      title="Reports"
+      subtitle="Configure and generate DFMEA exports for submissions, reviews, and audit packages."
+    >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Card className="lg:col-span-7">
-          <h2 className="mb-3 font-display text-lg font-semibold">Generate Report</h2>
-          <div className="space-y-2">
+        <Panel title="Generate Report" className="lg:col-span-7 lg:self-start">
+          <div className="flex flex-col gap-2">
             {TYPES.map(([label, fmt, desc], i) => (
-              <label key={label as string} className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 hover:bg-muted/40 ${type === i ? "border-primary bg-accent/50" : ""}`}>
-                <input type="radio" name="rtype" checked={type === i} onChange={() => setType(i)} className="mt-1" />
-                <div className="flex-1">
-                  <div className="text-sm font-semibold">{label} <span className="ml-2 text-xs font-normal text-muted-foreground">{fmt}</span></div>
-                  <div className="text-xs text-muted-foreground">{desc}</div>
+              <label
+                key={label}
+                className={cn(
+                  "flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors duration-[150ms] hover:bg-raised",
+                  type === i ? "border-strong bg-raised" : "border-hairline",
+                )}
+              >
+                <input
+                  type="radio"
+                  name="rtype"
+                  checked={type === i}
+                  onChange={() => setType(i)}
+                  className={cn(checkClass, "mt-0.5")}
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="type-label-md text-foreground">
+                    {label}{" "}
+                    <span className="type-caption ml-2 font-normal text-tertiary">{fmt}</span>
+                  </div>
+                  <div className="type-body-sm text-tertiary">{desc}</div>
                 </div>
               </label>
             ))}
           </div>
 
-          <h3 className="mt-5 mb-2 text-sm font-semibold">Scope</h3>
-          <div className="space-y-1 text-sm">
-            <label className="flex items-center gap-2"><input type="radio" name="scope" defaultChecked /> Full device — all levels</label>
-            <label className="flex items-center gap-2"><input type="radio" name="scope" /> By subsystem</label>
-            <label className="flex items-center gap-2"><input type="radio" name="scope" /> Critical risks only (S ≥ 9 or RPN ≥ 200)</label>
-            <label className="flex items-center gap-2"><input type="radio" name="scope" /> By owner</label>
+          <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">Scope</h3>
+          <div className="flex flex-col gap-2">
+            <label className={optionRow}>
+              <input type="radio" name="scope" defaultChecked className={checkClass} /> Full device
+              — all levels
+            </label>
+            <label className={optionRow}>
+              <input type="radio" name="scope" className={checkClass} /> By subsystem
+            </label>
+            <label className={optionRow}>
+              <input type="radio" name="scope" className={checkClass} /> Critical risks only (S ≥ 9
+              or RPN ≥ 200)
+            </label>
+            <label className={optionRow}>
+              <input type="radio" name="scope" className={checkClass} /> By owner
+            </label>
           </div>
 
-          <h3 className="mt-5 mb-2 text-sm font-semibold">Options</h3>
-          <div className="space-y-1 text-sm">
-            <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> Include AI confidence scores</label>
-            <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> Include traceability links</label>
-            <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> Include residual RPN (post-mitigation)</label>
-            <label className="flex items-center gap-2"><input type="checkbox" /> Include rejected AI suggestions</label>
-            <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> Include engineer comments</label>
+          <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">Options</h3>
+          <div className="flex flex-col gap-2">
+            <label className={optionRow}>
+              <input type="checkbox" defaultChecked className={checkClass} /> Include AI confidence
+              scores
+            </label>
+            <label className={optionRow}>
+              <input type="checkbox" defaultChecked className={checkClass} /> Include traceability
+              links
+            </label>
+            <label className={optionRow}>
+              <input type="checkbox" defaultChecked className={checkClass} /> Include residual RPN
+              (post-mitigation)
+            </label>
+            <label className={optionRow}>
+              <input type="checkbox" className={checkClass} /> Include rejected AI suggestions
+            </label>
+            <label className={optionRow}>
+              <input type="checkbox" defaultChecked className={checkClass} /> Include engineer
+              comments
+            </label>
           </div>
 
           <button
-            onClick={() => toast.success("Report queued. You will receive an email when it's ready.")}
-            className="mt-5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90"
+            type="button"
+            onClick={() =>
+              toast.success("Report queued. You will receive an email when it's ready.")
+            }
+            className={buttonClass("primary", { size: "lg", className: "mt-6" })}
           >
             Generate Report
           </button>
-        </Card>
+        </Panel>
 
-        <Card className="lg:col-span-5 !p-0">
-          <h2 className="p-5 pb-3 font-display text-lg font-semibold">Recent Reports</h2>
-          <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead className="bg-muted/50 text-left text-[11px] uppercase text-muted-foreground">
+        <Panel title="Recent Reports" padded={false} className="lg:col-span-5 lg:self-start">
+          <table className={tableStyles.table}>
+            <thead>
               <tr>
-                <th className="px-3 py-2">Report</th><th className="px-2 py-2">Type</th><th className="px-2 py-2">By</th><th className="px-2 py-2">Date</th>
+                <th className={tableStyles.th()}>Report</th>
+                <th className={tableStyles.th()}>Type</th>
+                <th className={tableStyles.th()}>By</th>
+                <th className={tableStyles.th()}>Date</th>
               </tr>
             </thead>
             <tbody>
-              {RECENT_REPORTS.map(([name, t, _s, by, d]) => (
-                <tr key={name as string} className="border-t">
-                  <td className="px-3 py-2 font-mono text-primary">{name}</td>
-                  <td className="px-2 py-2">{t}</td>
-                  <td className="px-2 py-2"><EngineerAvatar name={by as string} /></td>
-                  <td className="px-2 py-2 font-mono">{d}</td>
+              {RECENT_REPORTS.map(([name, t, , by, d]) => (
+                <tr key={name as string} className={tableStyles.tr()}>
+                  <td className={tableStyles.td({ primary: true, className: "font-mono" })}>
+                    {name}
+                  </td>
+                  <td className={tableStyles.td({ className: "text-tertiary" })}>{t}</td>
+                  <td className={tableStyles.td()}>
+                    <EngineerAvatar name={by as string} />
+                  </td>
+                  <td className={tableStyles.td({ className: "font-mono text-tertiary" })}>{d}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          </div>
-        </Card>
+        </Panel>
       </div>
     </PageContainer>
   );

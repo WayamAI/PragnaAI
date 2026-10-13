@@ -6,7 +6,7 @@ import { Panel, QuietStatus } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button-styles";
 import { inputClass } from "@/components/ui/input-styles";
 import { cn } from "@/lib/utils";
-import { Search } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/knowledge-base")({ component: KB });
@@ -54,7 +54,7 @@ function KB() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
         <div className="min-w-0 lg:col-span-3">
           <div className="relative">
-            <Search
+            <icons.search
               className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-quaternary"
               aria-hidden="true"
             />

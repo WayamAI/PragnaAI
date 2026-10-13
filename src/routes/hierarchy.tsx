@@ -10,7 +10,7 @@ import { buttonClass } from "@/components/ui/button-styles";
 import { inputClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
-import { ChevronRight, ChevronDown, Sparkles } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/hierarchy")({ component: HierarchyPage });
@@ -55,9 +55,9 @@ function TreeNode({
       >
         {hasChildren ? (
           open ? (
-            <ChevronDown className="size-3 shrink-0 text-quaternary" aria-hidden="true" />
+            <icons.chevronDown className="size-3 shrink-0 text-quaternary" aria-hidden="true" />
           ) : (
-            <ChevronRight className="size-3 shrink-0 text-quaternary" aria-hidden="true" />
+            <icons.chevronRight className="size-3 shrink-0 text-quaternary" aria-hidden="true" />
           )
         ) : (
           <span className="w-3 shrink-0" />
@@ -205,7 +205,7 @@ function HierarchyPage() {
               }}
               className={buttonClass("secondary", { size: "sm" })}
             >
-              <Sparkles className="size-3.5" aria-hidden="true" /> Analyze this component
+              <icons.ai className="size-3.5" aria-hidden="true" /> Analyze this component
             </button>
           </div>
         </Panel>

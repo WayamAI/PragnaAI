@@ -1,16 +1,5 @@
-import {
-  LayoutDashboard,
-  GitBranch,
-  Table2,
-  Sparkles,
-  ShieldAlert,
-  Link as LinkIcon,
-  BookOpen,
-  FolderOpen,
-  Plug,
-  FileDown,
-  type LucideIcon,
-} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 
 export type NavItem = {
   title: string;
@@ -30,31 +19,31 @@ export const navGroups: NavGroup[] = [
   {
     label: "Project",
     items: [
-      { title: "Project Overview", url: "/overview", icon: LayoutDashboard },
-      { title: "Product Hierarchy", url: "/hierarchy", icon: GitBranch },
+      { title: "Project Overview", url: "/overview", icon: icons.overview },
+      { title: "Product Hierarchy", url: "/hierarchy", icon: icons.hierarchy },
     ],
   },
   {
     label: "Analysis",
     items: [
-      { title: "DFMEA Workspace", url: "/workspace", icon: Table2, count: "280" },
-      { title: "AI Analysis", url: "/ai-analysis", icon: Sparkles, count: "23" },
-      { title: "Risk Register", url: "/risk-register", icon: ShieldAlert, count: "14" },
-      { title: "Traceability", url: "/traceability", icon: LinkIcon },
+      { title: "DFMEA Workspace", url: "/workspace", icon: icons.workspace, count: "280" },
+      { title: "AI Analysis", url: "/ai-analysis", icon: icons.aiAnalysis, count: "23" },
+      { title: "Risk Register", url: "/risk-register", icon: icons.riskRegister, count: "14" },
+      { title: "Traceability", url: "/traceability", icon: icons.traceability },
     ],
   },
   {
     label: "Knowledge",
     items: [
-      { title: "Knowledge Base", url: "/knowledge-base", icon: BookOpen },
-      { title: "Document Vault", url: "/documents", icon: FolderOpen },
+      { title: "Knowledge Base", url: "/knowledge-base", icon: icons.knowledgeBase },
+      { title: "Document Vault", url: "/documents", icon: icons.documents },
     ],
   },
   {
     label: "Delivery",
     items: [
-      { title: "Integrations", url: "/integrations", icon: Plug, count: "6" },
-      { title: "Reports", url: "/reports", icon: FileDown },
+      { title: "Integrations", url: "/integrations", icon: icons.integrations, count: "6" },
+      { title: "Reports", url: "/reports", icon: icons.reports },
     ],
   },
 ];

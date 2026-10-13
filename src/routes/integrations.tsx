@@ -3,7 +3,7 @@ import { PageContainer } from "@/components/shared/PageContainer";
 import { INTEGRATIONS } from "@/data/integrations";
 import { QuietStatus, ToneBadge } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button-styles";
-import { RefreshCw, ArrowRight, Plug } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/integrations")({ component: Integrations });
@@ -12,7 +12,7 @@ function StatusPill({ status }: { status: "connected" | "syncing" }) {
   if (status === "syncing") {
     return (
       <ToneBadge tone="info" className="shrink-0 gap-1">
-        <RefreshCw className="size-3 animate-spin" aria-hidden="true" /> Syncing
+        <icons.sync className="size-3 animate-spin" aria-hidden="true" /> Syncing
       </ToneBadge>
     );
   }
@@ -44,13 +44,13 @@ function Integrations() {
           onClick={() => toast.success("Re-syncing all connected systems…")}
           className={buttonClass("primary", { size: "sm" })}
         >
-          <RefreshCw className="size-3.5" aria-hidden="true" /> Sync all
+          <icons.sync className="size-3.5" aria-hidden="true" /> Sync all
         </button>
       }
     >
       <div className="mb-4 flex flex-wrap items-center gap-4 rounded-lg border border-hairline bg-raised p-4">
         <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-          <Plug className="size-[17px]" aria-hidden="true" />
+          <icons.integrations className="size-[17px]" aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1 basis-64">
           <div className="type-label-md text-foreground">
@@ -80,7 +80,7 @@ function Integrations() {
                 {step}
               </span>
               {i < FLOW.length - 1 && (
-                <ArrowRight className="size-4 text-quaternary" aria-hidden="true" />
+                <icons.flow className="size-4 text-quaternary" aria-hidden="true" />
               )}
             </li>
           ))}

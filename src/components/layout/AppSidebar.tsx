@@ -1,18 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type SyntheticEvent } from "react";
 import { toast } from "sonner";
-import {
-  Settings,
-  HelpCircle,
-  X,
-  ExternalLink,
-  BookOpen,
-  Moon,
-  Sun,
-  PanelLeftClose,
-  PanelLeftOpen,
-  type LucideIcon,
-} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme/theme";
 import { buttonClass } from "@/components/ui/button-styles";
@@ -153,7 +143,7 @@ export function AppSidebar({
               rowFocus,
             )}
           >
-            <X className="size-4" aria-hidden="true" />
+            <icons.close className="size-4" aria-hidden="true" />
           </button>
         </div>
 
@@ -232,22 +222,22 @@ export function AppSidebar({
           <div className="hidden lg:block">
             {footerButton(
               expanded ? "Collapse sidebar" : "Expand sidebar",
-              expanded ? PanelLeftClose : PanelLeftOpen,
+              expanded ? icons.sidebarCollapse : icons.sidebarExpand,
               () => onToggleExpanded?.(),
               { "aria-expanded": expanded },
             )}
           </div>
           {footerButton(
             theme === "light" ? "Dark theme" : "Light theme",
-            theme === "light" ? Moon : Sun,
+            theme === "light" ? icons.themeDark : icons.themeLight,
             toggleTheme,
             { "aria-label": theme === "light" ? "Switch to dark theme" : "Switch to light theme" },
           )}
-          {footerButton("Settings", Settings, () => {
+          {footerButton("Settings", icons.settings, () => {
             console.log("[Sidebar] Settings opened");
             setModal("Settings");
           })}
-          {footerButton("Help & Standards", HelpCircle, () => {
+          {footerButton("Help & Standards", icons.help, () => {
             console.log("[Sidebar] Help & Standards opened");
             setModal("Help & Standards");
           })}
@@ -394,7 +384,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
             }}
             className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
           >
-            Contact support <ExternalLink className="size-3" aria-hidden="true" />
+            Contact support <icons.external className="size-3" aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -444,7 +434,10 @@ function HelpModal({ onClose }: { onClose: () => void }) {
                   rowFocus,
                 )}
               >
-                <BookOpen className="mt-0.5 size-4 shrink-0 text-tertiary" aria-hidden="true" />
+                <icons.standard
+                  className="mt-0.5 size-4 shrink-0 text-tertiary"
+                  aria-hidden="true"
+                />
                 <div>
                   <div className="type-label-sm font-mono text-foreground">{id}</div>
                   <div className="type-body-sm text-tertiary">{desc}</div>

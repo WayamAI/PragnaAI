@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { ACTIVITY } from "@/data/misc";
 import { INTEGRATIONS } from "@/data/integrations";
-import { Sparkles, Search, Shield, Plug, X, RefreshCw, ChevronRight } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { zoneTint } from "@/components/dashboard/zoneTint";
 import {
   KpiTile,
@@ -122,7 +123,7 @@ const RPN_BUCKETS = [
 ];
 
 const AGENTS: {
-  icon: typeof Sparkles;
+  icon: LucideIcon;
   name: string;
   status: string;
   tone: Tone;
@@ -130,7 +131,7 @@ const AGENTS: {
   last: string;
 }[] = [
   {
-    icon: Sparkles,
+    icon: icons.hierarchy,
     name: "Structure Analysis Agent",
     status: "Complete",
     tone: "success",
@@ -138,7 +139,7 @@ const AGENTS: {
     last: "Today 09:15",
   },
   {
-    icon: Search,
+    icon: icons.search,
     name: "Knowledge Retrieval Agent",
     status: "Active",
     tone: "success",
@@ -147,7 +148,7 @@ const AGENTS: {
     last: "Running",
   },
   {
-    icon: Shield,
+    icon: icons.riskRegister,
     name: "Risk Scoring Agent",
     status: "Idle",
     tone: "neutral",
@@ -181,7 +182,7 @@ function Overview() {
           className="flex w-full items-center gap-3 rounded-lg border border-hairline bg-container p-3 text-left outline-none transition-colors duration-[150ms] hover:border-strong focus-visible:ring-2 focus-visible:ring-active"
         >
           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-            <Plug className="size-[17px]" aria-hidden="true" />
+            <icons.integrations className="size-[17px]" aria-hidden="true" />
           </span>
           <span className="type-body-md flex min-w-0 items-center gap-2">
             <StatusDot tone="success" />
@@ -193,7 +194,7 @@ function Overview() {
             </span>
           </span>
           <span className="type-label-sm ml-auto inline-flex shrink-0 items-center gap-1 text-foreground">
-            View integrations <ChevronRight className="size-3" aria-hidden="true" />
+            View integrations <icons.chevronRight className="size-3" aria-hidden="true" />
           </span>
         </button>
 
@@ -391,7 +392,7 @@ function Overview() {
               to="/ai-analysis"
               className={buttonClass("ghost", { size: "sm", className: "mt-3 -ml-3" })}
             >
-              Open AI analysis <ChevronRight className="size-3" aria-hidden="true" />
+              Open AI analysis <icons.chevronRight className="size-3" aria-hidden="true" />
             </Link>
           </Panel>
         </div>
@@ -405,7 +406,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
   return (
     <ModalShell
       className="max-w-2xl"
-      icon={<Plug className="size-[17px]" aria-hidden="true" />}
+      icon={<icons.integrations className="size-[17px]" aria-hidden="true" />}
       title="Connected data sources"
       titleExtra={
         <QuietStatus tone="success" className="font-sans">
@@ -424,7 +425,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className={buttonClass("primary", { size: "sm", className: "shrink-0" })}
           >
-            Manage integrations <ChevronRight className="size-3" aria-hidden="true" />
+            Manage integrations <icons.chevronRight className="size-3" aria-hidden="true" />
           </Link>
         </>
       }
@@ -443,7 +444,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
                 <span className="type-label-md truncate text-foreground">{it.name}</span>
                 {it.status === "syncing" ? (
                   <ToneBadge tone="info" className="shrink-0 gap-1">
-                    <RefreshCw className="size-3 animate-spin" aria-hidden="true" /> Syncing
+                    <icons.sync className="size-3 animate-spin" aria-hidden="true" /> Syncing
                   </ToneBadge>
                 ) : (
                   <QuietStatus tone="success" className="shrink-0">
@@ -456,7 +457,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
               </div>
               <div className="type-body-sm mt-1 flex flex-wrap items-center gap-1">
                 <span className="text-tertiary">{it.feeds}</span>
-                <ChevronRight className="size-3 text-quaternary" aria-hidden="true" />
+                <icons.flow className="size-3 text-quaternary" aria-hidden="true" />
                 <span className="font-medium text-foreground">{it.into}</span>
               </div>
             </div>

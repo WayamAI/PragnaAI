@@ -12,6 +12,7 @@ import { KpiTile, Unit } from "@/components/ui/primitives";
 import { navGroups, navItems, findNav } from "@/components/layout/nav";
 import { severityTone } from "@/lib/severity";
 import { THEME_INIT_SCRIPT, THEME_STORAGE_KEY } from "@/components/theme/theme";
+import { icons } from "@/components/icons/iconMap";
 
 const src = join(process.cwd(), "src");
 const read = (p: string) => readFileSync(join(src, p), "utf8");
@@ -212,5 +213,38 @@ describe("risk zones", () => {
         `bg-${tones[band]}-badge`,
       );
     }
+  });
+});
+
+describe("icon map", () => {
+  it("gives every meaning its own icon (only ai and aiAnalysis share one)", () => {
+    const byComponent = new Map<unknown, string[]>();
+    for (const [key, component] of Object.entries(icons)) {
+      byComponent.set(component, [...(byComponent.get(component) ?? []), key]);
+    }
+    const shared = [...byComponent.values()].filter((keys) => keys.length > 1);
+    expect(shared).toEqual([["aiAnalysis", "ai"]]);
+  });
+
+  it("draws every nav item with its icon-map entry", () => {
+    const mapped = new Set<unknown>(Object.values(icons));
+    for (const item of navItems) expect(mapped.has(item.icon)).toBe(true);
+  });
+
+  it("imports lucide-react only in the icon map, ui primitives and the integrations data file", () => {
+    const allowed = ["components/icons/iconMap.ts", "data/integrations.ts"];
+    const walk = (dir: string): string[] =>
+      readdirSync(join(src, dir), { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name).split("\\").join("/")],
+      );
+    const offenders = walk(".")
+      .filter((f) => /\.(ts|tsx)$/.test(f))
+      .filter((f) => !f.startsWith("components/ui/") && !allowed.includes(f))
+      .filter((f) => /^import\s+(?!type\s)[^;]*?from\s+"lucide-react"/m.test(read(f)));
+    expect(offenders).toEqual([]);
+  });
+
+  it("sets one global stroke width of 1.75", () => {
+    expect(read("styles.css")).toMatch(/svg\.lucide\s*\{\s*stroke-width:\s*1\.75;/);
   });
 });

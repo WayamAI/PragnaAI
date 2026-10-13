@@ -6,7 +6,7 @@ import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
 import { buttonClass } from "@/components/ui/button-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
-import { Upload } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/documents")({ component: Docs });
@@ -27,7 +27,7 @@ function Docs() {
         }}
         className="mb-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-strong bg-raised p-8 text-center"
       >
-        <Upload className="size-6 text-tertiary" aria-hidden="true" />
+        <icons.upload className="size-6 text-tertiary" aria-hidden="true" />
         <p className="type-body-md mt-2 text-foreground">
           Drag and drop engineering documents here, or{" "}
           <button

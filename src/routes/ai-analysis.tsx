@@ -6,7 +6,7 @@ import { KpiTile } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button-styles";
 import { selectClass } from "@/components/ui/input-styles";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 
 export const Route = createFileRoute("/ai-analysis")({ component: AI });
 
@@ -73,7 +73,7 @@ function AI() {
                 </div>
               </div>
               <div className="mt-3 flex items-start gap-2">
-                <Sparkles className="mt-0.5 size-4 shrink-0 text-tertiary" aria-hidden="true" />
+                <icons.ai className="mt-0.5 size-4 shrink-0 text-tertiary" aria-hidden="true" />
                 <h3 className="type-label-md min-w-0 text-foreground">
                   <span className="mr-2 font-mono font-normal text-tertiary">{s.id}</span>
                   {s.title}

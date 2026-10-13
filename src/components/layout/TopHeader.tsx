@@ -1,18 +1,6 @@
 import { useId, useState } from "react";
 import { useRouter, useRouterState } from "@tanstack/react-router";
-import {
-  Bell,
-  HelpCircle,
-  ChevronDown,
-  X,
-  AlertTriangle,
-  Sparkles,
-  FileDown,
-  BookOpen,
-  ExternalLink,
-  Menu,
-  LogOut,
-} from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { CURRENT_USER } from "@/data/team";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
 import { logout } from "@/lib/auth";
@@ -25,22 +13,22 @@ type Panel = "notifications" | "help" | null;
 
 const NOTIFICATIONS = [
   {
-    icon: AlertTriangle,
+    icon: icons.alert,
     tone: "text-error",
     title: "7 mitigations overdue",
     detail: "Oldest: MIT-0033-A (BMS watchdog validation) — 55 days late.",
     time: "just now",
   },
   {
-    icon: Sparkles,
+    icon: icons.ai,
     tone: "text-tertiary",
     title: "23 AI suggestions pending review",
     detail: "New batch generated for Battery Pack and Signal Processing.",
     time: "2h ago",
   },
   {
-    icon: FileDown,
-    tone: "text-success",
+    icon: icons.reports,
+    tone: "text-tertiary",
     title: "Report ready to download",
     detail: "Risk Summary Report (PDF) finished generating.",
     time: "5h ago",
@@ -49,22 +37,22 @@ const NOTIFICATIONS = [
 
 const HELP_LINKS = [
   {
-    icon: BookOpen,
+    icon: icons.standard,
     title: "DFMEA Quick Start Guide",
     detail: "How to add failure modes, score S/O/D, and approve rows.",
   },
   {
-    icon: BookOpen,
+    icon: icons.standard,
     title: "ISO 14971 — Risk Management",
     detail: "The core medical-device risk management standard.",
   },
   {
-    icon: BookOpen,
+    icon: icons.standard,
     title: "IEC 62304 — Software Life Cycle",
     detail: "Software failure modes and safety classification.",
   },
   {
-    icon: BookOpen,
+    icon: icons.standard,
     title: "How RPN is calculated",
     detail: "RPN = Severity × Occurrence × Detection.",
   },
@@ -91,7 +79,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
     <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-hairline bg-page px-4 sm:px-5">
       <div className="flex min-w-0 items-center gap-3">
         <button onClick={onMenuClick} aria-label="Open menu" className={`${iconButton} lg:hidden`}>
-          <Menu className="size-4" aria-hidden="true" />
+          <icons.menu className="size-4" aria-hidden="true" />
         </button>
         <div className="hidden min-w-0 sm:block">
           <div className="type-eyebrow truncate text-quaternary">{nav?.group ?? "PragnaAI"}</div>
@@ -110,7 +98,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
           <span>Rev B</span>
           <span className="text-quaternary">|</span>
           <span className="tabular">DFMEA-2025-001</span>
-          <ChevronDown className="size-3 text-quaternary" aria-hidden="true" />
+          <icons.chevronDown className="size-3 text-quaternary" aria-hidden="true" />
         </button>
       </div>
       <div className="flex shrink-0 items-center gap-2">
@@ -122,7 +110,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             aria-haspopup="dialog"
             aria-expanded={panel === "notifications"}
           >
-            <Bell className="size-4" aria-hidden="true" />
+            <icons.notifications className="size-4" aria-hidden="true" />
             <span className="type-caption tabular absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-error-surface text-error">
               3
             </span>
@@ -176,7 +164,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             aria-haspopup="dialog"
             aria-expanded={panel === "help"}
           >
-            <HelpCircle className="size-4" aria-hidden="true" />
+            <icons.help className="size-4" aria-hidden="true" />
           </button>
           {panel === "help" && (
             <Dropdown
@@ -190,7 +178,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
                 >
-                  Open documentation <ExternalLink className="size-3" aria-hidden="true" />
+                  Open documentation <icons.external className="size-3" aria-hidden="true" />
                 </button>
               }
             >
@@ -222,7 +210,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
           MediCore Systems
         </span>
         <button onClick={handleLogout} aria-label="Log out" title="Log out" className={iconButton}>
-          <LogOut className="size-4" aria-hidden="true" />
+          <icons.logout className="size-4" aria-hidden="true" />
         </button>
       </div>
     </header>
@@ -261,7 +249,7 @@ function Dropdown({
             className={buttonClass("icon", { className: "size-7" })}
             aria-label="Close"
           >
-            <X className="size-3.5" aria-hidden="true" />
+            <icons.close className="size-3.5" aria-hidden="true" />
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">{children}</div>

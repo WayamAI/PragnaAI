@@ -1,10 +1,10 @@
-import { Moon, Sun } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { useTheme } from "./theme";
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
   const toDark = theme === "light";
-  const Icon = toDark ? Moon : Sun;
+  const Icon = toDark ? icons.themeDark : icons.themeLight;
   return (
     <button
       type="button"

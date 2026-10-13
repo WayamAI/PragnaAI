@@ -10,7 +10,7 @@ import { buttonClass } from "@/components/ui/button-styles";
 import { inputClass, selectClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
-import { Plus, Sparkles, Download, CheckCircle2, X } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/workspace")({ component: Workspace });
@@ -82,7 +82,7 @@ function Workspace() {
             }}
             className={buttonClass("primary", { size: "sm" })}
           >
-            <Plus className="size-3.5" aria-hidden="true" /> Add failure mode
+            <icons.add className="size-3.5" aria-hidden="true" /> Add failure mode
           </button>
           <button
             type="button"
@@ -92,7 +92,7 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <Sparkles className="size-3.5" aria-hidden="true" /> Suggest for this component
+            <icons.ai className="size-3.5" aria-hidden="true" /> Suggest for this component
           </button>
           <button
             type="button"
@@ -102,7 +102,7 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <Download className="size-3.5" aria-hidden="true" /> Export
+            <icons.export className="size-3.5" aria-hidden="true" /> Export
           </button>
           <button
             type="button"
@@ -112,7 +112,7 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <CheckCircle2 className="size-3.5" aria-hidden="true" /> Approve all reviewed
+            <icons.approve className="size-3.5" aria-hidden="true" /> Approve all reviewed
           </button>
         </>
       }
@@ -281,7 +281,7 @@ function Workspace() {
                 className={buttonClass("icon", { className: "shrink-0" })}
                 aria-label="Close"
               >
-                <X className="size-4" aria-hidden="true" />
+                <icons.close className="size-4" aria-hidden="true" />
               </button>
             </div>
             <div className="flex flex-col gap-4 p-4">

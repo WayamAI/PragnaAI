@@ -1,6 +1,6 @@
 # REDESIGN_REPORT.md
 
-Chronus-style UI redesign of PragnaAI (DFMEA platform, TanStack Start + Tailwind v4). Baseline: `8257bbb` ("baseline: pre-redesign"). Head at time of writing: `a29368e` plus the Step 6 commit that adds this file.
+Chronus-style UI redesign of PragnaAI (DFMEA platform, TanStack Start + Tailwind v4). Baseline: `8257bbb` ("baseline: pre-redesign"). Head at time of writing: the Step 7 commit (see the table).
 
 Claims were checked against git (`git diff 8257bbb HEAD`) and in a headless browser (Playwright, Chromium) against a second dev server running the baseline commit. Where a claim could not be verified it says so.
 
@@ -31,8 +31,8 @@ Claims were checked against git (`git diff 8257bbb HEAD`) and in a headless brow
 | a4f1175 | ui: step 4l 404 and error page |
 | bc50d4f | ui: fab clearance and table fit |
 | a29368e | ui: step 5 wording, a11y and overlay restyle |
-
-Step 6 (this report and the final QA fixes) and Step 7 (icons) follow as their own commits.
+| 8c6a75a | ui: step 6 final QA and REDESIGN_REPORT.md |
+| (Step 7) | ui: step 7 icons (one icon map, header icon, greyscale) |
 
 ## Diff stat against 8257bbb, by area
 
@@ -58,6 +58,7 @@ Step 6 (this report and the final QA fixes) and Step 7 (icons) follow as their o
 - `src/components/ui/primitives.tsx`, `modal.tsx`, `button-styles.ts`, `input-styles.ts`, `table-styles.ts`, `tone-styles.ts`
 - `src/components/dashboard/chartTheme.ts`, `zoneTint.ts`
 - `src/hooks/use-overlay-dismiss.ts`
+- `src/components/icons/iconMap.ts`
 - `src/lib/severity.ts`
 - `public/brand/wayam-mark-light.svg`, `wayam-mark-dark.svg`, `wayam-wordmark-light.svg`, `wayam-wordmark-dark.svg`
 - `REDESIGN_REPORT.md`
@@ -87,6 +88,15 @@ Added (all approved):
 - `@fontsource/michroma`
 
 No other dependency changes. The old font packages (`@fontsource/inter`, `ibm-plex-sans`, `ibm-plex-mono`) stay installed but are no longer imported.
+
+## Icons (Step 7)
+
+- **One map:** `src/components/icons/iconMap.ts` is the only place app code imports icons from `lucide-react` (besides the unused `ui/*` files and `src/data/integrations.ts`, a do-not-touch data file that holds the six vendor icons). Everything else uses `icons.<meaning>`; `contract.test.ts` enforces this.
+- **Stroke 1.75** globally via `svg.lucide` in `styles.css`; verified at runtime on every icon (35 distinct icons on 10 pages plus the notification, help and chat overlays).
+- **Greyscale:** every icon in rows, buttons, nav and overlays is a neutral token. The only coloured icon is the overdue-mitigations alert in the notifications tray (status, `text-error`). Notification icons for AI suggestions and the ready report were violet and green and are now neutral.
+- **Page header icon = sidebar icon:** `PageContainer` looks up the current route in `nav.ts` and passes the nav item's icon to `PageHeader`, which draws it in the same circular puck. Verified on all 10 pages. The 404, login and error pages have no header icon.
+- **One icon, one meaning:** the standards/guide rows (Help modal, Help dropdown) use `standard` (document) instead of the book, which is reserved for the Knowledge Base. The overview agent rows use hierarchy, search and risk icons rather than a second Sparkles. `ai` and `aiAnalysis` are the same icon on purpose (the page is the AI queue); a test asserts no other two keys share a component.
+- **Sizes by role:** 17px nav and header pucks, 16px controls, 14px inline button icons, 12px chevrons and badge icons.
 
 ## Design system pieces
 
@@ -126,6 +136,7 @@ Added in Step 5 (explicit asks plus the minimum needed to make them work; flagge
 11. `PageBody` has extra bottom padding so the last content clears the floating assistant button.
 12. Wording (labels and placeholders only, toast and console strings untouched): "Add failure mode", "Suggest for this component" and "Analyze this component" (the "AI:" prefix is dropped, the Sparkles icon carries it), "Edit and accept", "Flag for team", "Matrix view"/"Chain view", "Use in DFMEA workspace", "View full record", "Show residual RPN", "browse", "Uploaded by", "How Your DFMEA Is Assembled", "Failure Modes · First 6 of 18", "High (RPN 100–199)", placeholders without trailing dots.
 13. Reports: recent report file names get zero-width break points after underscores (display only) so they wrap cleanly.
+14. Step 7 (visual only): every page header shows its sidebar icon in a circular puck, and notification icons are neutral except the overdue alert.
 
 Not changed: every toast string, every `console.log`, route list, filter logic, data.
 
@@ -162,9 +173,9 @@ Not changed: every toast string, every `console.log`, route list, filter logic, 
 
 ## Verification
 
-| Check | Baseline `8257bbb` | After Step 5 |
+| Check | Baseline `8257bbb` | After Step 7 |
 |---|---|---|
-| `npm test` | no test script | 16/16 pass |
+| `npm test` | no test script | 20/20 pass (16 before Step 7) |
 | `npm run build` | OK | OK |
 | `npm run lint` | 525 problems (517 errors, 8 warnings) | 170 problems |
 | `tsc --noEmit` | not run | clean |
@@ -175,7 +186,7 @@ Per-control click recorder (every `<button>` in `<main>` clicked on a fresh page
 
 Overlay checks: Settings, Help, integrations popup and chat all expose a labelled `role="dialog"` with `aria-modal`, close on Escape, scrim and their close/cancel buttons, and the notification and help dropdowns close on Escape and their close button. Chat accepts a typed message and returns the canned reply. Settings switches toggle by click and by label.
 
-Screenshots: every page, light and dark, 1440 and 390, plus the workspace drawer, the traceability chain view, the 404, the error page and every overlay, were viewed after Step 5.
+Screenshots: every page, light and dark, 1440 and 390, plus the workspace drawer, the traceability chain view, the 404, the error page and every overlay, were viewed after Step 5 and again after Step 7 (80 images each time).
 
 ## Questions for reviewer
 

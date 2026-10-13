@@ -25,5 +25,12 @@ export function PageHeader({
 
 /** Scrolling page body. The document never scrolls; this region does. */
 export function PageBody({ children }: { children: ReactNode }) {
-  return <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">{children}</div>;
+  return (
+    <div
+      data-scroll-restoration-id="page-body"
+      className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5"
+    >
+      {children}
+    </div>
+  );
 }

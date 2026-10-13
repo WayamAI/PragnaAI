@@ -124,8 +124,13 @@ function Reports() {
             <tbody>
               {RECENT_REPORTS.map(([name, t, , by, d]) => (
                 <tr key={name as string} className={tableStyles.tr()}>
-                  <td className={tableStyles.td({ primary: true, className: "font-mono" })}>
-                    {name}
+                  <td
+                    className={tableStyles.td({
+                      primary: true,
+                      className: "max-w-[220px] font-mono !whitespace-normal break-words",
+                    })}
+                  >
+                    {(name as string).replace(/_/g, "_\u200b")}
                   </td>
                   <td className={tableStyles.td({ className: "text-tertiary" })}>{t}</td>
                   <td className={tableStyles.td()}>

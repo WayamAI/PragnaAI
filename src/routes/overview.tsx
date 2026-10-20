@@ -227,7 +227,7 @@ function Overview() {
               on hover). Colour marks the risk zone; the top-right zone is highest priority.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full border-separate border-spacing-1 text-center">
+              <table className="w-full border-collapse text-center">
                 <thead>
                   <tr>
                     <th className="type-eyebrow pb-1 text-left text-quaternary" colSpan={2}>
@@ -256,7 +256,7 @@ function Overview() {
                             key={ci}
                             title={`${row.tier} (${row.row}) × O${ci + 1}: ${v} failure modes · ${z.band} risk zone · avg Detection D≈${row.avgD.toFixed(1)}`}
                             style={{ background: z.bg, color: z.text }}
-                            className="type-label-sm tabular h-11 w-14 rounded-md"
+                            className="type-label-sm tabular h-11 w-14 border border-container"
                           >
                             {v}
                           </td>

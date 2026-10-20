@@ -112,8 +112,8 @@ function RiskRegister() {
                     className={tableStyles.td({
                       primary: true,
                       className: cn(
-                        "border-l-2 font-mono",
-                        critical ? "border-l-error" : "border-l-transparent",
+                        "font-mono",
+                        critical && "shadow-[inset_2px_0_0_var(--feedback-error-content)]",
                       ),
                     })}
                   >

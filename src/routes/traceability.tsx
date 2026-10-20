@@ -108,8 +108,8 @@ function Traceability() {
                     Requirement
                   </th>
                   {FM_COLUMNS.map(({ id, label }) => (
-                    <th key={id} className="w-24 px-1 pt-2 pb-2 align-bottom">
-                      <div className="mx-auto flex min-h-14 flex-col justify-end rounded-md bg-raised px-1 py-2 text-center">
+                    <th key={id} className="w-24 border-l border-hairline px-1 pt-2 pb-2 align-top">
+                      <div className="mx-auto flex h-[72px] flex-col justify-start rounded-md bg-raised px-1 py-2 text-center">
                         <span className="type-caption font-mono text-foreground">{id}</span>
                         <span className="type-caption mt-1 text-[10px] leading-tight font-normal text-tertiary">
                           {shortLabel(label)}
@@ -129,7 +129,7 @@ function Traceability() {
                     {FM_COLUMNS.map((_, fi) => {
                       const st = cellState(ri, fi);
                       return (
-                        <td key={fi} className="p-0.5">
+                        <td key={fi} className="border-l border-hairline p-0.5">
                           <div className={cn("mx-auto h-5 w-6 rounded", COLOR[st])} />
                         </td>
                       );

@@ -115,10 +115,10 @@ const RINGS = [
 ];
 
 const RPN_BUCKETS = [
-  { range: "0-49", count: 98, fill: "var(--text-quaternary)" },
-  { range: "50-99", count: 89, fill: "var(--text-quaternary)" },
-  { range: "100-149", count: 52, fill: "var(--text-quaternary)" },
-  { range: "150-199", count: 27, fill: "var(--text-quaternary)" },
+  { range: "0-49", count: 98, fill: "var(--analytics-series-1)" },
+  { range: "50-99", count: 89, fill: "var(--analytics-series-1)" },
+  { range: "100-149", count: 52, fill: "var(--analytics-series-1)" },
+  { range: "150-199", count: 27, fill: "var(--analytics-series-1)" },
   { range: "200+", count: 14, fill: "var(--feedback-error-content)" },
 ];
 
@@ -314,7 +314,7 @@ function Overview() {
                         stroke="none"
                         isAnimationActive={false}
                       >
-                        <Cell fill="var(--action-primary-default)" />
+                        <Cell fill="var(--analytics-series-1)" />
                         <Cell fill="var(--surface-raised-x2)" />
                       </Pie>
                     </PieChart>

@@ -48,7 +48,7 @@ function Integrations() {
         </button>
       }
     >
-      <div className="mb-4 flex flex-wrap items-center gap-4 rounded-lg border border-hairline bg-raised p-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-hairline bg-container p-3">
         <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
           <icons.integrations className="size-[17px]" aria-hidden="true" />
         </span>

@@ -190,7 +190,7 @@ function Workspace() {
                   <td
                     className={tableStyles.td({
                       truncate: true,
-                      className: cn("max-w-[180px]", quiet),
+                      className: cn("max-w-[140px]", quiet),
                     })}
                   >
                     {r.function}
@@ -207,7 +207,7 @@ function Workspace() {
                   <td
                     className={tableStyles.td({
                       truncate: true,
-                      className: cn("max-w-[180px]", quiet),
+                      className: cn("max-w-[140px]", quiet),
                     })}
                   >
                     {r.effectPatient}
@@ -236,7 +236,7 @@ function Workspace() {
                   <td
                     className={tableStyles.td({
                       truncate: true,
-                      className: cn("max-w-[220px]", quiet),
+                      className: cn("max-w-[160px]", quiet),
                     })}
                   >
                     {r.mitigation}

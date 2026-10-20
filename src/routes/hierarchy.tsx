@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { HIERARCHY, BATTERY_FUNCTIONS, type HierarchyNode } from "@/data/hierarchy";
 import { StatusDot, StatusBadge } from "@/components/shared/StatusBadge";
@@ -12,6 +12,7 @@ import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 import { icons } from "@/components/icons/iconMap";
 import { toast } from "sonner";
+import { ancestorNames, initialOpen, toggleOpen, visibleRows } from "@/lib/tree";
 
 export const Route = createFileRoute("/hierarchy")({ component: HierarchyPage });
 
@@ -23,60 +24,115 @@ const STATS: { label: string; value: string; valueClassName?: string }[] = [
   { label: "RPN range", value: "18-216" },
 ];
 
-function TreeNode({
-  node,
-  depth,
+/** WAI-ARIA tree: click selects (and opens), chevron toggles, arrows move, one tab stop. */
+function DeviceTree({
   selectedId,
   onSelect,
 }: {
-  node: HierarchyNode;
-  depth: number;
   selectedId: string;
   onSelect: (n: HierarchyNode) => void;
 }) {
-  const [open, setOpen] = useState(depth < 2 || node.id === "power" || node.id === "battery-pack");
-  const hasChildren = !!node.children?.length;
-  const isSel = node.id === selectedId;
+  const [open, setOpen] = useState(() => initialOpen(HIERARCHY));
+  const [focusId, setFocusId] = useState(selectedId);
+  const itemRefs = useRef(new Map<string, HTMLDivElement>());
+  const rows = visibleRows(HIERARCHY, open);
+
+  const toggle = (id: string, to?: boolean) => setOpen((cur) => toggleOpen(cur, id, to));
+  const focusRow = (id: string) => {
+    setFocusId(id);
+    itemRefs.current.get(id)?.focus();
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>, i: number) => {
+    const { node, parentId } = rows[i];
+    const hasChildren = !!node.children?.length;
+    const isOpen = open.has(node.id);
+    switch (e.key) {
+      case "ArrowDown":
+        if (rows[i + 1]) focusRow(rows[i + 1].node.id);
+        break;
+      case "ArrowUp":
+        if (rows[i - 1]) focusRow(rows[i - 1].node.id);
+        break;
+      case "Home":
+        focusRow(rows[0].node.id);
+        break;
+      case "End":
+        focusRow(rows[rows.length - 1].node.id);
+        break;
+      case "ArrowRight":
+        if (hasChildren && !isOpen) toggle(node.id, true);
+        else if (hasChildren) focusRow(rows[i + 1].node.id);
+        break;
+      case "ArrowLeft":
+        if (hasChildren && isOpen) toggle(node.id, false);
+        else if (parentId) focusRow(parentId);
+        break;
+      case "Enter":
+      case " ":
+        onSelect(node);
+        if (hasChildren && !isOpen) toggle(node.id, true);
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
+  };
+
   return (
-    <div>
-      <button
-        type="button"
-        onClick={() => {
-          onSelect(node);
-          if (hasChildren) setOpen(!open);
-        }}
-        aria-current={isSel ? "true" : undefined}
-        aria-expanded={hasChildren ? open : undefined}
-        className={cn(
-          "type-body-md flex min-h-8 w-full items-center gap-1.5 rounded-md py-1 pr-2 text-left outline-none transition-colors duration-[150ms] hover:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active",
-          isSel ? "bg-raised-2 font-medium text-foreground" : "text-secondary-foreground",
-        )}
-        style={{ paddingLeft: 6 + depth * 14 }}
-      >
-        {hasChildren ? (
-          open ? (
-            <icons.chevronDown className="size-3 shrink-0 text-quaternary" aria-hidden="true" />
-          ) : (
-            <icons.chevronRight className="size-3 shrink-0 text-quaternary" aria-hidden="true" />
-          )
-        ) : (
-          <span className="w-3 shrink-0" />
-        )}
-        <StatusDot status={node.status} />
-        <span className="flex-1 truncate">{node.name}</span>
-        <span className="type-caption shrink-0 font-normal text-quaternary">{node.kind}</span>
-      </button>
-      {open &&
-        hasChildren &&
-        node.children!.map((c) => (
-          <TreeNode
-            key={c.id}
-            node={c}
-            depth={depth + 1}
-            selectedId={selectedId}
-            onSelect={onSelect}
-          />
-        ))}
+    <div role="tree" aria-label="Device tree">
+      {rows.map(({ node, depth }, i) => {
+        const hasChildren = !!node.children?.length;
+        const isOpen = open.has(node.id);
+        const isSel = node.id === selectedId;
+        return (
+          <div
+            key={node.id}
+            ref={(el) => {
+              if (el) itemRefs.current.set(node.id, el);
+              else itemRefs.current.delete(node.id);
+            }}
+            role="treeitem"
+            aria-level={depth + 1}
+            aria-selected={isSel}
+            aria-expanded={hasChildren ? isOpen : undefined}
+            tabIndex={node.id === focusId ? 0 : -1}
+            onFocus={() => setFocusId(node.id)}
+            onKeyDown={(e) => onKeyDown(e, i)}
+            onClick={() => {
+              onSelect(node);
+              if (hasChildren && !isOpen) toggle(node.id, true);
+            }}
+            className={cn(
+              "type-body-md flex min-h-8 w-full cursor-pointer items-center gap-1.5 rounded-md py-1 pr-2 text-left outline-none transition-colors duration-[150ms] hover:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active",
+              isSel ? "bg-raised-2 font-medium text-foreground" : "text-secondary-foreground",
+            )}
+            style={{ paddingLeft: 6 + depth * 14 }}
+          >
+            {hasChildren ? (
+              <span
+                aria-hidden="true"
+                className="grid size-4 shrink-0 place-items-center rounded-sm hover:bg-raised-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggle(node.id);
+                }}
+              >
+                {isOpen ? (
+                  <icons.chevronDown className="size-3 text-quaternary" />
+                ) : (
+                  <icons.chevronRight className="size-3 text-quaternary" />
+                )}
+              </span>
+            ) : (
+              <span className="size-4 shrink-0" />
+            )}
+            <StatusDot status={node.status} />
+            <span className="flex-1 truncate">{node.name}</span>
+            <span className="type-caption shrink-0 font-normal text-quaternary">{node.kind}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -101,7 +157,7 @@ function HierarchyPage() {
             className={inputClass("sm", "mb-3")}
           />
           <div className="max-h-[70vh] overflow-y-auto">
-            <TreeNode node={HIERARCHY} depth={0} selectedId={sel.id} onSelect={setSel} />
+            <DeviceTree selectedId={sel.id} onSelect={setSel} />
           </div>
         </Panel>
 
@@ -109,7 +165,10 @@ function HierarchyPage() {
           <div className="mb-4">
             <h2 className="type-display-lg text-foreground">{sel.name}</h2>
             <p className="type-body-md mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-tertiary">
-              <span>{sel.kind} · Power Management System · DFMEA Status:</span>
+              <span>
+                {sel.kind} · {(ancestorNames(HIERARCHY, sel.id) ?? []).join(" › ") || "Top level"} ·
+                DFMEA status:
+              </span>
               <StatusBadge status={sel.status} />
             </p>
           </div>
@@ -128,7 +187,9 @@ function HierarchyPage() {
             ))}
           </div>
 
-          <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">Identified functions</h3>
+          <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">
+            Identified functions · Battery Pack
+          </h3>
           <ul className="type-body-md mb-6 divide-y divide-hairline rounded-lg border border-hairline bg-raised px-3">
             {BATTERY_FUNCTIONS.map((f) => (
               <li key={f.id} className="flex gap-3 py-2 text-secondary-foreground">
@@ -138,7 +199,9 @@ function HierarchyPage() {
             ))}
           </ul>
 
-          <h3 className="type-eyebrow mb-2 text-quaternary">Failure modes · first 6 of 18</h3>
+          <h3 className="type-eyebrow mb-2 text-quaternary">
+            Failure modes · Battery Pack, first 6 of 18
+          </h3>
           <div className={tableStyles.wrap}>
             <table className={tableStyles.table}>
               <thead>

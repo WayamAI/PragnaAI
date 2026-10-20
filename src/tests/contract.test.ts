@@ -306,3 +306,46 @@ describe("copy", () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe("device tree", () => {
+  it("opens the first two levels and the Battery Pack branch, then expands and collapses", async () => {
+    const { HIERARCHY } = await import("@/data/hierarchy");
+    const { initialOpen, visibleRows, toggleOpen } = await import("@/lib/tree");
+    const open = initialOpen(HIERARCHY);
+    const ids = () => visibleRows(HIERARCHY, open).map((r) => r.node.id);
+    expect(open.has("cg3000") && open.has("power") && open.has("battery-pack")).toBe(true);
+    expect(ids()).toContain("li-ion");
+    expect(ids()).not.toContain("photodiode");
+
+    const expanded = toggleOpen(open, "spo2");
+    expect(visibleRows(HIERARCHY, expanded).map((r) => r.node.id)).toContain("photodiode");
+    expect(open.has("spo2")).toBe(false); // input untouched
+
+    const collapsed = toggleOpen(expanded, "spo2");
+    expect(visibleRows(HIERARCHY, collapsed).map((r) => r.node.id)).not.toContain("photodiode");
+    expect(visibleRows(HIERARCHY, toggleOpen(open, "cg3000", false))).toHaveLength(1);
+  });
+
+  it("derives the path from the data, not a hardcoded system name", async () => {
+    const { HIERARCHY } = await import("@/data/hierarchy");
+    const { ancestorNames, visibleRows, initialOpen } = await import("@/lib/tree");
+    expect(ancestorNames(HIERARCHY, "battery-pack")).toEqual([
+      "CardioGuard 3000",
+      "Power Management System",
+    ]);
+    expect(ancestorNames(HIERARCHY, "photodiode")).toEqual([
+      "CardioGuard 3000",
+      "Patient Interface System",
+      "SpO2 Module",
+    ]);
+    const rows = visibleRows(HIERARCHY, initialOpen(HIERARCHY));
+    expect(rows.find((r) => r.node.id === "bms")?.parentId).toBe("battery-pack");
+  });
+
+  it("marks the tree up with ARIA roles", () => {
+    const page = read("routes/hierarchy.tsx");
+    expect(page).toContain('role="tree"');
+    expect(page).toContain('role="treeitem"');
+    expect(page).toContain("aria-expanded");
+  });
+});

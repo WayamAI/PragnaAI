@@ -5,18 +5,30 @@ import { FAILURE_MODES } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
-import { KpiTile } from "@/components/ui/primitives";
-import { inputClass, selectClass } from "@/components/ui/input-styles";
+import { KpiTile, SearchInput } from "@/components/ui/primitives";
+import type { LucideIcon } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
+import { selectClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/risk-register")({ component: RiskRegister });
 
-const KPI: { label: string; value: string; valueClassName?: string }[] = [
-  { label: "Total risks", value: "280" },
-  { label: "Critical (S≥9 or RPN≥200)", value: "14", valueClassName: "text-error" },
-  { label: "High (RPN 100-199)", value: "47", valueClassName: "text-warning" },
-  { label: "Mitigations overdue", value: "7" },
+const KPI: { label: string; icon: LucideIcon; value: string; valueClassName?: string }[] = [
+  { label: "Total risks", icon: icons.riskRegister, value: "280" },
+  {
+    label: "Critical (S≥9 or RPN≥200)",
+    icon: icons.alert,
+    value: "14",
+    valueClassName: "text-error",
+  },
+  {
+    label: "High (RPN 100-199)",
+    icon: icons.severity,
+    value: "47",
+    valueClassName: "text-warning",
+  },
+  { label: "Mitigations overdue", icon: icons.overdue, value: "7" },
 ];
 
 // Low-value columns go quiet (tertiary text) but stay in the table.
@@ -37,6 +49,7 @@ function RiskRegister() {
           <KpiTile
             key={k.label}
             label={k.label}
+            icon={k.icon}
             value={k.value}
             valueClassName={k.valueClassName}
           />
@@ -44,10 +57,10 @@ function RiskRegister() {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <input
+        <SearchInput
           placeholder="Search risks"
           aria-label="Search risks"
-          className={inputClass("sm", "min-w-[180px] flex-1")}
+          wrapperClassName="min-w-[180px] flex-1"
         />
         <select aria-label="Level" className={selectClass}>
           <option>Level: All</option>

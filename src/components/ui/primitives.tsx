@@ -1,7 +1,9 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Mark } from "@/components/icons/Mark";
-import { marks } from "@/components/icons/iconMap";
+import { icons, marks } from "@/components/icons/iconMap";
+import { inputClass } from "./input-styles";
 import type { Tone } from "@/lib/severity";
 import { toneBadge, toneDot, toneText } from "./tone-styles";
 
@@ -18,6 +20,7 @@ export const Unit = ({ children, className }: { children: ReactNode; className?:
 /** Content card: 8px radius, hairline border, no shadow, optional eyebrow header. */
 export const Panel = ({
   title,
+  icon: Icon,
   action,
   padded = true,
   className,
@@ -25,6 +28,8 @@ export const Panel = ({
   children,
 }: {
   title?: ReactNode;
+  /** Greyscale 16px icon before the title. */
+  icon?: LucideIcon;
   action?: ReactNode;
   padded?: boolean;
   className?: string;
@@ -39,7 +44,10 @@ export const Panel = ({
   >
     {title && (
       <header className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-hairline px-4">
-        <h3 className="type-eyebrow truncate text-quaternary">{title}</h3>
+        <h3 className="type-eyebrow flex min-w-0 items-center gap-2 text-quaternary">
+          {Icon && <Icon className="size-4 shrink-0 text-tertiary" aria-hidden="true" />}
+          <span className="truncate">{title}</span>
+        </h3>
         {action && <div className="shrink-0">{action}</div>}
       </header>
     )}
@@ -52,6 +60,7 @@ export const Panel = ({
 /** KPI tile: eyebrow label, Michroma tabular value, signed delta and hint. */
 export const KpiTile = ({
   label,
+  icon: Icon,
   value,
   unit,
   delta,
@@ -62,6 +71,8 @@ export const KpiTile = ({
   valueClassName,
 }: {
   label: string;
+  /** Top-right 16px icon, tertiary. */
+  icon?: LucideIcon;
   value: ReactNode;
   unit?: string;
   delta?: string;
@@ -73,7 +84,10 @@ export const KpiTile = ({
 }) => {
   const body = (
     <>
-      <span className="type-eyebrow text-quaternary">{label}</span>
+      <span className="flex items-start justify-between gap-2">
+        <span className="type-eyebrow text-quaternary">{label}</span>
+        {Icon && <Icon className="size-4 shrink-0 text-tertiary" aria-hidden="true" />}
+      </span>
       <span
         className={cn(
           "type-display-xl sm:type-display-2xl tabular text-foreground",
@@ -178,5 +192,20 @@ export const EmptyState = ({
     <Mark id={marks.empty} size={72} className="mb-1" />
     <p className="type-body-md text-tertiary">{title}</p>
     {detail && <p className="type-body-sm text-quaternary">{detail}</p>}
+  </div>
+);
+
+/** Toolbar search field: the pill input with a leading search icon. */
+export const SearchInput = ({
+  wrapperClassName,
+  className,
+  ...props
+}: InputHTMLAttributes<HTMLInputElement> & { wrapperClassName?: string }) => (
+  <div className={cn("relative", wrapperClassName)}>
+    <icons.search
+      className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-quaternary"
+      aria-hidden="true"
+    />
+    <input {...props} className={inputClass("sm", cn("pl-9", className))} />
   </div>
 );

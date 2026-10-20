@@ -5,6 +5,7 @@ import { login } from "@/lib/auth";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { buttonClass } from "@/components/ui/button-styles";
 import { inputClass, labelClass } from "@/components/ui/input-styles";
+import { icons } from "@/components/icons/iconMap";
 
 const brand = (file: string) => `${import.meta.env.BASE_URL}brand/${file}`;
 
@@ -132,6 +133,7 @@ function LoginPage() {
                 disabled={submitting}
                 className={buttonClass("primary", { size: "lg", className: "mt-1 w-full" })}
               >
+                <icons.signIn className="size-4" aria-hidden="true" />
                 Sign in
               </button>
             </form>

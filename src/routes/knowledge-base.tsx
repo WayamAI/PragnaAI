@@ -124,7 +124,8 @@ function KB() {
                     }}
                     className={buttonClass("secondary", { size: "sm" })}
                   >
-                    Use in DFMEA workspace
+                    <icons.workspace className="size-3.5" aria-hidden="true" /> Use in DFMEA
+                    workspace
                   </button>
                   <button
                     type="button"
@@ -134,7 +135,7 @@ function KB() {
                     }}
                     className={buttonClass("ghost", { size: "sm" })}
                   >
-                    View full record
+                    <icons.view className="size-3.5" aria-hidden="true" /> View full record
                   </button>
                 </div>
               </section>
@@ -142,7 +143,7 @@ function KB() {
           </div>
         </div>
 
-        <Panel title="Knowledge Base Index" className={cn("lg:self-start")}>
+        <Panel title="Knowledge Base Index" icon={icons.database} className={cn("lg:self-start")}>
           <dl className="type-body-md divide-y divide-hairline">
             {INDEX.map(([l, v]) => (
               <div key={l} className="flex justify-between gap-3 py-2 first:pt-0">

@@ -4,6 +4,7 @@ import { PageContainer } from "@/components/shared/PageContainer";
 import { REQUIREMENTS } from "@/data/misc";
 import { FAILURE_MODES } from "@/data/dfmea";
 import { Panel, ToneBadge } from "@/components/ui/primitives";
+import { icons } from "@/components/icons/iconMap";
 import { buttonClass } from "@/components/ui/button-styles";
 import { selectClass } from "@/components/ui/input-styles";
 import { cn } from "@/lib/utils";
@@ -92,6 +93,7 @@ function Traceability() {
       {view === "matrix" && (
         <Panel
           title="Coverage Matrix"
+          icon={icons.traceability}
           action={<ToneBadge tone="error">67 gaps</ToneBadge>}
           padded={false}
         >
@@ -143,7 +145,7 @@ function Traceability() {
       )}
 
       {view === "chain" && (
-        <Panel title="Trace Chain">
+        <Panel title="Trace Chain" icon={icons.traceability}>
           <div className="type-body-md mb-4 flex flex-wrap items-center gap-2">
             <span className="text-tertiary">Select a failure mode to trace</span>
             <select aria-label="Failure mode to trace" className={selectClass}>

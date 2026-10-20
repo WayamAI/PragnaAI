@@ -127,7 +127,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
                 >
-                  Mark all as read
+                  <icons.approve className="size-3 shrink-0" aria-hidden="true" /> Mark all as read
                 </button>
               }
             >

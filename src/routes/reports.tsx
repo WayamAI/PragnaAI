@@ -4,6 +4,7 @@ import { PageContainer } from "@/components/shared/PageContainer";
 import { RECENT_REPORTS } from "@/data/misc";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
 import { Panel } from "@/components/ui/primitives";
+import { icons } from "@/components/icons/iconMap";
 import { buttonClass } from "@/components/ui/button-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
@@ -31,7 +32,7 @@ function Reports() {
       subtitle="Configure and generate DFMEA exports for submissions, reviews, and audit packages."
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Panel title="Generate Report" className="lg:col-span-7 lg:self-start">
+        <Panel title="Generate Report" icon={icons.reports} className="lg:col-span-7 lg:self-start">
           <div className="flex flex-col gap-2">
             {TYPES.map(([label, fmt, desc], i) => (
               <label
@@ -107,11 +108,16 @@ function Reports() {
             }
             className={buttonClass("primary", { size: "lg", className: "mt-6" })}
           >
-            Generate report
+            <icons.reports className="size-4" aria-hidden="true" /> Generate report
           </button>
         </Panel>
 
-        <Panel title="Recent Reports" padded={false} className="lg:col-span-5 lg:self-start">
+        <Panel
+          title="Recent Reports"
+          icon={icons.history}
+          padded={false}
+          className="lg:col-span-5 lg:self-start"
+        >
           <table className={tableStyles.table}>
             <thead>
               <tr>

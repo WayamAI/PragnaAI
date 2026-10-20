@@ -5,9 +5,9 @@ import { HIERARCHY, BATTERY_FUNCTIONS, type HierarchyNode } from "@/data/hierarc
 import { StatusDot, StatusBadge } from "@/components/shared/StatusBadge";
 import { BATTERY_ROWS } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
-import { Panel } from "@/components/ui/primitives";
+import { Panel, SearchInput } from "@/components/ui/primitives";
+import type { LucideIcon } from "lucide-react";
 import { buttonClass } from "@/components/ui/button-styles";
-import { inputClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 import { icons } from "@/components/icons/iconMap";
@@ -16,12 +16,12 @@ import { ancestorNames, initialOpen, toggleOpen, visibleRows } from "@/lib/tree"
 
 export const Route = createFileRoute("/hierarchy")({ component: HierarchyPage });
 
-const STATS: { label: string; value: string; valueClassName?: string }[] = [
-  { label: "Functions", value: "4" },
-  { label: "Failure modes", value: "18" },
-  { label: "Critical", value: "2", valueClassName: "text-error" },
-  { label: "Mitigations pending", value: "4", valueClassName: "text-warning" },
-  { label: "RPN range", value: "18-216" },
+const STATS: { label: string; icon: LucideIcon; value: string; valueClassName?: string }[] = [
+  { label: "Functions", icon: icons.functions, value: "4" },
+  { label: "Failure modes", icon: icons.failureMode, value: "18" },
+  { label: "Critical", icon: icons.alert, value: "2", valueClassName: "text-error" },
+  { label: "Mitigations pending", icon: icons.pending, value: "4", valueClassName: "text-warning" },
+  { label: "RPN range", icon: icons.range, value: "18-216" },
 ];
 
 /** WAI-ARIA tree: click selects (and opens), chevron toggles, arrows move, one tab stop. */
@@ -150,11 +150,11 @@ function HierarchyPage() {
       subtitle="CardioGuard 3000 · Navigate the device tree and DFMEA status per node."
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Panel title="Device Tree" className="lg:col-span-4 lg:self-start">
-          <input
+        <Panel title="Device Tree" icon={icons.hierarchy} className="lg:col-span-4 lg:self-start">
+          <SearchInput
             placeholder="Search components"
             aria-label="Search components"
-            className={inputClass("sm", "mb-3")}
+            wrapperClassName="mb-3"
           />
           <div className="max-h-[70vh] overflow-y-auto">
             <DeviceTree selectedId={sel.id} onSelect={setSel} />
@@ -179,8 +179,16 @@ function HierarchyPage() {
                 key={s.label}
                 className="flex min-w-0 flex-col gap-1 rounded-lg border border-hairline bg-raised px-3 py-2.5"
               >
-                <span className="type-eyebrow text-quaternary">{s.label}</span>
-                <span className={cn("type-display-base tabular text-foreground", s.valueClassName)}>
+                <span className="flex items-start justify-between gap-2">
+                  <span className="type-eyebrow text-quaternary">{s.label}</span>
+                  <s.icon className="size-4 shrink-0 text-tertiary" aria-hidden="true" />
+                </span>
+                <span
+                  className={cn(
+                    "type-display-base tabular mt-auto text-foreground",
+                    s.valueClassName,
+                  )}
+                >
                   {s.value}
                 </span>
               </div>
@@ -258,7 +266,7 @@ function HierarchyPage() {
 
           <div className="mt-4 flex flex-wrap gap-2">
             <Link to="/workspace" className={buttonClass("primary", { size: "sm" })}>
-              Open DFMEA workspace
+              <icons.workspace className="size-3.5" aria-hidden="true" /> Open DFMEA workspace
             </Link>
             <button
               type="button"

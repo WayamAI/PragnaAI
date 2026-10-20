@@ -38,25 +38,45 @@ import {
 
 export const Route = createFileRoute("/overview")({ component: Overview });
 
-const KPI: { label: string; value: string; unit?: string; sub: string; valueClassName?: string }[] =
-  [
-    { label: "Total DFMEA items", value: "280", sub: "Across all levels" },
-    {
-      label: "Critical risks (S≥9)",
-      value: "14",
-      sub: "Require immediate action",
-      valueClassName: "text-error",
-    },
-    { label: "AI suggestions pending", value: "23", sub: "Awaiting engineer review" },
-    {
-      label: "Mitigations pending",
-      value: "31",
-      sub: "Open action items",
-      valueClassName: "text-warning",
-    },
-    { label: "DFMEA completion", value: "67", unit: "%", sub: "188 of 280 approved" },
-    { label: "Residual RPN reduced", value: "43", unit: "%", sub: "Avg reduction post-mitigation" },
-  ];
+const KPI: {
+  label: string;
+  icon: LucideIcon;
+  value: string;
+  unit?: string;
+  sub: string;
+  valueClassName?: string;
+}[] = [
+  { label: "Total DFMEA items", icon: icons.items, value: "280", sub: "Across all levels" },
+  {
+    label: "Critical risks (S≥9)",
+    icon: icons.alert,
+    value: "14",
+    sub: "Require immediate action",
+    valueClassName: "text-error",
+  },
+  { label: "AI suggestions pending", icon: icons.ai, value: "23", sub: "Awaiting engineer review" },
+  {
+    label: "Mitigations pending",
+    icon: icons.pending,
+    value: "31",
+    sub: "Open action items",
+    valueClassName: "text-warning",
+  },
+  {
+    label: "DFMEA completion",
+    icon: icons.completion,
+    value: "67",
+    unit: "%",
+    sub: "188 of 280 approved",
+  },
+  {
+    label: "Residual RPN reduced",
+    icon: icons.reduction,
+    value: "43",
+    unit: "%",
+    sub: "Avg reduction post-mitigation",
+  },
+];
 
 const HEATMAP = [
   {
@@ -207,6 +227,7 @@ function Overview() {
             <KpiTile
               key={k.label}
               label={k.label}
+              icon={k.icon}
               value={k.value}
               unit={k.unit}
               hint={k.sub}
@@ -216,7 +237,11 @@ function Overview() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-          <Panel title="Risk Distribution Matrix (Initial RPN)" className="lg:col-span-7">
+          <Panel
+            title="Risk Distribution Matrix (Initial RPN)"
+            icon={icons.matrix}
+            className="lg:col-span-7"
+          >
             <p className="type-body-sm mb-3 text-tertiary">
               Each cell counts the failure modes at that{" "}
               <span className="font-medium text-foreground">Severity (S)</span> ×{" "}
@@ -300,7 +325,7 @@ function Overview() {
             </div>
           </Panel>
 
-          <Panel title="Completion by Level" className="lg:col-span-5">
+          <Panel title="Completion by Level" icon={icons.completion} className="lg:col-span-5">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {RINGS.map((r) => (
                 <div key={r.level} className="text-center">
@@ -335,7 +360,7 @@ function Overview() {
           </Panel>
         </div>
 
-        <Panel title="Failure Mode Distribution by RPN Range">
+        <Panel title="Failure Mode Distribution by RPN Range" icon={icons.chart}>
           <div className="type-caption mb-3 flex flex-wrap items-center gap-4 font-normal text-tertiary">
             <span className="inline-flex items-center gap-1.5">
               <span
@@ -381,7 +406,7 @@ function Overview() {
         </Panel>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-          <Panel title="Recent Activity" className="lg:col-span-7">
+          <Panel title="Recent Activity" icon={icons.history} className="lg:col-span-7">
             <ul className="type-body-md divide-y divide-hairline">
               {ACTIVITY.map(([t, who, what], i) => (
                 <li key={i} className="flex gap-3 py-2">
@@ -396,7 +421,7 @@ function Overview() {
             </ul>
           </Panel>
 
-          <Panel title="AI Agent Activity" className="lg:col-span-5">
+          <Panel title="AI Agent Activity" icon={icons.ai} className="lg:col-span-5">
             <div className="flex flex-col gap-3">
               {AGENTS.map((a) => (
                 <div key={a.name} className="rounded-lg border border-hairline bg-raised p-3">

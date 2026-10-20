@@ -11,12 +11,12 @@ import { icons } from "@/components/icons/iconMap";
 export const Route = createFileRoute("/ai-analysis")({ component: AI });
 
 const KPI = [
-  ["Total generated", "143"],
-  ["Accepted", "89"],
-  ["Edited & accepted", "12"],
-  ["Pending review", "23"],
-  ["Rejected", "19"],
-];
+  ["Total generated", "143", icons.ai],
+  ["Accepted", "89", icons.approve],
+  ["Edited & accepted", "12", icons.edit],
+  ["Pending review", "23", icons.pending],
+  ["Rejected", "19", icons.reject],
+] as const;
 
 const scoreChip =
   "type-body-sm tabular rounded-md border border-hairline bg-raised px-2 py-0.5 font-mono text-secondary-foreground";
@@ -28,8 +28,8 @@ function AI() {
       subtitle="Review pending AI-generated failure mode suggestions across the device."
     >
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-        {KPI.map(([l, v]) => (
-          <KpiTile key={l} label={l} value={v} />
+        {KPI.map(([l, v, icon]) => (
+          <KpiTile key={l} label={l} icon={icon} value={v} />
         ))}
       </div>
 
@@ -99,28 +99,28 @@ function AI() {
                   }
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Accept
+                  <icons.approve className="size-3.5" aria-hidden="true" /> Accept
                 </button>
                 <button
                   type="button"
                   onClick={() => toast(`Editing ${s.id}...`)}
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Edit and accept
+                  <icons.edit className="size-3.5" aria-hidden="true" /> Edit and accept
                 </button>
                 <button
                   type="button"
                   onClick={() => toast.error(`${s.id} rejected.`)}
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Reject
+                  <icons.reject className="size-3.5" aria-hidden="true" /> Reject
                 </button>
                 <button
                   type="button"
                   onClick={() => toast(`${s.id} flagged for team review.`)}
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Flag for team
+                  <icons.flag className="size-3.5" aria-hidden="true" /> Flag for team
                 </button>
               </div>
             </section>

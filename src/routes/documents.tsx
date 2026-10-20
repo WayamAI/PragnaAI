@@ -89,7 +89,7 @@ function Docs() {
                       className: "px-2 text-secondary-foreground",
                     })}
                   >
-                    View
+                    <icons.view className="size-3.5" aria-hidden="true" /> View
                   </button>
                   <button
                     type="button"
@@ -99,7 +99,7 @@ function Docs() {
                     }}
                     className={buttonClass("ghost", { className: "px-2" })}
                   >
-                    Re-extract
+                    <icons.reextract className="size-3.5" aria-hidden="true" /> Re-extract
                   </button>
                 </td>
               </tr>

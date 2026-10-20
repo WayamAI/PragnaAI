@@ -5,9 +5,9 @@ import { BATTERY_ROWS, type FailureMode } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
-import { EmptyState } from "@/components/ui/primitives";
+import { EmptyState, SearchInput } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button-styles";
-import { inputClass, selectClass } from "@/components/ui/input-styles";
+import { selectClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 import { icons } from "@/components/icons/iconMap";
@@ -118,12 +118,12 @@ function Workspace() {
       }
     >
       <div className="flex flex-wrap gap-2">
-        <input
+        <SearchInput
           placeholder="Search failure modes"
           aria-label="Search failure modes"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className={inputClass("sm", "min-w-[180px] flex-1")}
+          wrapperClassName="min-w-[180px] flex-1"
         />
         <select
           aria-label="Risk"

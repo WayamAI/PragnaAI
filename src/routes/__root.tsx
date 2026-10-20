@@ -3,6 +3,7 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
+  redirect,
   useRouter,
   useRouterState,
   HeadContent,
@@ -21,7 +22,7 @@ import { AIAssistantPanel } from "@/components/layout/AIAssistantPanel";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { THEME_INIT_SCRIPT } from "@/components/theme/theme";
-import { isAuthenticated } from "@/lib/auth";
+import { isAuthenticated, shouldRedirectToLogin } from "@/lib/auth";
 import { buttonClass } from "@/components/ui/button-styles";
 
 function NotFoundComponent() {
@@ -79,6 +80,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // Client-side gate: a visitor without a session lands on /login before any page renders.
+  beforeLoad: ({ location }) => {
+    if (shouldRedirectToLogin(location.pathname)) throw redirect({ to: "/login" });
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },

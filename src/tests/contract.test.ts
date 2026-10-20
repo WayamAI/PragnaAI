@@ -248,3 +248,47 @@ describe("icon map", () => {
     expect(read("styles.css")).toMatch(/svg\.lucide\s*\{\s*stroke-width:\s*1\.75;/);
   });
 });
+
+describe("login gate", () => {
+  const store = new Map<string, string>();
+  const stubWindow = () => {
+    (globalThis as { window?: unknown }).window = {
+      localStorage: {
+        getItem: (k: string) => store.get(k) ?? null,
+        setItem: (k: string, v: string) => void store.set(k, v),
+        removeItem: (k: string) => void store.delete(k),
+      },
+    };
+  };
+
+  it("redirects a fresh visit to /login for every protected path", async () => {
+    const { shouldRedirectToLogin } = await import("@/lib/auth");
+    stubWindow();
+    store.clear();
+    for (const p of ["/", "/overview", "/workspace", "/hierarchy"]) {
+      expect(shouldRedirectToLogin(p)).toBe(true);
+    }
+    expect(shouldRedirectToLogin("/login")).toBe(false);
+  });
+
+  it("lets a signed-in visitor through, and gates again after sign-out", async () => {
+    const { shouldRedirectToLogin, login, logout } = await import("@/lib/auth");
+    stubWindow();
+    store.clear();
+    login("a@b.co", "x");
+    expect(store.has("pragnaai_auth")).toBe(true);
+    expect(shouldRedirectToLogin("/overview")).toBe(false);
+    logout();
+    expect(shouldRedirectToLogin("/overview")).toBe(true);
+  });
+
+  it("never redirects on the server", async () => {
+    const { shouldRedirectToLogin } = await import("@/lib/auth");
+    delete (globalThis as { window?: unknown }).window;
+    expect(shouldRedirectToLogin("/overview")).toBe(false);
+  });
+
+  it("registers the guard on the root route", () => {
+    expect(read("routes/__root.tsx")).toContain("shouldRedirectToLogin(location.pathname)");
+  });
+});

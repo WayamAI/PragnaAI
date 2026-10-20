@@ -28,6 +28,15 @@ export function isAuthenticated(): boolean {
   return getSession() !== null;
 }
 
+/**
+ * True when a visitor with no session must be sent to /login before anything renders.
+ * Always false on the server, which cannot read localStorage and must not bounce signed-in users.
+ */
+export function shouldRedirectToLogin(pathname: string): boolean {
+  if (typeof window === "undefined") return false;
+  return pathname !== "/login" && !isAuthenticated();
+}
+
 /** Accepts any non-empty email + password — demo purposes only. */
 export function login(email: string, _password: string): DemoSession {
   const session: DemoSession = { email, loggedInAt: new Date().toISOString() };

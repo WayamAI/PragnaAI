@@ -1,7 +1,7 @@
 /**
  * Demo authentication for PragnaAI.
  *
- * This is intentionally NOT real auth — any email + any password combination
+ * This is intentionally NOT real auth: any email + any password combination
  * is accepted. It exists purely to gate the app behind a login screen for
  * demo purposes. Session state lives in localStorage on the client only.
  */
@@ -37,7 +37,7 @@ export function shouldRedirectToLogin(pathname: string): boolean {
   return pathname !== "/login" && !isAuthenticated();
 }
 
-/** Accepts any non-empty email + password — demo purposes only. */
+/** Accepts any non-empty email + password, demo purposes only. */
 export function login(email: string, _password: string): DemoSession {
   const session: DemoSession = { email, loggedInAt: new Date().toISOString() };
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));

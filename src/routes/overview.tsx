@@ -144,7 +144,7 @@ const AGENTS: {
     status: "Active",
     tone: "success",
     detail:
-      "Querying FDA MDR database and internal knowledge base — queue: 23 suggestions pending review",
+      "Querying FDA MDR database and internal knowledge base. Queue: 23 suggestions pending review",
     last: "Running",
   },
   {
@@ -286,7 +286,7 @@ function Overview() {
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="size-3 rounded-sm" style={{ background: ZONE_TINT.Medium.bg }} />{" "}
-                Medium (6–11)
+                Medium (6-11)
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="size-3 rounded-sm" style={{ background: ZONE_TINT.High.bg }} />{" "}
@@ -413,12 +413,12 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
           {connected} live
         </QuietStatus>
       }
-      subtitle="PragnaAI pulls data from your PLM, requirements, quality, ERP and regulatory systems — the AI agents turn it into this DFMEA."
+      subtitle="PragnaAI pulls data from your PLM, requirements, quality, ERP and regulatory systems, and the AI agents turn it into this DFMEA."
       onClose={onClose}
       footer={
         <>
           <span className="type-body-sm text-tertiary">
-            Data flows in automatically — no manual re-entry.
+            Data flows in automatically, with no manual re-entry.
           </span>
           <Link
             to="/integrations"

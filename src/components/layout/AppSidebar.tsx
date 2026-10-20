@@ -357,15 +357,15 @@ function SettingsModal({ onClose }: { onClose: () => void }) {
 const STANDARDS_HELP = [
   [
     "ISO 14971:2019",
-    "Application of risk management to medical devices — the core DFMEA standard.",
+    "Application of risk management to medical devices: the core DFMEA standard.",
   ],
   [
     "IEC 62304:2006+A1",
-    "Medical device software life cycle — software failure modes & safety classes.",
+    "Medical device software life cycle: software failure modes & safety classes.",
   ],
-  ["IEC 60601-1", "Basic safety and essential performance — device-level safety requirements."],
-  ["IEC 60601-1-8", "Alarm systems — alarm prioritization and failure modes."],
-  ["IEC 62133-2:2017", "Secondary lithium cells — battery safety requirements."],
+  ["IEC 60601-1", "Basic safety and essential performance: device-level safety requirements."],
+  ["IEC 60601-1-8", "Alarm systems: alarm prioritization and failure modes."],
+  ["IEC 62133-2:2017", "Secondary lithium cells: battery safety requirements."],
 ];
 
 function HelpModal({ onClose }: { onClose: () => void }) {

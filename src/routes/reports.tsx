@@ -63,7 +63,7 @@ function Reports() {
           <div className="flex flex-col gap-2">
             <label className={optionRow}>
               <input type="radio" name="scope" defaultChecked className={checkClass} /> Full device
-              — all levels
+              · all levels
             </label>
             <label className={optionRow}>
               <input type="radio" name="scope" className={checkClass} /> By subsystem

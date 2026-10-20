@@ -42,7 +42,7 @@ function Docs() {
           </button>
         </p>
         <p className="type-caption mt-1 font-normal text-quaternary">
-          PDF, DOCX, XLSX, CSV — max 50MB per file
+          PDF, DOCX, XLSX, CSV · max 50MB per file
         </p>
       </div>
 
@@ -69,7 +69,7 @@ function Docs() {
                 </td>
                 <td className={tableStyles.td({ className: quiet })}>{d.type}</td>
                 <td className={tableStyles.td({ className: quiet })}>{d.version}</td>
-                <td className={tableStyles.td({ className: quiet })}>{d.pages ?? "—"}</td>
+                <td className={tableStyles.td({ className: quiet })}>{d.pages ?? "n/a"}</td>
                 <td className={tableStyles.td()}>
                   <EngineerAvatar name={d.by} />
                 </td>

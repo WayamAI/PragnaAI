@@ -15,7 +15,7 @@ export const STANDARDS = [
 
 export const ACTIVITY = [
   ["14:31", "R. Sharma", "accepted AI suggestion FM-0142 (Battery Pack, S=8)"],
-  ["14:18", "P. Kaul", "edited failure mode FM-0089 — changed O from 4 to 3"],
+  ["14:18", "P. Kaul", "edited failure mode FM-0089, changed O from 4 to 3"],
   ["13:55", "T. Iyer", "added mitigation MIT-0067 for FM-0067 (Enclosure seal failure)"],
   ["13:40", "A. Rodrigues", "rejected AI suggestion FM-AI-031 (Duplicate detected)"],
   ["13:22", "S. Mehta", "approved 6 DFMEA rows in Power Management subsystem"],

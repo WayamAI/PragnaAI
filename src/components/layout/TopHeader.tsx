@@ -16,7 +16,7 @@ const NOTIFICATIONS = [
     icon: icons.alert,
     tone: "text-error",
     title: "7 mitigations overdue",
-    detail: "Oldest: MIT-0033-A (BMS watchdog validation) — 55 days late.",
+    detail: "Oldest: MIT-0033-A (BMS watchdog validation), 55 days late.",
     time: "just now",
   },
   {
@@ -43,12 +43,12 @@ const HELP_LINKS = [
   },
   {
     icon: icons.standard,
-    title: "ISO 14971 — Risk Management",
+    title: "ISO 14971 · Risk Management",
     detail: "The core medical-device risk management standard.",
   },
   {
     icon: icons.standard,
-    title: "IEC 62304 — Software Life Cycle",
+    title: "IEC 62304 · Software Life Cycle",
     detail: "Software failure modes and safety classification.",
   },
   {
@@ -88,7 +88,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
         <button
           onClick={() => {
             console.log("[TopHeader] Switch project clicked");
-            toast("Project switcher — only CardioGuard 3000 available in this demo.");
+            toast("Project switcher: only CardioGuard 3000 available in this demo.");
           }}
           className="type-label-sm hidden h-8 items-center gap-2 rounded-full border border-hairline bg-action px-3 text-secondary-foreground outline-none transition-colors duration-[180ms] ease-out hover:border-strong hover:bg-raised-2 hover:text-foreground focus-visible:ring-2 focus-visible:ring-active md:inline-flex"
         >

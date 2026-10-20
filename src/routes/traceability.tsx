@@ -147,7 +147,7 @@ function Traceability() {
           <div className="type-body-md mb-4 flex flex-wrap items-center gap-2">
             <span className="text-tertiary">Select a failure mode to trace</span>
             <select aria-label="Failure mode to trace" className={selectClass}>
-              <option>FM-0031 — Capacity degradation</option>
+              <option>FM-0031 · Capacity degradation</option>
             </select>
           </div>
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-7">

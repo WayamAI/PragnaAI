@@ -292,3 +292,17 @@ describe("login gate", () => {
     expect(read("routes/__root.tsx")).toContain("shouldRedirectToLogin(location.pathname)");
   });
 });
+
+describe("copy", () => {
+  it("has no em dashes anywhere in src", () => {
+    const dash = String.fromCharCode(0x2014);
+    const walk = (dir: string): string[] =>
+      readdirSync(join(src, dir), { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)],
+      );
+    const offenders = walk(".")
+      .filter((f) => /\.(ts|tsx|md|css)$/.test(f))
+      .filter((f) => read(f).includes(dash));
+    expect(offenders).toEqual([]);
+  });
+});

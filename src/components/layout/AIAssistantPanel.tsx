@@ -17,7 +17,7 @@ export function AIAssistantPanel() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [msgs, setMsgs] = useState<Msg[]>([
-    { role: "ai", text: "Hi R. Sharma — ask me anything about the CardioGuard 3000 DFMEA." },
+    { role: "ai", text: "Hi R. Sharma, ask me anything about the CardioGuard 3000 DFMEA." },
   ]);
   const [thinking, setThinking] = useState(false);
   const titleId = useId();

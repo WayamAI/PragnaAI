@@ -15,7 +15,7 @@ export const Route = createFileRoute("/risk-register")({ component: RiskRegister
 const KPI: { label: string; value: string; valueClassName?: string }[] = [
   { label: "Total Risks", value: "280" },
   { label: "Critical (S≥9 or RPN≥200)", value: "14", valueClassName: "text-error" },
-  { label: "High (RPN 100–199)", value: "47", valueClassName: "text-warning" },
+  { label: "High (RPN 100-199)", value: "47", valueClassName: "text-warning" },
   { label: "Mitigations Overdue", value: "7" },
 ];
 
@@ -154,7 +154,7 @@ function RiskRegister() {
                       className: cn("font-mono", quiet),
                     })}
                   >
-                    {r.residualRpn ?? "—"}
+                    {r.residualRpn ?? "n/a"}
                   </td>
                   <td className={tableStyles.td()}>
                     <RiskBadge level={badgeForRpn(rpn, r.s)} />

@@ -163,7 +163,7 @@ function RootComponent() {
 
   if (!authed) {
     // Either still checking auth on first client render, or a redirect to
-    // /login is in flight — render nothing to avoid a dashboard flash.
+    // /login is in flight, so render nothing to avoid a dashboard flash.
     return null;
   }
 

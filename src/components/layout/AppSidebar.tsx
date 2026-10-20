@@ -237,7 +237,7 @@ export function AppSidebar({
             console.log("[Sidebar] Settings opened");
             setModal("Settings");
           })}
-          {footerButton("Help & Standards", icons.help, () => {
+          {footerButton("Help & standards", icons.help, () => {
             console.log("[Sidebar] Help & Standards opened");
             setModal("Help & Standards");
           })}
@@ -355,10 +355,7 @@ function SettingsModal({ onClose }: { onClose: () => void }) {
 }
 
 const STANDARDS_HELP = [
-  [
-    "ISO 14971:2019",
-    "Application of risk management to medical devices: the core DFMEA standard.",
-  ],
+  ["ISO 14971:2019", "Application of risk management to medical devices: the core DFMEA standard."],
   [
     "IEC 62304:2006+A1",
     "Medical device software life cycle: software failure modes & safety classes.",

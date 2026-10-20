@@ -38,7 +38,7 @@ const NOTIFICATIONS = [
 const HELP_LINKS = [
   {
     icon: icons.standard,
-    title: "DFMEA Quick Start Guide",
+    title: "DFMEA quick start guide",
     detail: "How to add failure modes, score S/O/D, and approve rows.",
   },
   {

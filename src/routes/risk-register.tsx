@@ -13,10 +13,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/risk-register")({ component: RiskRegister });
 
 const KPI: { label: string; value: string; valueClassName?: string }[] = [
-  { label: "Total Risks", value: "280" },
+  { label: "Total risks", value: "280" },
   { label: "Critical (S≥9 or RPN≥200)", value: "14", valueClassName: "text-error" },
   { label: "High (RPN 100-199)", value: "47", valueClassName: "text-warning" },
-  { label: "Mitigations Overdue", value: "7" },
+  { label: "Mitigations overdue", value: "7" },
 ];
 
 // Low-value columns go quiet (tertiary text) but stay in the table.
@@ -76,7 +76,7 @@ function RiskRegister() {
               <th className={tableStyles.th()}>Risk ID</th>
               <th className={tableStyles.th()}>Level</th>
               <th className={tableStyles.th()}>Component</th>
-              <th className={tableStyles.th()}>Failure Mode</th>
+              <th className={tableStyles.th()}>Failure mode</th>
               <th className={tableStyles.th({ numeric: true })}>S</th>
               <th className={tableStyles.th({ numeric: true })}>O</th>
               <th className={tableStyles.th({ numeric: true })}>D</th>

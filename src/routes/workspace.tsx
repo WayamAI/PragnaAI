@@ -155,8 +155,8 @@ function Workspace() {
               <th className={tableStyles.th({ className: "left-0 z-20" })}>FM ID</th>
               <th className={tableStyles.th()}>Component</th>
               <th className={tableStyles.th()}>Function</th>
-              <th className={tableStyles.th()}>Failure Mode</th>
-              <th className={tableStyles.th()}>Effect (Patient)</th>
+              <th className={tableStyles.th()}>Failure mode</th>
+              <th className={tableStyles.th()}>Effect (patient)</th>
               <th className={tableStyles.th({ numeric: true })}>S</th>
               <th className={tableStyles.th({ numeric: true })}>O</th>
               <th className={tableStyles.th({ numeric: true })}>D</th>
@@ -287,11 +287,11 @@ function Workspace() {
             <div className="flex flex-col gap-4 p-4">
               <Field label="Component" value={sel.component} />
               <Field label="Function" value={sel.function} />
-              <Field label="Effect (Local)" value={sel.effectLocal} />
-              <Field label="Effect (System)" value={sel.effectSystem} />
-              <Field label="Effect (Patient)" value={sel.effectPatient} />
+              <Field label="Effect (local)" value={sel.effectLocal} />
+              <Field label="Effect (system)" value={sel.effectSystem} />
+              <Field label="Effect (patient)" value={sel.effectPatient} />
               <Field label="Cause" value={sel.cause} />
-              <Field label="Current Controls" value={sel.controls} />
+              <Field label="Current controls" value={sel.controls} />
               <Field label="Mitigation" value={sel.mitigation} />
               <div className="grid grid-cols-4 gap-3 rounded-lg border border-hairline bg-raised px-3 py-2.5">
                 <Field label="S" value={sel.s.toString()} />
@@ -300,7 +300,7 @@ function Workspace() {
                 <Field label="RPN" value={(sel.s * sel.o * sel.d).toString()} />
               </div>
               <Field label="Standard" value={sel.standard} />
-              <Field label="Owner / Due" value={`${sel.owner} · ${sel.due}`} />
+              <Field label="Owner / due" value={`${sel.owner} · ${sel.due}`} />
             </div>
           </aside>
         </div>

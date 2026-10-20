@@ -12,12 +12,12 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/knowledge-base")({ component: KB });
 
 const SOURCES = [
-  "All Sources",
+  "All sources",
   "Previous DFMEAs",
-  "FDA MDR Database",
-  "Medical Standards",
-  "CAPA Records",
-  "Lessons Learned",
+  "FDA MDR database",
+  "Medical standards",
+  "CAPA records",
+  "Lessons learned",
 ];
 
 const SUGGESTIONS = [
@@ -30,16 +30,16 @@ const SUGGESTIONS = [
 
 const INDEX = [
   ["Previous DFMEAs", "47 documents"],
-  ["FDA MDR Records", "1,284 indexed"],
-  ["Medical Standards", "23 documents"],
-  ["CAPA Records", "89 records"],
-  ["Lessons Learned", "61 entries"],
-  ["Field Complaints", "142 records"],
+  ["FDA MDR records", "1,284 indexed"],
+  ["Medical standards", "23 documents"],
+  ["CAPA records", "89 records"],
+  ["Lessons learned", "61 entries"],
+  ["Field complaints", "142 records"],
 ];
 
 function KB() {
   const [query, setQuery] = useState("battery charging safety");
-  const [source, setSource] = useState("All Sources");
+  const [source, setSource] = useState("All sources");
 
   const runSearch = (q: string) => {
     console.log("[KnowledgeBase] Search", { query: q, source });

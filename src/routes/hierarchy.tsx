@@ -94,7 +94,7 @@ function HierarchyPage() {
       subtitle="CardioGuard 3000 · Navigate the device tree and DFMEA status per node."
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Panel title="Device tree" className="lg:col-span-4 lg:self-start">
+        <Panel title="Device Tree" className="lg:col-span-4 lg:self-start">
           <input
             placeholder="Search components"
             aria-label="Search components"
@@ -128,7 +128,7 @@ function HierarchyPage() {
             ))}
           </div>
 
-          <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">Identified Functions</h3>
+          <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">Identified functions</h3>
           <ul className="type-body-md mb-6 divide-y divide-hairline rounded-lg border border-hairline bg-raised px-3">
             {BATTERY_FUNCTIONS.map((f) => (
               <li key={f.id} className="flex gap-3 py-2 text-secondary-foreground">
@@ -138,13 +138,13 @@ function HierarchyPage() {
             ))}
           </ul>
 
-          <h3 className="type-eyebrow mb-2 text-quaternary">Failure Modes · First 6 of 18</h3>
+          <h3 className="type-eyebrow mb-2 text-quaternary">Failure modes · first 6 of 18</h3>
           <div className={tableStyles.wrap}>
             <table className={tableStyles.table}>
               <thead>
                 <tr>
                   <th className={tableStyles.th()}>FM ID</th>
-                  <th className={tableStyles.th()}>Failure Mode</th>
+                  <th className={tableStyles.th()}>Failure mode</th>
                   <th className={tableStyles.th({ numeric: true })}>S</th>
                   <th className={tableStyles.th({ numeric: true })}>O</th>
                   <th className={tableStyles.th({ numeric: true })}>D</th>

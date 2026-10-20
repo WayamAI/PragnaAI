@@ -38,22 +38,22 @@ export const Route = createFileRoute("/overview")({ component: Overview });
 
 const KPI: { label: string; value: string; unit?: string; sub: string; valueClassName?: string }[] =
   [
-    { label: "Total DFMEA Items", value: "280", sub: "Across all levels" },
+    { label: "Total DFMEA items", value: "280", sub: "Across all levels" },
     {
-      label: "Critical Risks (S≥9)",
+      label: "Critical risks (S≥9)",
       value: "14",
       sub: "Require immediate action",
       valueClassName: "text-error",
     },
-    { label: "AI Suggestions Pending", value: "23", sub: "Awaiting engineer review" },
+    { label: "AI suggestions pending", value: "23", sub: "Awaiting engineer review" },
     {
-      label: "Mitigations Pending",
+      label: "Mitigations pending",
       value: "31",
       sub: "Open action items",
       valueClassName: "text-warning",
     },
-    { label: "DFMEA Completion", value: "67", unit: "%", sub: "188 of 280 approved" },
-    { label: "Residual RPN Reduced", value: "43", unit: "%", sub: "Avg reduction post-mitigation" },
+    { label: "DFMEA completion", value: "67", unit: "%", sub: "188 of 280 approved" },
+    { label: "Residual RPN reduced", value: "43", unit: "%", sub: "Avg reduction post-mitigation" },
   ];
 
 const HEATMAP = [
@@ -106,12 +106,12 @@ function riskZone(ri: number, ci: number) {
 }
 
 const RINGS = [
-  { level: "Product Level", pct: 67, done: 4, total: 6 },
-  { level: "System Level", pct: 64, done: 18, total: 28 },
-  { level: "Subsystem Level", pct: 71, done: 44, total: 62 },
-  { level: "Part / Component", pct: 71, done: 88, total: 124 },
+  { level: "Product level", pct: 67, done: 4, total: 6 },
+  { level: "System level", pct: 64, done: 18, total: 28 },
+  { level: "Subsystem level", pct: 71, done: 44, total: 62 },
+  { level: "Part / component", pct: 71, done: 88, total: 124 },
   { level: "Accessories", pct: 56, done: 18, total: 32 },
-  { level: "Super System", pct: 57, done: 16, total: 28 },
+  { level: "Super system", pct: 57, done: 16, total: 28 },
 ];
 
 const RPN_BUCKETS = [

@@ -11,10 +11,10 @@ import { icons } from "@/components/icons/iconMap";
 export const Route = createFileRoute("/ai-analysis")({ component: AI });
 
 const KPI = [
-  ["Total Generated", "143"],
+  ["Total generated", "143"],
   ["Accepted", "89"],
-  ["Edited & Accepted", "12"],
-  ["Pending Review", "23"],
+  ["Edited & accepted", "12"],
+  ["Pending review", "23"],
   ["Rejected", "19"],
 ];
 

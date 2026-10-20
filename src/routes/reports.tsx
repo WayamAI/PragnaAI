@@ -12,12 +12,12 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/reports")({ component: Reports });
 
 const TYPES = [
-  ["Full DFMEA Export", "Excel (.xlsx)", "All failure modes, all columns"],
-  ["Risk Summary Report", "PDF", "Top risks, heatmap, distribution chart"],
-  ["Traceability Matrix", "Excel / PDF", "Requirement-to-verification matrix"],
-  ["AI Suggestions Report", "PDF", "All AI suggestions with confidence scores"],
-  ["Regulatory Package", "ZIP", "Combined: DFMEA + Traceability + Risk Summary"],
-  ["Open Items Report", "PDF", "Mitigations pending, overdue, unlinked items"],
+  ["Full DFMEA export", "Excel (.xlsx)", "All failure modes, all columns"],
+  ["Risk summary report", "PDF", "Top risks, heatmap, distribution chart"],
+  ["Traceability matrix", "Excel / PDF", "Requirement-to-verification matrix"],
+  ["AI suggestions report", "PDF", "All AI suggestions with confidence scores"],
+  ["Regulatory package", "ZIP", "Combined: DFMEA + traceability + risk summary"],
+  ["Open items report", "PDF", "Mitigations pending, overdue, unlinked items"],
 ];
 
 const checkClass = "size-4 shrink-0 accent-action-primary";
@@ -107,7 +107,7 @@ function Reports() {
             }
             className={buttonClass("primary", { size: "lg", className: "mt-6" })}
           >
-            Generate Report
+            Generate report
           </button>
         </Panel>
 

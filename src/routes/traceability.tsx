@@ -55,11 +55,11 @@ const CHAIN_STATE: Record<ChainTone, string> = {
 const CHAIN: [string, string, ChainTone][] = [
   ["REQ-PWR-001", "Requirement", "success"],
   ["F-BAT-01", "Function", "success"],
-  ["FM-0031", "Failure Mode", "warning"],
-  ["CAUSE-031", "Root Cause", "warning"],
+  ["FM-0031", "Failure mode", "warning"],
+  ["CAUSE-031", "Root cause", "warning"],
   ["MIT-0031-B", "Mitigation", "warning"],
-  ["VT-0031", "Verification Test", "error"],
-  ["VR-2025-012", "Validation Report", "error"],
+  ["VT-0031", "Verification test", "error"],
+  ["VR-2025-012", "Validation report", "error"],
 ];
 
 function Traceability() {
@@ -91,7 +91,7 @@ function Traceability() {
     >
       {view === "matrix" && (
         <Panel
-          title="Coverage matrix"
+          title="Coverage Matrix"
           action={<ToneBadge tone="error">67 gaps</ToneBadge>}
           padded={false}
         >
@@ -143,7 +143,7 @@ function Traceability() {
       )}
 
       {view === "chain" && (
-        <Panel title="Trace chain">
+        <Panel title="Trace Chain">
           <div className="type-body-md mb-4 flex flex-wrap items-center gap-2">
             <span className="text-tertiary">Select a failure mode to trace</span>
             <select aria-label="Failure mode to trace" className={selectClass}>

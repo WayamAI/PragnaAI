@@ -88,5 +88,6 @@
   --feedback-error-content:   #ff969b; --feedback-error-badge:   #a62329;
   --feedback-neutral-content: #d4d4d4; --feedback-neutral-background: rgba(255, 255, 255, 0.06); --feedback-neutral-badge: #636363;
 
+  --analytics-series-1: #4a9ee0;
   --analytics-series-6: #b65bd8;
 }

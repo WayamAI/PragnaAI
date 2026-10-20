@@ -25,6 +25,8 @@ import {
 import {
   BarChart,
   Bar,
+  CartesianGrid,
+  LabelList,
   XAxis,
   YAxis,
   ResponsiveContainer,
@@ -334,19 +336,45 @@ function Overview() {
         </div>
 
         <Panel title="Failure Mode Distribution by RPN Range">
+          <div className="type-caption mb-3 flex flex-wrap items-center gap-4 font-normal text-tertiary">
+            <span className="inline-flex items-center gap-1.5">
+              <span
+                className="size-2.5 rounded-sm"
+                style={{ background: "var(--analytics-series-1)" }}
+              />
+              Failure modes
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span
+                className="size-2.5 rounded-sm"
+                style={{ background: "var(--feedback-error-content)" }}
+              />
+              Critical range (RPN 200+)
+            </span>
+          </div>
           <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={RPN_BUCKETS}>
+            <BarChart data={RPN_BUCKETS} margin={{ top: 16, right: 8, bottom: 0, left: 0 }}>
+              <CartesianGrid vertical={false} stroke="var(--stroke-muted)" />
               <XAxis dataKey="range" axisLine={false} tickLine={false} tick={axisTick} />
-              <YAxis axisLine={false} tickLine={false} tick={axisTick} />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={axisTick}
+                width={32}
+                domain={[0, 100]}
+                ticks={[0, 50, 100]}
+              />
               <Tooltip
                 cursor={{ fill: "var(--surface-raised)" }}
                 contentStyle={chartTooltipStyle}
                 labelStyle={chartTooltipLabelStyle}
+                formatter={(v) => [v, "Failure modes"]}
               />
-              <Bar dataKey="count" radius={[4, 4, 4, 4]} isAnimationActive={false}>
+              <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={48} isAnimationActive={false}>
                 {RPN_BUCKETS.map((b, i) => (
                   <Cell key={i} fill={b.fill} />
                 ))}
+                <LabelList dataKey="count" position="top" style={axisTick} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>

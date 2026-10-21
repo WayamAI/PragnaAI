@@ -7,6 +7,7 @@ import { logout } from "@/lib/auth";
 import { toast } from "sonner";
 import { buttonClass } from "@/components/ui/button-styles";
 import { useOverlayDismiss } from "@/hooks/use-overlay-dismiss";
+import { openAssistant } from "@/lib/assistant";
 import { findNav } from "./nav";
 
 type Panel = "notifications" | "help" | null;
@@ -98,6 +99,15 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
         </button>
       </div>
       <div className="flex shrink-0 items-center gap-1">
+        <button
+          type="button"
+          onClick={openAssistant}
+          aria-label="AI assistant"
+          title="AI assistant (Ctrl/Cmd+K)"
+          className={iconButton}
+        >
+          <icons.ai size={20} />
+        </button>
         <div className="relative">
           <button
             onClick={() => toggle("notifications")}

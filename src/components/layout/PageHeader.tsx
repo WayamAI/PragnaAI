@@ -35,7 +35,7 @@ export function PageBody({ children }: { children: ReactNode }) {
   return (
     <div
       data-scroll-restoration-id="page-body"
-      className="min-h-0 flex-1 overflow-y-auto p-4 pb-20 sm:p-5 sm:pb-20"
+      className="min-h-0 flex-1 overflow-y-auto p-4 pb-6 sm:p-5 sm:pb-6"
     >
       {children}
     </div>

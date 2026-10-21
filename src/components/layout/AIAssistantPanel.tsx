@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { buttonClass } from "@/components/ui/button-styles";
 import { inputClass } from "@/components/ui/input-styles";
 import { useOverlayDismiss } from "@/hooks/use-overlay-dismiss";
+import { OPEN_ASSISTANT_EVENT } from "@/lib/assistant";
 
 type Msg = { role: "user" | "ai"; text: string };
 
@@ -30,8 +31,13 @@ export function AIAssistantPanel() {
         setOpen((o) => !o);
       }
     };
+    const openFromTopBar = () => setOpen(true);
     window.addEventListener("keydown", h);
-    return () => window.removeEventListener("keydown", h);
+    window.addEventListener(OPEN_ASSISTANT_EVENT, openFromTopBar);
+    return () => {
+      window.removeEventListener("keydown", h);
+      window.removeEventListener(OPEN_ASSISTANT_EVENT, openFromTopBar);
+    };
   }, []);
 
   const send = (text: string) => {
@@ -51,14 +57,6 @@ export function AIAssistantPanel() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="fixed right-6 bottom-6 z-40 flex size-11 items-center justify-center rounded-full border border-strong bg-action-primary text-on-color outline-none transition-colors duration-[180ms] ease-out hover:bg-action-primary-hover focus-visible:ring-2 focus-visible:ring-active"
-        aria-label="Open AI Assistant (Cmd+K)"
-      >
-        <icons.ai size={20} />
-      </button>
       {open && (
         <div className="fixed inset-0 z-50 text-foreground">
           <div

@@ -3,10 +3,9 @@ import { useState } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { REQUIREMENTS } from "@/data/misc";
 import { FAILURE_MODES } from "@/data/dfmea";
-import { Panel, ToneBadge } from "@/components/ui/primitives";
+import { Panel, SelectField, ToneBadge } from "@/components/ui/primitives";
 import { icons } from "@/components/icons/iconMap";
 import { buttonClass } from "@/components/ui/button-styles";
-import { selectClass } from "@/components/ui/input-styles";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/traceability")({ component: Traceability });
@@ -148,9 +147,9 @@ function Traceability() {
         <Panel title="Trace Chain" icon={icons.traceability}>
           <div className="type-body-md mb-4 flex flex-wrap items-center gap-2">
             <span className="text-tertiary">Select a failure mode to trace</span>
-            <select aria-label="Failure mode to trace" className={selectClass}>
+            <SelectField aria-label="Failure mode to trace">
               <option>FM-0031 · Capacity degradation</option>
-            </select>
+            </SelectField>
           </div>
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-7">
             {CHAIN.map(([id, label, tone]) => (

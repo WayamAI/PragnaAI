@@ -16,11 +16,11 @@ export function PageContainer({
   children: ReactNode;
 }) {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
-  // The header shows the mark of the page's sidebar item.
-  const mark = findNav(pathname)?.item.mark;
+  // The header shows the icon of the page's sidebar item.
+  const icon = findNav(pathname)?.item.icon;
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <PageHeader title={title} subtitle={subtitle} actions={actions} mark={mark} />
+      <PageHeader title={title} subtitle={subtitle} actions={actions} icon={icon} />
       <PageBody>{children}</PageBody>
     </div>
   );

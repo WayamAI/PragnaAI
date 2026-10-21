@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { ACTIVITY } from "@/data/misc";
 import { INTEGRATIONS } from "@/data/integrations";
-import type { LucideIcon } from "lucide-react";
+import type { AppIconComponent } from "@/components/icons/iconMap";
 import { icons } from "@/components/icons/iconMap";
 import { zoneTint } from "@/components/dashboard/zoneTint";
 import {
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/overview")({ component: Overview });
 
 const KPI: {
   label: string;
-  icon: LucideIcon;
+  icon: AppIconComponent;
   value: string;
   unit?: string;
   sub: string;
@@ -145,7 +145,7 @@ const RPN_BUCKETS = [
 ];
 
 const AGENTS: {
-  icon: LucideIcon;
+  icon: AppIconComponent;
   name: string;
   status: string;
   tone: Tone;
@@ -204,7 +204,7 @@ function Overview() {
           className="flex w-full items-center gap-3 rounded-lg border border-hairline bg-container p-3 text-left outline-none transition-colors duration-[150ms] hover:border-strong focus-visible:ring-2 focus-visible:ring-active"
         >
           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-            <icons.integrations className="size-[17px]" aria-hidden="true" />
+            <icons.integrations size={24} />
           </span>
           <span className="type-body-md flex min-w-0 items-center gap-2">
             <StatusDot tone="success" />
@@ -216,7 +216,7 @@ function Overview() {
             </span>
           </span>
           <span className="type-label-sm ml-auto inline-flex shrink-0 items-center gap-1 text-foreground">
-            View integrations <icons.chevronRight className="size-3" aria-hidden="true" />
+            View integrations <icons.chevronRight size={12} />
           </span>
         </button>
 
@@ -256,10 +256,14 @@ function Overview() {
                 <thead>
                   <tr>
                     <th className="type-eyebrow pb-1 text-left text-quaternary" colSpan={2}>
-                      Severity (S) ↓
+                      <span className="inline-flex items-center gap-1">
+                        Severity (S) <icons.flow size={12} className="rotate-90" />
+                      </span>
                     </th>
                     <th className="type-eyebrow pb-1 text-quaternary" colSpan={5}>
-                      Occurrence (O) →
+                      <span className="inline-flex items-center gap-1">
+                        Occurrence (O) <icons.flow size={12} />
+                      </span>
                     </th>
                     <th className="type-eyebrow pb-1 pl-2 text-quaternary">Avg D</th>
                   </tr>
@@ -426,7 +430,7 @@ function Overview() {
               {AGENTS.map((a) => (
                 <div key={a.name} className="rounded-lg border border-hairline bg-raised p-3">
                   <div className="flex items-start gap-2">
-                    <a.icon className="mt-0.5 size-3.5 shrink-0 text-tertiary" aria-hidden="true" />
+                    <a.icon size={16} className="mt-0.5 shrink-0 text-tertiary" />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <div className="type-label-md text-foreground">{a.name}</div>
@@ -445,7 +449,7 @@ function Overview() {
               to="/ai-analysis"
               className={buttonClass("ghost", { size: "sm", className: "mt-3 -ml-3" })}
             >
-              Open AI analysis <icons.chevronRight className="size-3" aria-hidden="true" />
+              Open AI analysis <icons.chevronRight size={12} />
             </Link>
           </Panel>
         </div>
@@ -459,7 +463,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
   return (
     <ModalShell
       className="max-w-2xl"
-      icon={<icons.integrations className="size-[17px]" aria-hidden="true" />}
+      icon={<icons.integrations size={24} />}
       title="Connected data sources"
       titleExtra={
         <QuietStatus tone="success" className="font-sans">
@@ -478,7 +482,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className={buttonClass("primary", { size: "sm", className: "shrink-0" })}
           >
-            Manage integrations <icons.chevronRight className="size-3" aria-hidden="true" />
+            Manage integrations <icons.chevronRight size={12} />
           </Link>
         </>
       }
@@ -490,14 +494,14 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
             className="flex items-start gap-3 rounded-lg border border-hairline p-3"
           >
             <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-              <it.icon className="size-[17px]" aria-hidden="true" />
+              <it.icon size={24} />
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
                 <span className="type-label-md truncate text-foreground">{it.name}</span>
                 {it.status === "syncing" ? (
                   <ToneBadge tone="info" className="shrink-0 gap-1">
-                    <icons.sync className="size-3 animate-spin" aria-hidden="true" /> Syncing
+                    <icons.sync size={12} className="animate-spin" /> Syncing
                   </ToneBadge>
                 ) : (
                   <QuietStatus tone="success" className="shrink-0">
@@ -510,7 +514,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
               </div>
               <div className="type-body-sm mt-1 flex flex-wrap items-center gap-1">
                 <span className="text-tertiary">{it.feeds}</span>
-                <icons.flow className="size-3 text-quaternary" aria-hidden="true" />
+                <icons.flow size={12} className="text-quaternary" />
                 <span className="font-medium text-foreground">{it.into}</span>
               </div>
             </div>

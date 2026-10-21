@@ -1,5 +1,5 @@
 import { useId, type ReactNode } from "react";
-import { X } from "lucide-react";
+import { icons } from "@/components/icons/iconMap";
 import { cn } from "@/lib/utils";
 import { buttonClass } from "./button-styles";
 import { useOverlayDismiss } from "@/hooks/use-overlay-dismiss";
@@ -66,7 +66,7 @@ export function ModalShell({
             className={buttonClass("icon", { className: "size-7 shrink-0" })}
             aria-label="Close"
           >
-            <X className="size-4" aria-hidden="true" />
+            <icons.close size={16} />
           </button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto p-5">{children}</div>

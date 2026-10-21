@@ -1,25 +1,24 @@
 import type { ReactNode } from "react";
-import { Mark } from "@/components/icons/Mark";
-import type { MarkId } from "@/components/icons/iconMap";
+import type { AppIconComponent } from "@/components/icons/iconMap";
 
-/** Page title block: page mark, Michroma title, one-line description, right-aligned actions. */
+/** Page title block: page icon, Michroma title, one-line description, right-aligned actions. */
 export function PageHeader({
   title,
   subtitle,
   actions,
-  mark,
+  icon: Icon,
 }: {
   title: string;
   subtitle?: string;
   actions?: ReactNode;
-  /** The page's illustration, drawn at 44px. */
-  mark?: MarkId;
+  /** The page's icon: the same one its sidebar item shows, drawn at 44px. */
+  icon?: AppIconComponent;
 }) {
   return (
     <header className="shrink-0 border-b border-hairline px-4 py-4 sm:px-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 items-start gap-3">
-          {mark && <Mark id={mark} size={44} className="shrink-0" />}
+          {Icon && <Icon size={44} />}
           <div className="min-w-0">
             <h2 className="type-display-lg sm:type-display-xl text-foreground">{title}</h2>
             {subtitle && <p className="type-body-md mt-1 max-w-[70ch] text-tertiary">{subtitle}</p>}

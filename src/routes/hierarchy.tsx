@@ -6,7 +6,7 @@ import { StatusDot, StatusBadge } from "@/components/shared/StatusBadge";
 import { BATTERY_ROWS } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
 import { Panel, SearchInput } from "@/components/ui/primitives";
-import type { LucideIcon } from "lucide-react";
+import type { AppIconComponent } from "@/components/icons/iconMap";
 import { buttonClass } from "@/components/ui/button-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
@@ -16,7 +16,7 @@ import { ancestorNames, initialOpen, toggleOpen, visibleRows } from "@/lib/tree"
 
 export const Route = createFileRoute("/hierarchy")({ component: HierarchyPage });
 
-const STATS: { label: string; icon: LucideIcon; value: string; valueClassName?: string }[] = [
+const STATS: { label: string; icon: AppIconComponent; value: string; valueClassName?: string }[] = [
   { label: "Functions", icon: icons.functions, value: "4" },
   { label: "Failure modes", icon: icons.failureMode, value: "18" },
   { label: "Critical", icon: icons.alert, value: "2", valueClassName: "text-error" },
@@ -119,9 +119,9 @@ function DeviceTree({
                 }}
               >
                 {isOpen ? (
-                  <icons.chevronDown className="size-3 text-quaternary" />
+                  <icons.chevronDown size={12} className="text-quaternary" />
                 ) : (
-                  <icons.chevronRight className="size-3 text-quaternary" />
+                  <icons.chevronRight size={12} className="text-quaternary" />
                 )}
               </span>
             ) : (
@@ -266,7 +266,7 @@ function HierarchyPage() {
 
           <div className="mt-4 flex flex-wrap gap-2">
             <Link to="/workspace" className={buttonClass("primary", { size: "sm" })}>
-              <icons.workspace className="size-3.5" aria-hidden="true" /> Open DFMEA workspace
+              <icons.workspace size={16} /> Open DFMEA workspace
             </Link>
             <button
               type="button"
@@ -276,7 +276,7 @@ function HierarchyPage() {
               }}
               className={buttonClass("secondary", { size: "sm" })}
             >
-              <icons.ai className="size-3.5" aria-hidden="true" /> Analyze this component
+              <icons.ai size={16} /> Analyze this component
             </button>
           </div>
         </Panel>

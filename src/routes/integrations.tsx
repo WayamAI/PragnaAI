@@ -12,7 +12,7 @@ function StatusPill({ status }: { status: "connected" | "syncing" }) {
   if (status === "syncing") {
     return (
       <ToneBadge tone="info" className="shrink-0 gap-1">
-        <icons.sync className="size-3 animate-spin" aria-hidden="true" /> Syncing
+        <icons.sync size={12} className="animate-spin" /> Syncing
       </ToneBadge>
     );
   }
@@ -44,13 +44,13 @@ function Integrations() {
           onClick={() => toast.success("Re-syncing all connected systems…")}
           className={buttonClass("primary", { size: "sm" })}
         >
-          <icons.sync className="size-3.5" aria-hidden="true" /> Sync all
+          <icons.sync size={16} /> Sync all
         </button>
       }
     >
       <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-hairline bg-container p-3">
         <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-          <icons.integrations className="size-[17px]" aria-hidden="true" />
+          <icons.integrations size={24} />
         </span>
         <div className="min-w-0 flex-1 basis-64">
           <div className="type-label-md text-foreground">
@@ -79,9 +79,7 @@ function Integrations() {
               >
                 {step}
               </span>
-              {i < FLOW.length - 1 && (
-                <icons.flow className="size-4 text-quaternary" aria-hidden="true" />
-              )}
+              {i < FLOW.length - 1 && <icons.flow size={16} className="text-quaternary" />}
             </li>
           ))}
         </ol>
@@ -96,7 +94,7 @@ function Integrations() {
             <div className="flex items-start justify-between gap-2">
               <div className="flex min-w-0 items-center gap-3">
                 <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-                  <it.icon className="size-[17px]" aria-hidden="true" />
+                  <it.icon size={24} />
                 </span>
                 <div className="min-w-0">
                   <h3 className="type-label-md truncate text-foreground">{it.name}</h3>

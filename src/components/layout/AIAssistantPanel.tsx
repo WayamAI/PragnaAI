@@ -57,7 +57,7 @@ export function AIAssistantPanel() {
         className="fixed right-6 bottom-6 z-40 flex size-11 items-center justify-center rounded-full border border-strong bg-action-primary text-on-color outline-none transition-colors duration-[180ms] ease-out hover:bg-action-primary-hover focus-visible:ring-2 focus-visible:ring-active"
         aria-label="Open AI Assistant (Cmd+K)"
       >
-        <icons.ai className="size-5" aria-hidden="true" />
+        <icons.ai size={20} />
       </button>
       {open && (
         <div className="fixed inset-0 z-50 text-foreground">
@@ -74,7 +74,7 @@ export function AIAssistantPanel() {
           >
             <div className="flex h-14 shrink-0 items-center justify-between border-b border-hairline px-4">
               <h2 id={titleId} className="type-label-md flex items-center gap-2 text-foreground">
-                <icons.ai className="size-4 text-tertiary" aria-hidden="true" />
+                <icons.ai size={16} className="text-tertiary" />
                 PragnaAI Assistant
               </h2>
               <div className="flex items-center gap-1">
@@ -92,7 +92,7 @@ export function AIAssistantPanel() {
                   aria-label="Close"
                   className={buttonClass("icon")}
                 >
-                  <icons.close className="size-4" aria-hidden="true" />
+                  <icons.close size={16} />
                 </button>
               </div>
             </div>
@@ -154,7 +154,7 @@ export function AIAssistantPanel() {
                   aria-label="Send message"
                   className={buttonClass("primary", { className: "size-8 px-0" })}
                 >
-                  <icons.send className="size-4" aria-hidden="true" />
+                  <icons.send size={16} />
                 </button>
               </form>
             </div>

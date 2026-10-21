@@ -1,4 +1,5 @@
 import { Toaster as Sonner } from "sonner";
+import { icons } from "@/components/icons/iconMap";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
@@ -6,6 +7,14 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       className="toaster group"
+      icons={{
+        success: <icons.approve size={16} />,
+        error: <icons.reject size={16} />,
+        warning: <icons.alert size={16} />,
+        info: <icons.help size={16} />,
+        loading: <icons.sync size={16} className="animate-spin" />,
+        close: <icons.close size={12} />,
+      }}
       toastOptions={{
         classNames: {
           toast:

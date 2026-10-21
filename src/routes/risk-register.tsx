@@ -5,16 +5,15 @@ import { FAILURE_MODES } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
-import { KpiTile, SearchInput } from "@/components/ui/primitives";
-import type { LucideIcon } from "lucide-react";
+import { CheckInput, KpiTile, SearchInput, SelectField } from "@/components/ui/primitives";
+import type { AppIconComponent } from "@/components/icons/iconMap";
 import { icons } from "@/components/icons/iconMap";
-import { selectClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/risk-register")({ component: RiskRegister });
 
-const KPI: { label: string; icon: LucideIcon; value: string; valueClassName?: string }[] = [
+const KPI: { label: string; icon: AppIconComponent; value: string; valueClassName?: string }[] = [
   { label: "Total risks", icon: icons.riskRegister, value: "280" },
   {
     label: "Critical (S≥9 or RPN≥200)",
@@ -62,21 +61,20 @@ function RiskRegister() {
           aria-label="Search risks"
           wrapperClassName="min-w-[180px] flex-1"
         />
-        <select aria-label="Level" className={selectClass}>
+        <SelectField aria-label="Level">
           <option>Level: All</option>
-        </select>
-        <select aria-label="Risk" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Risk">
           <option>Risk: All</option>
-        </select>
-        <select aria-label="Status" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Status">
           <option>Status: All</option>
-        </select>
+        </SelectField>
         <label className="type-label-sm ml-auto inline-flex items-center gap-2 text-secondary-foreground">
-          <input
+          <CheckInput
             type="checkbox"
             checked={showResidual}
             onChange={(e) => setShowResidual(e.target.checked)}
-            className="size-4 accent-action-primary"
           />
           Show residual RPN
         </label>

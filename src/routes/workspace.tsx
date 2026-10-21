@@ -5,9 +5,8 @@ import { BATTERY_ROWS, type FailureMode } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
-import { EmptyState, SearchInput } from "@/components/ui/primitives";
+import { EmptyState, SearchInput, SelectField } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button-styles";
-import { selectClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 import { icons } from "@/components/icons/iconMap";
@@ -82,7 +81,7 @@ function Workspace() {
             }}
             className={buttonClass("primary", { size: "sm" })}
           >
-            <icons.add className="size-3.5" aria-hidden="true" /> Add failure mode
+            <icons.add size={16} /> Add failure mode
           </button>
           <button
             type="button"
@@ -92,7 +91,7 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <icons.ai className="size-3.5" aria-hidden="true" /> Suggest for this component
+            <icons.ai size={16} /> Suggest for this component
           </button>
           <button
             type="button"
@@ -102,7 +101,7 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <icons.export className="size-3.5" aria-hidden="true" /> Export
+            <icons.export size={16} /> Export
           </button>
           <button
             type="button"
@@ -112,7 +111,7 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <icons.approve className="size-3.5" aria-hidden="true" /> Approve all reviewed
+            <icons.approve size={16} /> Approve all reviewed
           </button>
         </>
       }
@@ -125,27 +124,22 @@ function Workspace() {
           onChange={(e) => setQ(e.target.value)}
           wrapperClassName="min-w-[180px] flex-1"
         />
-        <select
-          aria-label="Risk"
-          value={risk}
-          onChange={(e) => setRisk(e.target.value)}
-          className={selectClass}
-        >
+        <SelectField aria-label="Risk" value={risk} onChange={(e) => setRisk(e.target.value)}>
           <option value="">Risk: All</option>
           <option>Critical</option>
           <option>High</option>
           <option>Medium</option>
           <option>Low</option>
-        </select>
-        <select aria-label="Status" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Status">
           <option>Status: All</option>
-        </select>
-        <select aria-label="Owner" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Owner">
           <option>Owner: All</option>
-        </select>
-        <select aria-label="Source" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Source">
           <option>Source: All</option>
-        </select>
+        </SelectField>
       </div>
 
       <div className={cn(tableStyles.wrap, "mt-3")}>
@@ -281,7 +275,7 @@ function Workspace() {
                 className={buttonClass("icon", { className: "shrink-0" })}
                 aria-label="Close"
               >
-                <icons.close className="size-4" aria-hidden="true" />
+                <icons.close size={16} />
               </button>
             </div>
             <div className="flex flex-col gap-4 p-4">

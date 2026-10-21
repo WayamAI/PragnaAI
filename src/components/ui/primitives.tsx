@@ -1,9 +1,13 @@
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import type {
+  ButtonHTMLAttributes,
+  InputHTMLAttributes,
+  ReactNode,
+  SelectHTMLAttributes,
+} from "react";
+import type { AppIconComponent } from "@/components/icons/iconMap";
 import { cn } from "@/lib/utils";
-import { Mark } from "@/components/icons/Mark";
-import { icons, marks } from "@/components/icons/iconMap";
-import { inputClass } from "./input-styles";
+import { icons } from "@/components/icons/iconMap";
+import { inputClass, selectClass } from "./input-styles";
 import type { Tone } from "@/lib/severity";
 import { toneBadge, toneDot, toneText } from "./tone-styles";
 
@@ -28,8 +32,8 @@ export const Panel = ({
   children,
 }: {
   title?: ReactNode;
-  /** Greyscale 16px icon before the title. */
-  icon?: LucideIcon;
+  /** Icon before the title, drawn at 20px. */
+  icon?: AppIconComponent;
   action?: ReactNode;
   padded?: boolean;
   className?: string;
@@ -45,7 +49,7 @@ export const Panel = ({
     {title && (
       <header className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-hairline px-4">
         <h3 className="type-eyebrow flex min-w-0 items-center gap-2 text-quaternary">
-          {Icon && <Icon className="size-4 shrink-0 text-tertiary" aria-hidden="true" />}
+          {Icon && <Icon size={20} />}
           <span className="truncate">{title}</span>
         </h3>
         {action && <div className="shrink-0">{action}</div>}
@@ -71,8 +75,8 @@ export const KpiTile = ({
   valueClassName,
 }: {
   label: string;
-  /** Top-right 16px icon, tertiary. */
-  icon?: LucideIcon;
+  /** Top-right 28px icon. */
+  icon?: AppIconComponent;
   value: ReactNode;
   unit?: string;
   delta?: string;
@@ -86,7 +90,7 @@ export const KpiTile = ({
     <>
       <span className="flex items-start justify-between gap-2">
         <span className="type-eyebrow text-quaternary">{label}</span>
-        {Icon && <Icon className="size-4 shrink-0 text-tertiary" aria-hidden="true" />}
+        {Icon && <Icon size={28} />}
       </span>
       <span
         className={cn(
@@ -189,7 +193,7 @@ export const EmptyState = ({
       className,
     )}
   >
-    <Mark id={marks.empty} size={72} className="mb-1" />
+    <icons.empty size={44} className="mb-1" />
     <p className="type-body-md text-tertiary">{title}</p>
     {detail && <p className="type-body-sm text-quaternary">{detail}</p>}
   </div>
@@ -203,9 +207,53 @@ export const SearchInput = ({
 }: InputHTMLAttributes<HTMLInputElement> & { wrapperClassName?: string }) => (
   <div className={cn("relative", wrapperClassName)}>
     <icons.search
-      className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-quaternary"
-      aria-hidden="true"
+      size={16}
+      className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-quaternary"
     />
     <input {...props} className={inputClass("sm", cn("pl-9", className))} />
   </div>
+);
+
+/** Native select with our chevron: the browser arrow is hidden and the icon sits over it. */
+export const SelectField = ({
+  className,
+  wrapperClassName,
+  children,
+  ...props
+}: SelectHTMLAttributes<HTMLSelectElement> & { wrapperClassName?: string }) => (
+  <span className={cn("relative inline-flex", wrapperClassName)}>
+    <select {...props} className={cn(selectClass, "cursor-pointer appearance-none", className)}>
+      {children}
+    </select>
+    <icons.chevronDown
+      size={12}
+      className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2"
+    />
+  </span>
+);
+
+/** Checkbox or radio drawn by us: a bordered box with the check icon, or a ring with a dot. */
+export const CheckInput = ({
+  type = "checkbox",
+  className,
+  ...props
+}: Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & { type?: "checkbox" | "radio" }) => (
+  <span className={cn("relative inline-flex size-4 shrink-0", className)}>
+    <input
+      {...props}
+      type={type}
+      className={cn(
+        "peer size-4 cursor-pointer appearance-none border border-strong bg-action outline-none transition-colors focus-visible:ring-2 focus-visible:ring-active disabled:opacity-40",
+        type === "checkbox"
+          ? "rounded-[4px] checked:border-foreground checked:bg-container"
+          : "rounded-full checked:border-foreground checked:bg-[radial-gradient(circle,var(--action-primary-default)_0_36%,transparent_42%)]",
+      )}
+    />
+    {type === "checkbox" && (
+      <icons.check
+        size={12}
+        className="pointer-events-none absolute inset-0 m-auto opacity-0 peer-checked:opacity-100"
+      />
+    )}
+  </span>
 );

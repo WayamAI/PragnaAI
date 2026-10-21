@@ -133,7 +133,7 @@ function LoginPage() {
                 disabled={submitting}
                 className={buttonClass("primary", { size: "lg", className: "mt-1 w-full" })}
               >
-                <icons.signIn className="size-4" aria-hidden="true" />
+                <icons.signIn size={16} />
                 Sign in
               </button>
             </form>

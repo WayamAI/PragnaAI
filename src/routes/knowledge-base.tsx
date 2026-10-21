@@ -55,8 +55,8 @@ function KB() {
         <div className="min-w-0 lg:col-span-3">
           <div className="relative">
             <icons.search
-              className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-quaternary"
-              aria-hidden="true"
+              size={16}
+              className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-quaternary"
             />
             <input
               value={query}
@@ -124,8 +124,7 @@ function KB() {
                     }}
                     className={buttonClass("secondary", { size: "sm" })}
                   >
-                    <icons.workspace className="size-3.5" aria-hidden="true" /> Use in DFMEA
-                    workspace
+                    <icons.workspace size={16} /> Use in DFMEA workspace
                   </button>
                   <button
                     type="button"
@@ -135,7 +134,7 @@ function KB() {
                     }}
                     className={buttonClass("ghost", { size: "sm" })}
                   >
-                    <icons.view className="size-3.5" aria-hidden="true" /> View full record
+                    <icons.view size={16} /> View full record
                   </button>
                 </div>
               </section>

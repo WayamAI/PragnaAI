@@ -79,7 +79,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
     <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-hairline bg-page px-4 sm:px-5">
       <div className="flex min-w-0 items-center gap-3">
         <button onClick={onMenuClick} aria-label="Open menu" className={`${iconButton} lg:hidden`}>
-          <icons.menu className="size-4" aria-hidden="true" />
+          <icons.menu size={16} />
         </button>
         <div className="hidden min-w-0 sm:block">
           <div className="type-eyebrow truncate text-quaternary">{nav?.group ?? "PragnaAI"}</div>
@@ -98,7 +98,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
           <span>Rev B</span>
           <span className="text-quaternary">|</span>
           <span className="tabular">DFMEA-2025-001</span>
-          <icons.chevronDown className="size-3 text-quaternary" aria-hidden="true" />
+          <icons.chevronDown size={12} className="text-quaternary" />
         </button>
       </div>
       <div className="flex shrink-0 items-center gap-2">
@@ -110,7 +110,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             aria-haspopup="dialog"
             aria-expanded={panel === "notifications"}
           >
-            <icons.notifications className="size-4" aria-hidden="true" />
+            <icons.notifications size={16} />
             <span className="type-caption tabular absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-error-surface text-error">
               3
             </span>
@@ -127,7 +127,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
                 >
-                  <icons.approve className="size-3 shrink-0" aria-hidden="true" /> Mark all as read
+                  <icons.approve size={12} className="shrink-0" /> Mark all as read
                 </button>
               }
             >
@@ -140,7 +140,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className="flex w-full gap-3 border-b border-hairline px-4 py-3 text-left outline-none transition-colors duration-[150ms] last:border-b-0 hover:bg-raised focus-visible:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active"
                 >
-                  <n.icon className={`mt-0.5 size-4 shrink-0 ${n.tone}`} aria-hidden="true" />
+                  <n.icon className={`mt-0.5 size-4 shrink-0 ${n.tone}`} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <span className="type-label-md truncate text-foreground">{n.title}</span>
@@ -164,7 +164,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             aria-haspopup="dialog"
             aria-expanded={panel === "help"}
           >
-            <icons.help className="size-4" aria-hidden="true" />
+            <icons.help size={16} />
           </button>
           {panel === "help" && (
             <Dropdown
@@ -178,7 +178,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
                 >
-                  Open documentation <icons.external className="size-3" aria-hidden="true" />
+                  Open documentation <icons.external size={12} />
                 </button>
               }
             >
@@ -191,7 +191,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className="flex w-full gap-3 border-b border-hairline px-4 py-3 text-left outline-none transition-colors duration-[150ms] last:border-b-0 hover:bg-raised focus-visible:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active"
                 >
-                  <h.icon className="mt-0.5 size-4 shrink-0 text-tertiary" aria-hidden="true" />
+                  <h.icon size={16} className="mt-0.5 shrink-0 text-tertiary" />
                   <div className="min-w-0 flex-1">
                     <div className="type-label-md truncate text-foreground">{h.title}</div>
                     <p className="type-body-sm mt-0.5 text-tertiary">{h.detail}</p>
@@ -210,7 +210,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
           MediCore Systems
         </span>
         <button onClick={handleLogout} aria-label="Log out" title="Log out" className={iconButton}>
-          <icons.logout className="size-4" aria-hidden="true" />
+          <icons.logout size={16} />
         </button>
       </div>
     </header>
@@ -249,7 +249,7 @@ function Dropdown({
             className={buttonClass("icon", { className: "size-7" })}
             aria-label="Close"
           >
-            <icons.close className="size-3.5" aria-hidden="true" />
+            <icons.close size={16} />
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">{children}</div>

@@ -260,11 +260,6 @@
 
   /* Chronus has no heading defaults; pages set their own role classes. */
 
-  /* Chronus icon stroke */
-  svg.lucide {
-    stroke-width: 1.75;
-  }
-
   ::placeholder {
     color: var(--text-quaternary);
   }

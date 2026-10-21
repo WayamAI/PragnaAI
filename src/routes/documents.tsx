@@ -27,7 +27,7 @@ function Docs() {
         }}
         className="mb-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-strong bg-raised p-8 text-center"
       >
-        <icons.upload className="size-6 text-tertiary" aria-hidden="true" />
+        <icons.upload size={24} className="text-tertiary" />
         <p className="type-body-md mt-2 text-foreground">
           Drag and drop engineering documents here, or{" "}
           <button
@@ -89,7 +89,7 @@ function Docs() {
                       className: "px-2 text-secondary-foreground",
                     })}
                   >
-                    <icons.view className="size-3.5" aria-hidden="true" /> View
+                    <icons.view size={16} /> View
                   </button>
                   <button
                     type="button"
@@ -99,7 +99,7 @@ function Docs() {
                     }}
                     className={buttonClass("ghost", { className: "px-2" })}
                   >
-                    <icons.reextract className="size-3.5" aria-hidden="true" /> Re-extract
+                    <icons.reextract size={16} /> Re-extract
                   </button>
                 </td>
               </tr>

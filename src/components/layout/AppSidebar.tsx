@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type SyntheticEvent } from "react";
 import { toast } from "sonner";
-import type { LucideIcon } from "lucide-react";
+import type { AppIconComponent } from "@/components/icons/iconMap";
 import { icons } from "@/components/icons/iconMap";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme/theme";
@@ -58,7 +58,12 @@ export function AppSidebar({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  const footerButton = (label: string, Icon: LucideIcon, onClick: () => void, extra?: object) => (
+  const footerButton = (
+    label: string,
+    Icon: AppIconComponent,
+    onClick: () => void,
+    extra?: object,
+  ) => (
     <button
       type="button"
       onClick={onClick}
@@ -72,7 +77,7 @@ export function AppSidebar({
       {...extra}
     >
       <span className={cn(puckBase, puckIdle)}>
-        <Icon className="size-[17px]" aria-hidden="true" />
+        <Icon size={24} />
       </span>
       <span
         className={cn(
@@ -143,7 +148,7 @@ export function AppSidebar({
               rowFocus,
             )}
           >
-            <icons.close className="size-4" aria-hidden="true" />
+            <icons.close size={16} />
           </button>
         </div>
 
@@ -190,7 +195,7 @@ export function AppSidebar({
                           active ? "bg-action-primary text-on-color" : puckIdle,
                         )}
                       >
-                        <it.icon className="size-[17px]" aria-hidden="true" />
+                        <it.icon size={24} />
                       </span>
                       <span
                         className={cn(
@@ -233,7 +238,7 @@ export function AppSidebar({
           </div>
           {footerButton(
             theme === "light" ? "Dark theme" : "Light theme",
-            theme === "light" ? icons.themeDark : icons.themeLight,
+            icons.theme,
             toggleTheme,
             { "aria-label": theme === "light" ? "Switch to dark theme" : "Switch to light theme" },
           )}
@@ -385,7 +390,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
             }}
             className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
           >
-            Contact support <icons.external className="size-3" aria-hidden="true" />
+            Contact support <icons.external size={12} />
           </button>
           <button
             type="button"
@@ -435,10 +440,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
                   rowFocus,
                 )}
               >
-                <icons.standard
-                  className="mt-0.5 size-4 shrink-0 text-tertiary"
-                  aria-hidden="true"
-                />
+                <icons.standard size={16} className="mt-0.5 shrink-0 text-tertiary" />
                 <div>
                   <div className="type-label-sm font-mono text-foreground">{id}</div>
                   <div className="type-body-sm text-tertiary">{desc}</div>

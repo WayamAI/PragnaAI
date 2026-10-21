@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -13,6 +13,7 @@ import { navGroups, navItems, findNav } from "@/components/layout/nav";
 import { severityTone } from "@/lib/severity";
 import { THEME_INIT_SCRIPT, THEME_STORAGE_KEY } from "@/components/theme/theme";
 import { icons } from "@/components/icons/iconMap";
+import { AppIcon, FLAT_FALLBACKS, ICON_NAMES, TIERS } from "@/components/icons/AppIcon";
 
 const src = join(process.cwd(), "src");
 const read = (p: string) => readFileSync(join(src, p), "utf8");
@@ -217,13 +218,53 @@ describe("risk zones", () => {
 });
 
 describe("icon map", () => {
-  it("gives every meaning its own icon (only ai and aiAnalysis share one)", () => {
-    const byComponent = new Map<unknown, string[]>();
+  const publicDir = join(process.cwd(), "public", "images", "icons");
+  const walk = (dir: string): string[] =>
+    readdirSync(join(src, dir), { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name).split("\\").join("/")],
+    );
+
+  it("gives every meaning its own picture (only the listed aliases share one)", () => {
+    const byPicture = new Map<string, string[]>();
     for (const [key, component] of Object.entries(icons)) {
-      byComponent.set(component, [...(byComponent.get(component) ?? []), key]);
+      const id = `${component.iconName}|${component.transform ?? ""}`;
+      byPicture.set(id, [...(byPicture.get(id) ?? []), key]);
     }
-    const shared = [...byComponent.values()].filter((keys) => keys.length > 1);
-    expect(shared).toEqual([["aiAnalysis", "ai"]]);
+    const shared = [...byPicture.values()].filter((keys) => keys.length > 1);
+    expect(shared.map((keys) => [...keys].sort()).sort()).toEqual([
+      ["ai", "aiAnalysis"],
+      ["chart", "range"],
+      ["items", "workspace"],
+    ]);
+  });
+
+  it("uses every picture at least once and resolves every key to existing files", () => {
+    const used = new Set(Object.values(icons).map((c) => c.iconName));
+    for (const name of ICON_NAMES) expect(used.has(name)).toBe(true);
+    for (const name of ICON_NAMES) {
+      for (const tier of TIERS) {
+        for (const x of [1, 2]) {
+          expect(existsSync(join(publicDir, `${name}-${tier}@${x}x.png`))).toBe(true);
+        }
+      }
+    }
+    for (const name of FLAT_FALLBACKS) {
+      expect(existsSync(join(publicDir, "fallback", `${name}.svg`))).toBe(true);
+    }
+  });
+
+  it("renders a decorative image with a 1x and 2x source, and a flat SVG at 16px for fallbacks", () => {
+    const html = renderToStaticMarkup(createElement(AppIcon, { name: "search", size: 28 }));
+    expect(html).toContain('alt=""');
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain("search-28@1x.png 1x, ");
+    expect(html).toContain("search-28@2x.png 2x");
+    expect(renderToStaticMarkup(createElement(AppIcon, { name: "chevron", size: 12 }))).toContain(
+      "fallback/chevron.svg",
+    );
+    expect(renderToStaticMarkup(createElement(AppIcon, { name: "chevron", size: 20 }))).toContain(
+      "chevron-20@1x.png",
+    );
   });
 
   it("draws every nav item with its icon-map entry", () => {
@@ -231,21 +272,12 @@ describe("icon map", () => {
     for (const item of navItems) expect(mapped.has(item.icon)).toBe(true);
   });
 
-  it("imports lucide-react only in the icon map, ui primitives and the integrations data file", () => {
-    const allowed = ["components/icons/iconMap.ts", "data/integrations.ts"];
-    const walk = (dir: string): string[] =>
-      readdirSync(join(src, dir), { withFileTypes: true }).flatMap((e) =>
-        e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name).split("\\").join("/")],
-      );
+  it("imports no icon library anywhere in src and has no lucide stylesheet rule", () => {
     const offenders = walk(".")
-      .filter((f) => /\.(ts|tsx)$/.test(f))
-      .filter((f) => !f.startsWith("components/ui/") && !allowed.includes(f))
-      .filter((f) => /^import\s+(?!type\s)[^;]*?from\s+"lucide-react"/m.test(read(f)));
+      .filter((f) => /\.(ts|tsx)$/.test(f) && !f.startsWith("tests/"))
+      .filter((f) => /from\s+"lucide-react"/.test(read(f)));
     expect(offenders).toEqual([]);
-  });
-
-  it("sets one global stroke width of 1.75", () => {
-    expect(read("styles.css")).toMatch(/svg\.lucide\s*\{\s*stroke-width:\s*1\.75;/);
+    expect(read("styles.css")).not.toContain("lucide");
   });
 });
 

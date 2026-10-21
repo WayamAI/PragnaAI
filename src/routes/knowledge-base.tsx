@@ -78,7 +78,7 @@ function KB() {
                   setQuery(c);
                   runSearch(c);
                 }}
-                className={buttonClass("chip")}
+                className={buttonClass("chip", { size: "sm" })}
               >
                 {c}
               </button>
@@ -95,7 +95,7 @@ function KB() {
                   console.log("[KnowledgeBase] Source filter", s);
                   toast(`Filtering results by: ${s}`);
                 }}
-                className={buttonClass("chip", { active: source === s })}
+                className={buttonClass("chip", { size: "sm", active: source === s })}
               >
                 {s}
               </button>

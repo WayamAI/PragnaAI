@@ -85,7 +85,7 @@ function RiskRegister() {
           <thead>
             <tr>
               <th className={tableStyles.th()}>Risk ID</th>
-              <th className={tableStyles.th()}>Level</th>
+              <th className={tableStyles.th({ className: "hidden 2xl:table-cell" })}>Level</th>
               <th className={tableStyles.th()}>Component</th>
               <th className={tableStyles.th()}>Failure mode</th>
               <th className={tableStyles.th({ numeric: true })}>S</th>
@@ -130,13 +130,21 @@ function RiskRegister() {
                   >
                     {r.id}
                   </td>
-                  <td className={tableStyles.td({ className: quiet })}>{r.level}</td>
-                  <td className={tableStyles.td({ className: quiet })}>{r.component}</td>
+                  <td className={tableStyles.td({ className: cn("hidden 2xl:table-cell", quiet) })}>
+                    {r.level}
+                  </td>
+                  <td
+                    className={tableStyles.td({
+                      className: cn("max-w-[150px] whitespace-normal", quiet),
+                    })}
+                  >
+                    {r.component}
+                  </td>
                   <td
                     className={tableStyles.td({
                       primary: true,
                       truncate: true,
-                      className: "max-w-[240px]",
+                      className: "max-w-[200px]",
                     })}
                   >
                     {r.failureMode}

@@ -88,6 +88,7 @@ function Docs() {
                       toast(`Opening ${d.name}`);
                     }}
                     className={buttonClass("ghost", {
+                      size: "sm",
                       className: "px-2 text-secondary-foreground",
                     })}
                   >
@@ -100,6 +101,7 @@ function Docs() {
                       toast.success(`Re-extraction queued for ${d.name}`);
                     }}
                     className={buttonClass("ghost", {
+                      size: "sm",
                       className: "px-2 text-secondary-foreground",
                     })}
                   >

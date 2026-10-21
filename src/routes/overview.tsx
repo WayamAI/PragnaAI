@@ -6,6 +6,7 @@ import { INTEGRATIONS } from "@/data/integrations";
 import type { AppIconComponent } from "@/components/icons/iconMap";
 import { icons } from "@/components/icons/iconMap";
 import { zoneTint } from "@/components/dashboard/zoneTint";
+import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import {
   KpiTile,
   Panel,
@@ -32,8 +33,6 @@ import {
   ResponsiveContainer,
   Tooltip,
   Cell,
-  PieChart,
-  Pie,
 } from "recharts";
 
 export const Route = createFileRoute("/overview")({ component: Overview });
@@ -137,10 +136,10 @@ const RINGS = [
 ];
 
 const RPN_BUCKETS = [
-  { range: "0-49", count: 98, fill: "var(--analytics-series-1)" },
-  { range: "50-99", count: 89, fill: "var(--analytics-series-1)" },
-  { range: "100-149", count: 52, fill: "var(--analytics-series-1)" },
-  { range: "150-199", count: 27, fill: "var(--analytics-series-1)" },
+  { range: "0-49", count: 98, fill: "url(#rpn-bar)" },
+  { range: "50-99", count: 89, fill: "url(#rpn-bar)" },
+  { range: "100-149", count: 52, fill: "url(#rpn-bar)" },
+  { range: "150-199", count: 27, fill: "url(#rpn-bar)" },
   { range: "200+", count: 14, fill: "var(--feedback-error-content)" },
 ];
 
@@ -330,47 +329,23 @@ function Overview() {
           </Panel>
 
           <Panel title="Completion by Level" icon={icons.completion} className="lg:col-span-5">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3">
               {RINGS.map((r) => (
-                <div key={r.level} className="text-center">
-                  <ResponsiveContainer width="100%" height={80}>
-                    <PieChart>
-                      <Pie
-                        data={[{ v: r.pct }, { v: 100 - r.pct }]}
-                        dataKey="v"
-                        innerRadius={22}
-                        outerRadius={32}
-                        startAngle={90}
-                        endAngle={-270}
-                        stroke="none"
-                        isAnimationActive={false}
-                      >
-                        <Cell fill="var(--analytics-series-1)" />
-                        <Cell fill="var(--surface-raised-x2)" />
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="type-display-base tabular mt-1 text-foreground">
-                    {r.pct}
-                    <Unit>%</Unit>
-                  </div>
-                  <div className="type-caption font-normal text-tertiary">{r.level}</div>
-                  <div className="type-caption tabular font-normal text-quaternary">
-                    {r.done}/{r.total}
-                  </div>
-                </div>
+                <ProgressRing
+                  key={r.level}
+                  pct={r.pct}
+                  label={r.level}
+                  detail={`${r.done}/${r.total}`}
+                />
               ))}
             </div>
           </Panel>
         </div>
 
         <Panel title="Failure Mode Distribution by RPN Range" icon={icons.chart}>
-          <div className="type-caption mb-3 flex flex-wrap items-center gap-4 font-normal text-tertiary">
+          <div className="type-caption mb-3 ml-8 flex flex-wrap items-center gap-4 font-normal text-tertiary">
             <span className="inline-flex items-center gap-1.5">
-              <span
-                className="size-2.5 rounded-sm"
-                style={{ background: "var(--analytics-series-1)" }}
-              />
+              <span className="size-2.5 rounded-sm bg-brand-gradient" />
               Failure modes
             </span>
             <span className="inline-flex items-center gap-1.5">
@@ -383,6 +358,12 @@ function Overview() {
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={RPN_BUCKETS} margin={{ top: 16, right: 8, bottom: 0, left: 0 }}>
+              <defs>
+                <linearGradient id="rpn-bar" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ffa12b" />
+                  <stop offset="100%" stopColor="#f0731a" />
+                </linearGradient>
+              </defs>
               <CartesianGrid vertical={false} stroke="var(--stroke-muted)" />
               <XAxis dataKey="range" axisLine={false} tickLine={false} tick={axisTick} />
               <YAxis
@@ -399,7 +380,7 @@ function Overview() {
                 labelStyle={chartTooltipLabelStyle}
                 formatter={(v) => [v, "Failure modes"]}
               />
-              <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={48} isAnimationActive={false}>
+              <Bar dataKey="count" radius={[8, 8, 0, 0]} maxBarSize={56} isAnimationActive={false}>
                 {RPN_BUCKETS.map((b, i) => (
                   <Cell key={i} fill={b.fill} />
                 ))}

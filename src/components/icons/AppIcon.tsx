@@ -119,7 +119,7 @@ export function AppIcon({
       height={size}
       draggable={false}
       className={className ? `shrink-0 select-none ${className}` : "shrink-0 select-none"}
-      style={style}
+      style={{ width: size, height: size, ...style }}
     />
   );
 }

@@ -14,21 +14,18 @@ type Panel = "notifications" | "help" | null;
 const NOTIFICATIONS = [
   {
     icon: icons.alert,
-    tone: "text-error",
     title: "7 mitigations overdue",
     detail: "Oldest: MIT-0033-A (BMS watchdog validation), 55 days late.",
     time: "just now",
   },
   {
     icon: icons.ai,
-    tone: "text-tertiary",
     title: "23 AI suggestions pending review",
     detail: "New batch generated for Battery Pack and Signal Processing.",
     time: "2h ago",
   },
   {
     icon: icons.reports,
-    tone: "text-tertiary",
     title: "Report ready to download",
     detail: "Risk Summary Report (PDF) finished generating.",
     time: "5h ago",
@@ -59,7 +56,7 @@ const HELP_LINKS = [
 ];
 
 const iconButton =
-  "relative flex size-8 items-center justify-center rounded-full bg-action text-tertiary outline-none transition-colors duration-[180ms] ease-out hover:bg-raised-2 hover:text-secondary-foreground focus-visible:ring-2 focus-visible:ring-active";
+  "relative flex size-9 items-center justify-center rounded-full outline-none transition-colors duration-[180ms] ease-out hover:bg-raised-2 focus-visible:ring-2 focus-visible:ring-active";
 
 export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
   const [panel, setPanel] = useState<Panel>(null);
@@ -90,18 +87,17 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             console.log("[TopHeader] Switch project clicked");
             toast("Project switcher: only CardioGuard 3000 available in this demo.");
           }}
-          className="type-label-sm hidden h-8 items-center gap-2 rounded-full border border-hairline bg-action px-3 text-secondary-foreground outline-none transition-colors duration-[180ms] ease-out hover:border-strong hover:bg-raised-2 hover:text-foreground focus-visible:ring-2 focus-visible:ring-active md:inline-flex"
+          aria-label="Switch project"
+          className="hidden h-9 min-w-0 items-center gap-2 rounded-full px-3 outline-none transition-colors duration-[180ms] ease-out hover:bg-raised-2 focus-visible:ring-2 focus-visible:ring-active md:inline-flex"
         >
-          <span className="text-tertiary">Project:</span>
-          <span>CardioGuard 3000</span>
-          <span className="text-quaternary">|</span>
-          <span>Rev B</span>
-          <span className="text-quaternary">|</span>
-          <span className="tabular">DFMEA-2025-001</span>
-          <icons.chevronDown size={12} className="text-quaternary" />
+          <span className="type-label-md truncate text-foreground">CardioGuard 3000</span>
+          <span className="type-label-sm tabular truncate text-quaternary">
+            Rev B · DFMEA-2025-001
+          </span>
+          <icons.chevronDown size={12} />
         </button>
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-1">
         <div className="relative">
           <button
             onClick={() => toggle("notifications")}
@@ -110,8 +106,8 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             aria-haspopup="dialog"
             aria-expanded={panel === "notifications"}
           >
-            <icons.notifications size={16} />
-            <span className="type-caption tabular absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-error-surface text-error">
+            <icons.notifications size={20} />
+            <span className="type-caption tabular absolute top-0 right-0 flex size-4 items-center justify-center rounded-full bg-error-badge text-badge">
               3
             </span>
           </button>
@@ -143,7 +139,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   <n.icon size={16} className="mt-0.5" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="type-label-md truncate text-foreground">{n.title}</span>
+                      <span className="type-label-md text-foreground">{n.title}</span>
                       <span className="type-caption tabular shrink-0 font-normal text-quaternary">
                         {n.time}
                       </span>
@@ -164,7 +160,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             aria-haspopup="dialog"
             aria-expanded={panel === "help"}
           >
-            <icons.help size={16} />
+            <icons.help size={20} />
           </button>
           {panel === "help" && (
             <Dropdown
@@ -202,13 +198,11 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
           )}
         </div>
 
-        <div className="flex h-8 items-center gap-2 rounded-full border border-hairline bg-action px-1 sm:pr-3">
+        <span className="type-label-sm hidden px-1 text-quaternary lg:block">MediCore Systems</span>
+        <div className="flex h-9 items-center gap-2 px-1">
           <EngineerAvatar name={CURRENT_USER.name} />
           <span className="type-label-sm hidden text-foreground sm:block">{CURRENT_USER.name}</span>
         </div>
-        <span className="type-label-sm hidden h-8 items-center rounded-full border border-hairline bg-action px-3 text-tertiary md:inline-flex">
-          MediCore Systems
-        </span>
         <button onClick={handleLogout} aria-label="Log out" title="Log out" className={iconButton}>
           <icons.logout size={16} />
         </button>

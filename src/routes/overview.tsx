@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { ACTIVITY } from "@/data/misc";
 import { INTEGRATIONS } from "@/data/integrations";
@@ -180,13 +180,9 @@ const AGENTS: {
 
 function Overview() {
   const [showIntegrations, setShowIntegrations] = useState(false);
-  // Auto-open the data-source popup only once per browser session.
-  useEffect(() => {
-    if (!sessionStorage.getItem("rl-integrations-popup-seen")) {
-      setShowIntegrations(true);
-      sessionStorage.setItem("rl-integrations-popup-seen", "1");
-    }
-  }, []);
+  // The data-source details open on request from the card below. They used to open by
+  // themselves once per session; the old sessionStorage key "rl-integrations-popup-seen" is
+  // no longer read or written.
   const connected = INTEGRATIONS.filter((i) => i.status === "connected").length;
   const highCount = HEATMAP.reduce(
     (sum, row, ri) =>
@@ -197,27 +193,34 @@ function Overview() {
   return (
     <PageContainer title="Project Overview" subtitle="CardioGuard 3000 · Rev B · DFMEA-2025-001">
       <div className="flex flex-col gap-6">
-        {/* Live data-source status banner */}
-        <button
-          onClick={() => setShowIntegrations(true)}
-          className="flex w-full items-center gap-3 rounded-lg border border-hairline bg-container p-3 text-left outline-none transition-colors duration-[150ms] hover:border-strong focus-visible:ring-2 focus-visible:ring-active"
+        {/* Connected data sources: inline card, details on request */}
+        <section
+          aria-label="Connected data sources"
+          className="flex flex-wrap items-center gap-3 rounded-lg border border-hairline bg-container px-4 py-3"
         >
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-            <icons.integrations size={24} />
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-tint">
+            <icons.integrations size={28} />
           </span>
-          <span className="type-body-md flex min-w-0 items-center gap-2">
-            <StatusDot tone="success" />
-            <span className="font-medium whitespace-nowrap text-foreground">
-              {connected} of {INTEGRATIONS.length} data sources live
-            </span>
-            <span className="hidden truncate text-tertiary sm:inline">
-              · Teamcenter (PLM), Jama, Greenlight Guru, FDA MAUDE, SAP, Polarion
-            </span>
-          </span>
-          <span className="type-label-sm ml-auto inline-flex shrink-0 items-center gap-1 text-foreground">
-            View integrations <icons.chevronRight size={12} />
-          </span>
-        </button>
+          <div className="min-w-0 flex-1">
+            <h3 className="type-label-md text-foreground">Connected data sources</h3>
+            <p className="type-body-sm flex min-w-0 items-center gap-2 text-tertiary">
+              <StatusDot tone="success" />
+              <span className="font-medium whitespace-nowrap text-secondary-foreground">
+                {connected} of {INTEGRATIONS.length} live
+              </span>
+              <span className="hidden truncate sm:inline">
+                · Teamcenter (PLM), Jama, Greenlight Guru, FDA MAUDE, SAP, Polarion
+              </span>
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowIntegrations(true)}
+            className={buttonClass("secondary", { size: "sm" })}
+          >
+            View details <icons.chevronRight size={12} />
+          </button>
+        </section>
 
         {showIntegrations && <IntegrationsPopup onClose={() => setShowIntegrations(false)} />}
 

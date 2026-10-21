@@ -231,3 +231,45 @@ Not done, on purpose:
 - Hierarchy detail stats and failure-mode table are still Battery Pack demo data for every node; headings now say so.
 - Spaced hyphens used as dashes inside data titles (for example "FM-CG2-088 - ...") were not in the stated rule and are untouched.
 - `In Progress` shows a warning-coloured dot (data status taxonomy), left as is.
+
+## Manager review, round 2 (branch `ui-review-fixes`)
+
+Inputs: `ICON_INVENTORY.md` (icon slots and 25 design weaknesses), `VERIFY.md` (remaining fails), and seven Flow sprite sheets of 8 icons each (56 icons). The sheets were `.jpg`, not `.png`, and are not in the repo. One commit per item.
+
+### Icons (`447a79a`)
+
+- **Slicing:** each sheet was opened first: exactly 8 icons in 2 rows of 4, nothing inside any cell that looks like a watermark (the only non-white pixels in a sheet corner are the re-extract icon's bracket). Cells were found from the gaps between icons, the background removed with soft edges and de-fringed colours, icons trimmed, padded to an 8% margin and centred, then Lanczos-scaled from a 512px master. The contact sheet (24px and 44px on light and dark) is `docs/icon-audit/contact.webp`; no halos, no grey boxes.
+- **Files:** `public/images/icons/<key>-<size>@1x|2x.png` for 16, 20, 24, 28 and 44 (1.42 MB in total). The 32px tier was dropped: nothing draws at 32 and it pushed the set over 1.5 MB.
+- **Flat fallbacks:** the 3D art reads at 16px for most keys, but ten got hand-built 2-tone SVGs (brand gradient, `#8A8A8A` accents) used at 16px and below: `arrow`, `check`, `chevron`, `close`, `external`, `history`, `logout`, `menu`, `re-extract`, `sign-in`. They are in `public/images/icons/fallback/`.
+- **Wiring:** `AppIcon` renders `<img alt="" aria-hidden width height draggable=false srcset 1x/2x>`, is `BASE_URL`-safe, and sets an explicit inline size so a flex row cannot stretch it. `iconMap.ts` keeps its keys, each now an `AppIcon`. Sizes: 24 nav, 44 page header, 28 KPI, 20 panel header, 16 buttons, rows and inputs, 12 small controls. New keys: `check`, `mitigation`, `user`, `plm`, `requirements`, `qms`, `regulatory`, `verification`, `empty`.
+- **Also replaced:** native select chevrons (`SelectField`), checkboxes and radios (`CheckInput`), Sonner toast icons, the vendor icons in `data/integrations.ts`, the modal close, the matrix axis arrows. The old page marks and `Mark.tsx` are deleted; the new `empty` tray replaces `mark-empty`.
+- **Deleted:** the 18 unused shadcn files that imported lucide (checked by import graph: none reachable from any route). `lucide-react` is no longer imported anywhere but is **still in `package.json`**, as asked. The `svg.lucide` rule is gone.
+- **Tests:** every key resolves to existing files for every tier; one picture per meaning (aliases listed); the 1x/2x markup; the flat fallback at 16px and below; nothing imports an icon library.
+- **DOM scan** (10 routes, 5 overlays and login, light and dark): 0 `svg.lucide`, 0 native selects, 0 native checkboxes or radios, 0 broken icon images.
+
+### Design pass (images: `docs/review/r2-*.webp`, 10 pairs, 400 KB)
+
+| Item | What changed | Commit |
+|---|---|---|
+| a. Brand colour | Brand tokens (ramp, gradient `#DC440C → #FFA12B`, tint, text) in light and dark. Primary buttons, selected chips, ghost links, focus ring, switches, chat bubble, progress rings and chart series 1 use it. The warning tone is amber (`#8A5A00` text, `#9C6200` badge, AA in both themes), so High is no longer orange; Critical stays red, Medium blue, Low grey. Tests check the brand values, the amber hue and the contrast. | `c8ee150` |
+| b. Sidebar | 44px rows, 24px icons, group labels visible when expanded, counts as quiet pills, one-row footer, labels fade with the 200ms width change (no layout jump), expanded or collapsed remembered per session (`sessionStorage`, try/catch), first visit expanded from 1280px. Dead space above the footer: about 285px before, now 112px on the rail and 164px expanded at 900px height. | `299d88a` |
+| c. KPI tiles | 28px icon on a brand-tint circle, top left; one-line label with the full text in `title` (two lines under the icon on a phone); fixed header height so values align across a row; Hierarchy uses the same tile. Overview shows 3 per row until 1800px so labels are not cut. | `7f4cb3b` |
+| d. Cards and rhythm | Panel headers on a raised band, 24px between sections and 16px inside, toolbars 16px above tables, tighter page header, compact drop zone, traceability columns keep their width and scroll. | `18399b1` |
+| e. Charts | SVG progress rings with the brand gradient and the value inside; rounded gradient bars with value labels; legend aligned to the plot; curated series palette (brand, graphite, amber, grey, blue). | `651c3b3` |
+| f. Top bar | One project selector (project, then revision and program in quiet text), plain tenant text, avatar with name, 36px icon buttons. | `7236a43` |
+| g. AI assistant | Floating button removed; an icon button "AI assistant" in the top bar opens the same drawer; Ctrl/Cmd+K still toggles. Page bottom padding 80px to 24px. | `6c5df27` |
+| h. Data sources | Overview no longer opens a modal on first load; an inline "Connected Data Sources" card has a View details button that opens the same modal. The `rl-integrations-popup-seen` key is no longer read or written (harmless if present). | `cbef50f` |
+| i. Leftovers | Workspace and Risk Register fit at 1440 without scrolling (Function, Effect and Level hide below 1536px and stay in the row drawer; failure mode wraps). Login gets the brand lockup and a what's-inside list. Reports gets a Selected Report panel, a full-width Recent Reports table and a 32px button. Dialog and hierarchy headings are Title Case. The assistant says "Critical (S=9):" and lists the 7 overdue mitigations it counts (two rows added to the canned reply). | `75dc7ae` |
+| j. Consistency | Document Vault row actions and Knowledge Base chips are 32px like every other control. Measured on all 10 pages: page header 75px, panel header 44px, card radius 8px, no horizontal overflow. | `2ffb334` |
+
+### Deviations and things not done
+
+- **Active nav item:** the brief asked for an orange gradient puck with a white icon. The new icons are orange 3D renders, so a white silhouette would discard the art. The active item has a white puck with a brand-gradient ring on a brand-tint row instead.
+- **Sidebar dead space** is reduced, not zero: the footer stays pinned to the bottom, so a tall window still shows a gap (164px expanded at 900px, none at 800px).
+- **The wider default sidebar** costs table width, which is why several tables lose a secondary column below 1536px.
+- **Not changed:** the hierarchy search is still inert and the hierarchy detail panel is still Battery Pack demo data. Text arrows in running prose ("Workspace → Add failure mode") and the "›" breadcrumb separators are punctuation, not icons.
+- **Lint:** 165 problems (was 170), all pre-existing `prettier/prettier` errors in `src/data/*` and 7 warnings; none new.
+
+### Verification
+
+`tsc` clean; `npm test` 32/32; `npm run build`, `NITRO_PRESET=vercel npm run build` (`.vercel` deleted afterwards) and lint after every commit. Click recorder against `main` (a worktree on its own port) and this branch: 284 matched controls, 246 identical. The 38 differences are the tree rows now being `treeitem`, text changes from the earlier review round (`-` to `·`, sentence case) and the intended changes in this round (project selector label, new AI assistant and View details buttons); no navigation, dialog or toast behaviour differs. Every page in light and dark at 1440 and 390, plus the sidebar expanded, collapsed and as a mobile drawer, and the notifications, help, settings, assistant and data-sources overlays, were opened and inspected (the 1440 and 390 sets as montages).

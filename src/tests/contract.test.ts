@@ -453,3 +453,33 @@ describe("copy separators", () => {
     expect(read("components/layout/AIAssistantPanel.tsx")).not.toContain(" - ");
   });
 });
+
+describe("product name", () => {
+  const walk = (dir: string): string[] =>
+    readdirSync(join(src, dir), { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)],
+    );
+  const INTERNAL_IDS = [
+    "pragnaai_auth",
+    "pragnaai-theme",
+    "pragnaai-sidebar-groups",
+    "pragnaai-sidebar-expanded",
+    "pragnaai:open-assistant",
+  ];
+
+  it("shows TATVAM, with no visible PragnaAI text left in src/", () => {
+    const offenders = walk("")
+      .filter((f) => /\.(tsx?|css)$/.test(f) && !f.startsWith("tests"))
+      .filter((f) => {
+        const text = read(f)
+          .split("\n")
+          .filter((l) => !/^\s*(\/\/|\/?\*)/.test(l))
+          .join("\n");
+        const rest = INTERNAL_IDS.reduce((t, id) => t.split(id).join(""), text);
+        return /pragna/i.test(rest);
+      });
+    expect(offenders).toEqual([]);
+    expect(read("routes/__root.tsx")).toContain('title: "TATVAM"');
+    expect(read("components/layout/AppSidebar.tsx")).toContain(">TATVAM<");
+  });
+});

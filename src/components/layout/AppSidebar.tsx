@@ -161,12 +161,12 @@ export function AppSidebar({
           <div className="flex min-w-0 items-center gap-2.5">
             <img
               src={brand("wayam-mark-light.svg")}
-              alt="PragnaAI"
+              alt="TATVAM"
               className="h-auto w-8 shrink-0 dark:hidden"
             />
             <img
               src={brand("wayam-mark-dark.svg")}
-              alt="PragnaAI"
+              alt="TATVAM"
               className="hidden h-auto w-8 shrink-0 dark:block"
             />
             <div className={cn("flex min-w-0 flex-col gap-0.5", railOnly)}>
@@ -180,7 +180,7 @@ export function AppSidebar({
                 alt=""
                 className="hidden h-5 w-auto self-start dark:block"
               />
-              <span className="type-eyebrow block truncate text-quaternary">PragnaAI</span>
+              <span className="type-eyebrow block truncate text-quaternary">TATVAM</span>
             </div>
           </div>
           <button
@@ -362,7 +362,7 @@ function SettingsModal({ onClose }: { onClose: () => void }) {
   return (
     <ModalShell
       title="Settings"
-      subtitle="Preferences for PragnaAI (saved locally in this demo)"
+      subtitle="Preferences for TATVAM (saved locally in this demo)"
       onClose={onClose}
       footer={
         <>

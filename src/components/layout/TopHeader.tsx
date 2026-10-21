@@ -80,7 +80,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
           <icons.menu size={16} />
         </button>
         <div className="hidden min-w-0 sm:block">
-          <div className="type-eyebrow truncate text-quaternary">{nav?.group ?? "PragnaAI"}</div>
+          <div className="type-eyebrow truncate text-quaternary">{nav?.group ?? "TATVAM"}</div>
         </div>
         {nav && <h1 className="sr-only">{nav.item.title}</h1>}
         <button

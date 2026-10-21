@@ -207,3 +207,27 @@ Screenshots: every page, light and dark, 1440 and 390, plus the workspace drawer
 4. Should the unused `ui/*` files and the 41 unused dependencies be removed in a separate ticket?
 5. Should the inert filter controls and the static hierarchy panel be tracked as separate tickets?
 6. The 170 remaining lint problems are in do-not-touch or unused files. Should `src/data/*` be prettier-formatted (a pure formatting diff) in a separate commit?
+
+## Manager review (branch `ui-review-fixes`)
+
+Follow-up to manager feedback on BOM Sync and Bridge-to-Live, applied to PragnaAI. The audit that preceded the fixes is in `AUDIT_REVIEW.md` (commit `859cec1`). One commit per point.
+
+| # | Point | Finding | Fix | Commit |
+|---|---|---|---|---|
+| 1 | Login before dashboard | A fresh visit already ended on `/login`, but only through a post-hydration effect. | Client-only `beforeLoad` guard on the root route (`shouldRedirectToLogin`), same `pragnaai_auth` key, never redirects on the server. The effect stays as the SSR fallback. | `3a0f281` |
+| 2 | Icons | KPI tiles, panel headers, action buttons and search fields had none. | KPI tiles (top-right, 16px, tertiary), panel headers, Accept / Edit / Reject / Flag, View / Re-extract, Use in workspace, Generate report, Sign in, search fields. All from `iconMap.ts`, greyscale; new meanings added there. | `8115e61` |
+| 3 | Sidebar | Footer was four rows, nav clipped "Reports" at 800px high, dividers inset. | 2px row spacing, quiet group labels, counts right-aligned, footer is one row of four icon buttons when expanded, full-bleed rail dividers. Same 10 items and URLs, rail still 68px. | `7b0714e` |
+| 4 | Casing | Title Case in table headers, KPI labels, chips and buttons; sentence case in some panel titles. | Title Case for page, nav and panel titles; sentence case for everything else. Status enum values and test-asserted strings unchanged. | `8e34ac8` |
+| 5 | Tree view | Mouse worked; no keyboard, no ARIA, click on the selected node collapsed it, parent path hardcoded. | WAI-ARIA tree with roving tabindex, arrow/Home/End keys, chevron toggles, row click selects and opens, path derived from data (`src/lib/tree.ts`). Search box left inert (see below). | `3d0de37` |
+| 6 | Dashes | 27 em dashes in 13 files and 2 en-dash ranges. | Replaced with colon, comma, full stop or "·"; ranges use a hyphen; empty cells show "n/a". Test: no em dash in `src/`. | `695a96a` |
+| 7 | Line gaps | Matrix cells floated with 4px gaps, risk-register marker broke row rules, traceability had uneven header chips. | Continuous hairline matrix, inset-shadow marker, fixed header chip height, column rules. | `d5176ca` |
+| 8 | Graphs | Grey bars, five y ticks, no legend or values. | Blue series-1 bars (error for 200+), three ticks, horizontal grid, value labels, legend, rounded tops, dark series-1 lightened. | `9660674` |
+| 9 | Indicator colours | Rings were black (white in dark); "Low" badge read black beside blue. | All rings and bars use series-1 blue on the raised-2 track; neutral badge lightened. Status colours kept only for risk thresholds. | `cce6147` |
+| 10 | Consistency | Integrations banner differed from overview, workspace table clipped at 1440. | Same banner style, narrower truncating columns, hierarchy tile values aligned. | `8e2a9ca` |
+
+Not done, on purpose:
+
+- Tree search stays inert. Wiring it needs an ancestor-aware filter with auto-expand, which is more than a one-line filter on existing data.
+- Hierarchy detail stats and failure-mode table are still Battery Pack demo data for every node; headings now say so.
+- Spaced hyphens used as dashes inside data titles (for example "FM-CG2-088 - ...") were not in the stated rule and are untouched.
+- `In Progress` shows a warning-coloured dot (data status taxonomy), left as is.

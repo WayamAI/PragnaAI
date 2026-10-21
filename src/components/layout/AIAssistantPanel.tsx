@@ -9,8 +9,8 @@ import { OPEN_ASSISTANT_EVENT } from "@/lib/assistant";
 type Msg = { role: "user" | "ai"; text: string };
 
 const CANNED: Record<string, string> = {
-  critical: `Found 14 failure modes with Severity >= 9.\n\nCRITICAL (S=9):\nFM-0032  Thermal runaway due to charging IC failure     RPN 36\nFM-0034  Cell swelling due to overcharge                RPN 54\nFM-0038  Thermal sensor open circuit                    RPN 36\nFM-0039  Thermal sensor offset drift                    RPN 108\nFM-0048  Insufficient hold-up during mains loss         RPN 81\nFM-0203  Alarm fatigue · delayed response               RPN 108\n\nS=10 (Catastrophic):\nFM-0047  Mains isolation failure                        RPN 20\nFM-0102  Cable insulation degradation                   RPN 60\nFM-0202  Loss of protective earth                       RPN 60`,
-  pending: `7 mitigation actions are past their due date.\n\nMIT-0033-A  BMS watchdog validation      Owner: P. Kaul     Overdue 55d\nMIT-0039-B  Thermal calibration check    Owner: P. Kaul     Overdue 34d\nMIT-0046-A  Kalman filter SoC update     Owner: P. Kaul     Overdue 9d\nMIT-0101-B  Cable flex test validation   Owner: T. Iyer     Overdue 34d\nMIT-0103-A  Connector durability test    Owner: T. Iyer     Overdue 26d`,
+  critical: `Found 14 failure modes with Severity >= 9.\n\nCritical (S=9):\nFM-0032  Thermal runaway due to charging IC failure     RPN 36\nFM-0034  Cell swelling due to overcharge                RPN 54\nFM-0038  Thermal sensor open circuit                    RPN 36\nFM-0039  Thermal sensor offset drift                    RPN 108\nFM-0048  Insufficient hold-up during mains loss         RPN 81\nFM-0203  Alarm fatigue · delayed response               RPN 108\n\nS=10 (Catastrophic):\nFM-0047  Mains isolation failure                        RPN 20\nFM-0102  Cable insulation degradation                   RPN 60\nFM-0202  Loss of protective earth                       RPN 60`,
+  pending: `7 mitigation actions are past their due date.\n\nMIT-0033-A  BMS watchdog validation      Owner: P. Kaul     Overdue 55d\nMIT-0039-B  Thermal calibration check    Owner: P. Kaul     Overdue 34d\nMIT-0046-A  Kalman filter SoC update     Owner: P. Kaul     Overdue 9d\nMIT-0101-B  Cable flex test validation   Owner: T. Iyer     Overdue 34d\nMIT-0103-A  Connector durability test    Owner: T. Iyer     Overdue 26d\nMIT-0048-A  Hold-up capacitor validation Owner: A. Rodrigues Overdue 21d\nMIT-0203-A  Alarm escalation rework      Owner: S. Mehta    Overdue 14d`,
   battery: `Battery Pack subsystem: 18 failure modes, 2 critical (S>=9).\nAvg initial RPN 66, avg residual RPN 29 (56% reduction).\nOpen items: FM-0033, FM-0039, FM-0041, FM-0046, FM-0048.`,
 };
 
@@ -68,7 +68,7 @@ export function AIAssistantPanel() {
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="animate-in slide-in-from-right absolute inset-y-0 right-0 flex w-full flex-col border-l border-strong bg-container sm:w-[400px]"
+            className="animate-in slide-in-from-right absolute inset-y-0 right-0 flex w-full flex-col border-l border-strong bg-container sm:w-[540px]"
           >
             <div className="flex h-14 shrink-0 items-center justify-between border-b border-hairline px-4">
               <h2 id={titleId} className="type-label-md flex items-center gap-2 text-foreground">

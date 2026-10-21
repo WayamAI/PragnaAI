@@ -193,16 +193,16 @@ function Overview() {
   return (
     <PageContainer title="Project Overview" subtitle="CardioGuard 3000 · Rev B · DFMEA-2025-001">
       <div className="flex flex-col gap-6">
-        {/* Connected data sources: inline card, details on request */}
+        {/* Connected Data Sources: inline card, details on request */}
         <section
-          aria-label="Connected data sources"
+          aria-label="Connected Data Sources"
           className="flex flex-wrap items-center gap-3 rounded-lg border border-hairline bg-container px-4 py-3"
         >
           <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-tint">
             <icons.integrations size={28} />
           </span>
           <div className="min-w-0 flex-1">
-            <h3 className="type-label-md text-foreground">Connected data sources</h3>
+            <h3 className="type-label-md text-foreground">Connected Data Sources</h3>
             <p className="type-body-sm flex min-w-0 items-center gap-2 text-tertiary">
               <StatusDot tone="success" />
               <span className="font-medium whitespace-nowrap text-secondary-foreground">
@@ -448,7 +448,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
     <ModalShell
       className="max-w-2xl"
       icon={<icons.integrations size={24} />}
-      title="Connected data sources"
+      title="Connected Data Sources"
       titleExtra={
         <QuietStatus tone="success" className="font-sans">
           {connected} live

@@ -99,17 +99,32 @@ function Reports() {
             onClick={() =>
               toast.success("Report queued. You will receive an email when it's ready.")
             }
-            className={buttonClass("primary", { size: "lg", className: "mt-6" })}
+            className={buttonClass("primary", { size: "sm", className: "mt-6" })}
           >
             <icons.reports size={16} /> Generate report
           </button>
+        </Panel>
+
+        <Panel title="Selected Report" icon={icons.export} className="lg:col-span-5 lg:self-start">
+          <div className="flex items-start gap-3">
+            <icons.reports size={44} />
+            <div className="min-w-0">
+              <div className="type-label-md text-foreground">{TYPES[type][0]}</div>
+              <div className="type-caption mt-0.5 font-normal text-tertiary">{TYPES[type][1]}</div>
+            </div>
+          </div>
+          <p className="type-body-md mt-3 text-secondary-foreground">{TYPES[type][2]}.</p>
+          <p className="type-body-sm mt-3 border-t border-hairline pt-3 text-tertiary">
+            Set the scope and options on the left, then generate. You will receive an email when the
+            report is ready.
+          </p>
         </Panel>
 
         <Panel
           title="Recent Reports"
           icon={icons.history}
           padded={false}
-          className="lg:col-span-5 lg:self-start"
+          className="lg:col-span-12"
         >
           <table className={tableStyles.table}>
             <thead>
@@ -126,7 +141,7 @@ function Reports() {
                   <td
                     className={tableStyles.td({
                       primary: true,
-                      className: "max-w-[220px] font-mono !whitespace-normal break-words",
+                      className: "font-mono",
                     })}
                   >
                     {(name as string).replace(/_/g, "_\u200b")}

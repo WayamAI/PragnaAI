@@ -187,19 +187,19 @@ function HierarchyPage() {
           </div>
 
           <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">
-            Identified functions · Battery Pack
+            Identified Functions · Battery Pack
           </h3>
           <ul className="type-body-md mb-6 divide-y divide-hairline rounded-lg border border-hairline bg-raised px-3">
             {BATTERY_FUNCTIONS.map((f) => (
               <li key={f.id} className="flex gap-3 py-2 text-secondary-foreground">
-                <span className="type-body-sm shrink-0 font-mono text-foreground">{f.id}</span>
+                <span className="type-body-sm w-14 shrink-0 font-mono text-foreground">{f.id}</span>
                 {f.text}
               </li>
             ))}
           </ul>
 
           <h3 className="type-eyebrow mb-2 text-quaternary">
-            Failure modes · Battery Pack, first 6 of 18
+            Failure Modes · Battery Pack, First 6 of 18
           </h3>
           <div className={tableStyles.wrap}>
             <table className={tableStyles.table}>

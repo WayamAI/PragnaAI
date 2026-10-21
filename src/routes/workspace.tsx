@@ -148,9 +148,11 @@ function Workspace() {
             <tr>
               <th className={tableStyles.th({ className: "left-0 z-20" })}>FM ID</th>
               <th className={tableStyles.th()}>Component</th>
-              <th className={tableStyles.th()}>Function</th>
+              <th className={tableStyles.th({ className: "hidden 2xl:table-cell" })}>Function</th>
               <th className={tableStyles.th()}>Failure mode</th>
-              <th className={tableStyles.th()}>Effect (patient)</th>
+              <th className={tableStyles.th({ className: "hidden 2xl:table-cell" })}>
+                Effect (patient)
+              </th>
               <th className={tableStyles.th({ numeric: true })}>S</th>
               <th className={tableStyles.th({ numeric: true })}>O</th>
               <th className={tableStyles.th({ numeric: true })}>D</th>
@@ -180,11 +182,17 @@ function Workspace() {
                   >
                     {r.id}
                   </td>
-                  <td className={tableStyles.td({ className: quiet })}>{r.component}</td>
+                  <td
+                    className={tableStyles.td({
+                      className: cn("max-w-[140px] whitespace-normal", quiet),
+                    })}
+                  >
+                    {r.component}
+                  </td>
                   <td
                     className={tableStyles.td({
                       truncate: true,
-                      className: cn("max-w-[140px]", quiet),
+                      className: cn("hidden max-w-[140px] 2xl:table-cell", quiet),
                     })}
                   >
                     {r.function}
@@ -192,8 +200,7 @@ function Workspace() {
                   <td
                     className={tableStyles.td({
                       primary: true,
-                      truncate: true,
-                      className: "max-w-[220px]",
+                      className: "min-w-[200px] whitespace-normal",
                     })}
                   >
                     {r.failureMode}
@@ -201,7 +208,7 @@ function Workspace() {
                   <td
                     className={tableStyles.td({
                       truncate: true,
-                      className: cn("max-w-[140px]", quiet),
+                      className: cn("hidden max-w-[140px] 2xl:table-cell", quiet),
                     })}
                   >
                     {r.effectPatient}
@@ -229,11 +236,12 @@ function Workspace() {
                   </td>
                   <td
                     className={tableStyles.td({
-                      truncate: true,
-                      className: cn("max-w-[160px]", quiet),
+                      className: cn("max-w-[220px] min-w-[160px] whitespace-normal", quiet),
                     })}
                   >
-                    {r.mitigation}
+                    <span className="line-clamp-2" title={r.mitigation}>
+                      {r.mitigation}
+                    </span>
                   </td>
                   <td className={tableStyles.td()}>
                     <EngineerAvatar name={r.owner} />

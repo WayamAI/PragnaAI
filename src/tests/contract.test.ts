@@ -349,3 +349,18 @@ describe("device tree", () => {
     expect(page).toContain("aria-expanded");
   });
 });
+
+describe("copy separators", () => {
+  it("uses a middle dot, not a spaced hyphen, as a separator in strings", () => {
+    const walk = (dir: string): string[] =>
+      readdirSync(join(src, dir), { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name).split("\\").join("/")],
+      );
+    const files = walk(".").filter(
+      (f) => /\.(ts|tsx)$/.test(f) && !f.startsWith("tests/") && f !== "routeTree.gen.ts",
+    );
+    const offenders = files.filter((f) => /"[^"\n]* - [^"\n]*"/.test(read(f)));
+    expect(offenders).toEqual([]);
+    expect(read("components/layout/AIAssistantPanel.tsx")).not.toContain(" - ");
+  });
+});

@@ -14,9 +14,8 @@ const brand = (file: string) => `${import.meta.env.BASE_URL}brand/${file}`;
 type Flyout = { label: string; count?: string; top: number };
 
 const puckBase =
-  "grid size-9 shrink-0 place-items-center rounded-full transition-colors duration-[180ms] ease-out";
-const puckIdle =
-  "bg-action text-tertiary group-hover:bg-raised-2 group-hover:text-secondary-foreground";
+  "grid size-10 shrink-0 place-items-center rounded-full transition-colors duration-[180ms] ease-out";
+const puckIdle = "bg-action group-hover:bg-raised-2";
 const rowFocus = "outline-none focus-visible:ring-2 focus-visible:ring-active";
 
 export function AppSidebar({
@@ -73,7 +72,7 @@ export function AppSidebar({
       onMouseLeave={hideFlyout}
       onBlur={hideFlyout}
       title={label}
-      className={cn("group flex items-center gap-3 rounded-full lg:w-9", rowFocus)}
+      className={cn("group flex items-center gap-3 rounded-full", rowFocus)}
       {...extra}
     >
       <span className={cn(puckBase, puckIdle)}>
@@ -153,22 +152,24 @@ export function AppSidebar({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
-          <nav
-            aria-label="Primary"
-            className={cn("flex flex-col px-3 py-2", !expanded && "lg:px-[14px]")}
-          >
+          <nav aria-label="Primary" className="flex flex-col px-[14px] py-3">
             {navGroups.map((group, gi) => (
-              <div
-                key={group.label}
-                className={cn(
-                  "flex flex-col gap-0.5",
-                  gi > 0 && (expanded ? "mt-3" : "mt-3 lg:mt-0"),
+              <div key={group.label} className="flex flex-col gap-1">
+                {gi > 0 && (
+                  <div
+                    aria-hidden="true"
+                    className={cn(
+                      "mx-1 mt-2 mb-1 h-px bg-hairline transition-opacity duration-200 lg:mx-0",
+                      expanded && "lg:opacity-0",
+                    )}
+                  />
                 )}
-              >
-                {gi > 0 && !expanded && (
-                  <div className="-mx-[14px] my-2 hidden border-t border-hairline lg:block" />
-                )}
-                <div className={cn("type-eyebrow px-2 pb-1 text-quaternary", railOnly)}>
+                <div
+                  className={cn(
+                    "type-eyebrow h-5 overflow-hidden px-3 whitespace-nowrap text-tertiary transition-[height,opacity] duration-200",
+                    !expanded && "lg:h-0 lg:opacity-0",
+                  )}
+                >
                   {group.label}
                 </div>
                 {group.items.map((it) => {
@@ -184,32 +185,38 @@ export function AppSidebar({
                       onMouseLeave={hideFlyout}
                       onBlur={hideFlyout}
                       className={cn(
-                        "group flex items-center gap-3 rounded-full",
+                        "group flex h-11 items-center gap-3 overflow-hidden rounded-full transition-colors duration-200",
                         rowFocus,
-                        !expanded && "lg:w-9",
+                        active && "bg-brand-tint",
                       )}
                     >
                       <span
                         className={cn(
                           puckBase,
-                          active ? "bg-brand-tint ring-2 ring-inset ring-brand" : puckIdle,
+                          active ? "bg-container ring-2 ring-brand ring-inset" : puckIdle,
                         )}
                       >
                         <it.icon size={24} />
                       </span>
                       <span
                         className={cn(
-                          "type-label-sm min-w-0 flex-1 truncate transition-colors duration-[180ms]",
+                          "type-label-sm min-w-0 flex-1 truncate transition-[color,opacity] duration-200",
                           active
-                            ? "text-foreground"
-                            : "text-tertiary group-hover:text-secondary-foreground",
-                          railOnly,
+                            ? "font-semibold text-foreground"
+                            : "text-secondary-foreground group-hover:text-foreground",
+                          !expanded && "lg:opacity-0",
                         )}
                       >
                         {it.title}
                       </span>
                       {it.count && (
-                        <span className={cn("type-caption tabular pr-2 text-quaternary", railOnly)}>
+                        <span
+                          className={cn(
+                            "type-caption tabular mr-2 rounded-full bg-action px-2 text-tertiary transition-opacity duration-200",
+                            active && "bg-container",
+                            !expanded && "lg:opacity-0",
+                          )}
+                        >
                           {it.count}
                         </span>
                       )}
@@ -221,13 +228,8 @@ export function AppSidebar({
           </nav>
         </div>
 
-        {/* Footer: collapse, theme, settings, help */}
-        <div
-          className={cn(
-            "flex shrink-0 flex-col gap-0.5 border-t border-hairline px-3 py-2 lg:flex-row lg:items-center lg:justify-between",
-            !expanded && "lg:flex-col lg:items-stretch lg:px-[14px]",
-          )}
-        >
+        {/* Footer: collapse, theme, settings, help. One row when expanded, a column on the rail. */}
+        <div className="flex shrink-0 flex-col gap-1 border-t border-hairline px-[14px] py-2 lg:flex-row lg:flex-wrap lg:justify-between">
           <div className="hidden lg:block">
             {footerButton(
               expanded ? "Collapse sidebar" : "Expand sidebar",

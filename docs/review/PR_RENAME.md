@@ -26,4 +26,15 @@ Full table: `RENAME_INVENTORY.md`.
 - `tsc --noEmit`: 2 errors in `__root.tsx`, identical on main (not introduced here).
 - Browser run (fresh profile, headless Chromium): all 10 pages plus the 404 page in light and dark have 0 "pragna" matches in rendered DOM (scripts and styles excluded). Tab title is "TATVAM". The assistant panel shows "TATVAM Assistant".
 - Signed in, set dark theme, reloaded: still signed in and still dark.
-- Not run: full click recorder against main, mobile and collapsed sidebar, and every modal and toast. Those need a manual pass.
+
+## Follow-up checks (production build, node-server preset, run locally)
+- **Click recorder against main:** every button in main, header and aside on all 10 routes, clicked on a fresh page. It compared URL, dialog count, row count, toast text and console output before and after, with the product name normalised. 260 controls on each side: 260 identical, 0 behaviour differences.
+- **Visual checks (light and dark, each screenshot opened):** collapsed sidebar with flyout, mobile drawer (390px), Help and Standards modal, Settings modal, notifications dropdown, help dropdown, a toast ("Opening full documentation..."), the 404 page and the error page (forced by blocking a route chunk). All show TATVAM with no layout changes.
+- **Production text search:** 12 pages (10 routes, login, 404) in light and dark, 24 loads. Rendered DOM excluding scripts and styles: 0 "pragna" matches. Tab title is "TATVAM". The only remaining "pragnaai" string in served HTML is the storage key in the theme init script.
+
+## Pre-existing tsc errors (identical on main, not from this branch)
+`npx tsc --noEmit` reports 2 errors, both in `src/routes/__root.tsx`:
+1. `__root.tsx(84,3)` TS2322: the `beforeLoad` callback returns void, but the route type expects a function returning never ("Type 'void' is not assignable to type 'never'"). It throws a redirect conditionally.
+2. `__root.tsx(117,3)` TS2322: `ErrorComponent` is typed `({ error, reset }: { error: Error; reset: () => void })`, but TanStack's `ErrorComponentProps.error` is `unknown` ("Type 'unknown' is not assignable to type 'Error'").
+
+Both appear with this branch's changes stashed, so they come from main.

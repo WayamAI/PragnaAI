@@ -46,3 +46,5 @@ Expected behaviour changes: the data-sources modal no longer auto-opens, the AI 
 Verification: `tsc` clean, 32 tests, both builds pass, lint 165 problems (baseline 170, all pre-existing prettier errors in `src/data` plus 7 warnings).
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Sidebar now matches BOM Synchronization (`ui: sidebar matches BOM Synchronization`): solo Project Overview block, collapsible uppercase groups with chevrons (state remembered per session), 36px icon circles with a dark active tile, label flyout on the rail, Settings, Help, theme and Collapse pinned at the bottom, no counts. Workspace and Risk Register show Function, Effect and Level again and scroll inside their panel with a sticky first column. Side by side: `docs/review/sidebar-vs-bom-sync.webp`.

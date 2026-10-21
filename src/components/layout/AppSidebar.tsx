@@ -11,10 +11,23 @@ import { isNavActive, navGroups } from "./nav";
 
 const brand = (file: string) => `${import.meta.env.BASE_URL}brand/${file}`;
 
-type Flyout = { label: string; count?: string; top: number };
+type Flyout = { group: string; label: string; top: number };
+
+const GROUPS_KEY = "pragnaai-sidebar-groups";
+
+/** Groups the user closed, kept for the browser session. */
+function readClosed(): Set<string> {
+  try {
+    const raw = sessionStorage.getItem(GROUPS_KEY);
+    if (raw) return new Set(JSON.parse(raw) as string[]);
+  } catch {
+    // Storage blocked or unreadable: every group starts open.
+  }
+  return new Set();
+}
 
 const puckBase =
-  "grid size-10 shrink-0 place-items-center rounded-full transition-colors duration-[180ms] ease-out";
+  "grid size-9 shrink-0 place-items-center rounded-full transition-colors duration-[180ms] ease-out";
 const puckIdle = "bg-action group-hover:bg-raised-2";
 const rowFocus = "outline-none focus-visible:ring-2 focus-visible:ring-active";
 
@@ -33,6 +46,35 @@ export function AppSidebar({
   const [modal, setModal] = useState<"Settings" | "Help & Standards" | null>(null);
   const { theme, toggleTheme } = useTheme();
   const [flyout, setFlyout] = useState<Flyout | null>(null);
+  // Groups are open by default; the group of the current route is opened on navigation.
+  const [closedGroups, setClosedGroups] = useState<Set<string>>(readClosed);
+  const saveClosed = (next: Set<string>) => {
+    try {
+      sessionStorage.setItem(GROUPS_KEY, JSON.stringify([...next]));
+    } catch {
+      // Private mode: the choice just is not remembered.
+    }
+    return next;
+  };
+  const toggleGroup = (label: string) =>
+    setClosedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return saveClosed(next);
+    });
+  const activeGroup = navGroups.find((g) =>
+    g.items.some((i) => isNavActive(i.url, pathname)),
+  )?.label;
+  useEffect(() => {
+    if (!activeGroup) return;
+    setClosedGroups((prev) => {
+      if (!prev.has(activeGroup)) return prev;
+      const next = new Set(prev);
+      next.delete(activeGroup);
+      return saveClosed(next);
+    });
+  }, [activeGroup]);
 
   // Below lg the sidebar is an off-canvas drawer and always shows its full
   // layout. From lg it is a 68px rail that expands to 252px; labels are shown
@@ -41,10 +83,10 @@ export function AppSidebar({
 
   // Collapsed rail: hovering or focusing a puck shows its label to the right.
   // The nav column scrolls (and clips), so the flyout is position:fixed.
-  const showFlyout = (e: SyntheticEvent<HTMLElement>, label: string, count?: string) => {
+  const showFlyout = (e: SyntheticEvent<HTMLElement>, group: string, label: string) => {
     if (expanded) return;
     const r = e.currentTarget.getBoundingClientRect();
-    setFlyout({ label, count, top: r.top + r.height / 2 });
+    setFlyout({ group, label, top: r.top + r.height / 2 });
   };
   const hideFlyout = () => setFlyout(null);
 
@@ -59,6 +101,7 @@ export function AppSidebar({
 
   const footerButton = (
     label: string,
+    group: string,
     Icon: AppIconComponent,
     onClick: () => void,
     extra?: object,
@@ -67,12 +110,12 @@ export function AppSidebar({
       type="button"
       onClick={onClick}
       aria-label={label}
-      onMouseEnter={(e) => showFlyout(e, label)}
-      onFocus={(e) => showFlyout(e, label)}
+      onMouseEnter={(e) => showFlyout(e, group, label)}
+      onFocus={(e) => showFlyout(e, group, label)}
       onMouseLeave={hideFlyout}
       onBlur={hideFlyout}
       title={label}
-      className={cn("group flex items-center gap-3 rounded-full", rowFocus)}
+      className={cn("group flex w-full items-center gap-2.5 rounded-full", rowFocus)}
       {...extra}
     >
       <span className={cn(puckBase, puckIdle)}>
@@ -80,7 +123,8 @@ export function AppSidebar({
       </span>
       <span
         className={cn(
-          "type-label-sm truncate text-tertiary transition-colors duration-[180ms] group-hover:text-secondary-foreground lg:hidden",
+          "type-label-sm truncate font-normal text-tertiary transition-colors duration-[180ms] group-hover:text-secondary-foreground",
+          railOnly,
         )}
       >
         {label}
@@ -151,107 +195,116 @@ export function AppSidebar({
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
-          <nav aria-label="Primary" className="flex flex-col px-[14px] py-3">
-            {navGroups.map((group, gi) => (
-              <div key={group.label} className="flex flex-col gap-1">
-                {gi > 0 && (
-                  <div
-                    aria-hidden="true"
-                    className={cn(
-                      "mx-1 mt-2 mb-1 h-px bg-hairline transition-opacity duration-200 lg:mx-0",
-                      expanded && "lg:opacity-0",
-                    )}
-                  />
-                )}
-                <div
-                  className={cn(
-                    "type-eyebrow h-5 overflow-hidden px-3 whitespace-nowrap text-tertiary transition-[height,opacity] duration-200",
-                    !expanded && "lg:h-0 lg:opacity-0",
-                  )}
-                >
-                  {group.label}
-                </div>
-                {group.items.map((it) => {
-                  const active = isNavActive(it.url, pathname);
-                  return (
-                    <Link
-                      key={it.url}
-                      to={it.url}
-                      aria-label={it.title}
-                      aria-current={active ? "page" : undefined}
-                      onMouseEnter={(e) => showFlyout(e, it.title, it.count)}
-                      onFocus={(e) => showFlyout(e, it.title, it.count)}
-                      onMouseLeave={hideFlyout}
-                      onBlur={hideFlyout}
+        <div className="scrollbar-thin min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+          <nav
+            aria-label="Primary"
+            className={cn("flex flex-col gap-1 px-3 py-3", !expanded && "lg:px-4")}
+          >
+            {navGroups.map((group, gi) => {
+              const open = group.solo || !closedGroups.has(group.label);
+              // The rail has no group headers, so it always shows every item.
+              const hideItems = !open && (expanded ? "hidden" : "max-lg:hidden");
+              return (
+                <div key={group.label} className="flex flex-col gap-1">
+                  {gi > 0 && (
+                    <div
                       className={cn(
-                        "group flex h-11 items-center gap-3 overflow-hidden rounded-full transition-colors duration-200",
+                        "my-1 border-t border-hairline",
+                        expanded ? "-mx-3" : "-mx-3 lg:-mx-4",
+                      )}
+                    />
+                  )}
+                  {!group.solo && (
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(group.label)}
+                      aria-expanded={open}
+                      className={cn(
+                        "flex items-center justify-between rounded-lg px-1 py-1 text-left transition-colors duration-150 hover:bg-raised",
                         rowFocus,
-                        active && "bg-brand-tint",
+                        railOnly,
                       )}
                     >
-                      <span
+                      <span className="type-eyebrow text-quaternary">{group.label}</span>
+                      <icons.chevronDown
+                        size={12}
                         className={cn(
-                          puckBase,
-                          active ? "bg-container ring-2 ring-brand ring-inset" : puckIdle,
+                          "opacity-60 grayscale transition-transform duration-150",
+                          !open && "-rotate-90",
                         )}
-                      >
-                        <it.icon size={24} />
-                      </span>
-                      <span
-                        className={cn(
-                          "type-label-sm min-w-0 flex-1 truncate transition-[color,opacity] duration-200",
-                          active
-                            ? "font-semibold text-foreground"
-                            : "text-secondary-foreground group-hover:text-foreground",
-                          !expanded && "lg:opacity-0",
-                        )}
-                      >
-                        {it.title}
-                      </span>
-                      {it.count && (
-                        <span
-                          className={cn(
-                            "type-caption tabular mr-2 rounded-full bg-action px-2 text-tertiary transition-opacity duration-200",
-                            active && "bg-container",
-                            !expanded && "lg:opacity-0",
-                          )}
+                      />
+                    </button>
+                  )}
+                  <div className={cn("flex flex-col gap-1", hideItems)}>
+                    {group.items.map((it) => {
+                      const active = isNavActive(it.url, pathname);
+                      return (
+                        <Link
+                          key={it.url}
+                          to={it.url}
+                          aria-label={it.title}
+                          aria-current={active ? "page" : undefined}
+                          onMouseEnter={(e) => showFlyout(e, group.label, it.title)}
+                          onFocus={(e) => showFlyout(e, group.label, it.title)}
+                          onMouseLeave={hideFlyout}
+                          onBlur={hideFlyout}
+                          className={cn("group flex items-center gap-2.5 rounded-full", rowFocus)}
                         >
-                          {it.count}
-                        </span>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
+                          <span className={cn(puckBase, active ? "bg-action-primary" : puckIdle)}>
+                            <it.icon size={24} />
+                          </span>
+                          <span
+                            className={cn(
+                              "type-label-sm truncate font-normal transition-colors duration-[180ms]",
+                              active
+                                ? "text-foreground"
+                                : "text-tertiary group-hover:text-secondary-foreground",
+                              railOnly,
+                            )}
+                          >
+                            {it.title}
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </nav>
         </div>
 
-        {/* Footer: collapse, theme, settings, help. One row when expanded, a column on the rail. */}
-        <div className="flex shrink-0 flex-col gap-1 border-t border-hairline px-[14px] py-2 lg:flex-row lg:flex-wrap lg:justify-between">
+        {/* Footer: settings, help, theme and collapse, pinned to the bottom */}
+        <div
+          className={cn(
+            "flex shrink-0 flex-col gap-1 border-t border-hairline py-2",
+            expanded ? "px-3" : "px-3 lg:px-4",
+          )}
+        >
+          {footerButton("Settings", "", icons.settings, () => {
+            console.log("[Sidebar] Settings opened");
+            setModal("Settings");
+          })}
+          {footerButton("Help & standards", "", icons.help, () => {
+            console.log("[Sidebar] Help & Standards opened");
+            setModal("Help & Standards");
+          })}
+          {footerButton(
+            theme === "light" ? "Dark theme" : "Light theme",
+            "",
+            icons.theme,
+            toggleTheme,
+            { "aria-label": theme === "light" ? "Switch to dark theme" : "Switch to light theme" },
+          )}
           <div className="hidden lg:block">
             {footerButton(
               expanded ? "Collapse sidebar" : "Expand sidebar",
+              "",
               expanded ? icons.sidebarCollapse : icons.sidebarExpand,
               () => onToggleExpanded?.(),
               { "aria-expanded": expanded },
             )}
           </div>
-          {footerButton(
-            theme === "light" ? "Dark theme" : "Light theme",
-            icons.theme,
-            toggleTheme,
-            { "aria-label": theme === "light" ? "Switch to dark theme" : "Switch to light theme" },
-          )}
-          {footerButton("Settings", icons.settings, () => {
-            console.log("[Sidebar] Settings opened");
-            setModal("Settings");
-          })}
-          {footerButton("Help & standards", icons.help, () => {
-            console.log("[Sidebar] Help & Standards opened");
-            setModal("Help & Standards");
-          })}
         </div>
       </aside>
 
@@ -259,10 +312,12 @@ export function AppSidebar({
         <div
           role="presentation"
           style={{ top: flyout.top }}
-          className="type-label-sm pointer-events-none fixed left-[76px] z-[60] hidden -translate-y-1/2 items-center gap-2 rounded-lg border border-hairline bg-container px-2.5 py-1.5 whitespace-nowrap text-foreground shadow-lg lg:flex"
+          className="pointer-events-none fixed left-[76px] z-[60] hidden -translate-y-1/2 rounded-xl border border-hairline bg-container px-3 py-2 shadow-lg lg:block"
         >
-          {flyout.label}
-          {flyout.count && <span className="tabular text-quaternary">{flyout.count}</span>}
+          {flyout.group && (
+            <div className="type-eyebrow whitespace-nowrap text-quaternary">{flyout.group}</div>
+          )}
+          <div className="type-label-md whitespace-nowrap text-foreground">{flyout.label}</div>
         </div>
       )}
 

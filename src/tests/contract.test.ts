@@ -159,11 +159,18 @@ describe("navigation", () => {
       "/reports",
     ]);
     expect(navGroups.map((g) => [g.label, g.items.length])).toEqual([
-      ["Project", 2],
+      ["Overview", 1],
+      ["Project", 1],
       ["Analysis", 4],
       ["Knowledge", 2],
       ["Delivery", 2],
     ]);
+  });
+
+  it("draws Project Overview as a solo block and every other group collapsible, with no counts", () => {
+    expect(navGroups.filter((g) => g.solo).map((g) => g.items[0].url)).toEqual(["/overview"]);
+    expect(navGroups.every((g) => g.solo || g.items.length > 0)).toBe(true);
+    for (const item of navItems) expect(item).not.toHaveProperty("count");
   });
 
   it("derives the group and title from the pathname, with / as Overview", () => {

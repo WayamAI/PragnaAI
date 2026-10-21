@@ -84,8 +84,8 @@ function RiskRegister() {
         <table className={tableStyles.table}>
           <thead>
             <tr>
-              <th className={tableStyles.th()}>Risk ID</th>
-              <th className={tableStyles.th({ className: "hidden 2xl:table-cell" })}>Level</th>
+              <th className={tableStyles.th({ className: "left-0 z-20" })}>Risk ID</th>
+              <th className={tableStyles.th()}>Level</th>
               <th className={tableStyles.th()}>Component</th>
               <th className={tableStyles.th()}>Failure mode</th>
               <th className={tableStyles.th({ numeric: true })}>S</th>
@@ -118,24 +118,23 @@ function RiskRegister() {
               const rpn = r.s * r.o * r.d;
               const critical = r.s >= 9;
               return (
-                <tr key={r.id} className={tableStyles.tr()}>
+                <tr key={r.id} className={tableStyles.tr({ className: "group" })}>
                   <td
                     className={tableStyles.td({
                       primary: true,
                       className: cn(
                         "font-mono",
+                        "sticky left-0 z-[1] bg-container group-hover:bg-raised",
                         critical && "shadow-[inset_2px_0_0_var(--feedback-error-content)]",
                       ),
                     })}
                   >
                     {r.id}
                   </td>
-                  <td className={tableStyles.td({ className: cn("hidden 2xl:table-cell", quiet) })}>
-                    {r.level}
-                  </td>
+                  <td className={tableStyles.td({ className: quiet })}>{r.level}</td>
                   <td
                     className={tableStyles.td({
-                      className: cn("max-w-[150px] whitespace-normal", quiet),
+                      className: quiet,
                     })}
                   >
                     {r.component}

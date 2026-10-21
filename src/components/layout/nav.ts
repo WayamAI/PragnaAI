@@ -5,27 +5,25 @@ export type NavItem = {
   title: string;
   url: string;
   icon: AppIconComponent;
-  /** Quiet count shown beside the label when the sidebar is expanded. */
-  count?: string;
 };
 
 export type NavGroup = {
   label: string;
   items: NavItem[];
+  /** A block of one item with no header or chevron, drawn first with its own divider. */
+  solo?: boolean;
 };
 
 // One list drives the sidebar and the top-bar group eyebrow and page title.
 export const navGroups: NavGroup[] = [
   {
+    label: "Overview",
+    solo: true,
+    items: [{ title: "Project Overview", url: "/overview", icon: icons.overview }],
+  },
+  {
     label: "Project",
-    items: [
-      { title: "Project Overview", url: "/overview", icon: icons.overview },
-      {
-        title: "Product Hierarchy",
-        url: "/hierarchy",
-        icon: icons.hierarchy,
-      },
-    ],
+    items: [{ title: "Product Hierarchy", url: "/hierarchy", icon: icons.hierarchy }],
   },
   {
     label: "Analysis",
@@ -34,19 +32,16 @@ export const navGroups: NavGroup[] = [
         title: "DFMEA Workspace",
         url: "/workspace",
         icon: icons.workspace,
-        count: "280",
       },
       {
         title: "AI Analysis",
         url: "/ai-analysis",
         icon: icons.aiAnalysis,
-        count: "23",
       },
       {
         title: "Risk Register",
         url: "/risk-register",
         icon: icons.riskRegister,
-        count: "14",
       },
       {
         title: "Traceability",
@@ -73,7 +68,6 @@ export const navGroups: NavGroup[] = [
         title: "Integrations",
         url: "/integrations",
         icon: icons.integrations,
-        count: "6",
       },
       { title: "Reports", url: "/reports", icon: icons.reports },
     ],

@@ -4,7 +4,7 @@ import { TopHeader } from "./TopHeader";
 
 const SIDEBAR_KEY = "pragnaai-sidebar-expanded";
 
-/** Remembered for the browser session; first visit opens the labelled sidebar on wide screens. */
+/** Remembered for the browser session; first visit opens the labelled sidebar from lg. */
 function readExpanded() {
   try {
     const saved = sessionStorage.getItem(SIDEBAR_KEY);
@@ -12,7 +12,7 @@ function readExpanded() {
   } catch {
     // Storage blocked: fall through to the width default.
   }
-  return typeof window !== "undefined" && window.innerWidth >= 1280;
+  return typeof window !== "undefined" && window.innerWidth >= 1024;
 }
 
 /**

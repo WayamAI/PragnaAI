@@ -5,7 +5,7 @@ import { HIERARCHY, BATTERY_FUNCTIONS, type HierarchyNode } from "@/data/hierarc
 import { StatusDot, StatusBadge } from "@/components/shared/StatusBadge";
 import { BATTERY_ROWS } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
-import { Panel, SearchInput } from "@/components/ui/primitives";
+import { KpiTile, Panel, SearchInput } from "@/components/ui/primitives";
 import type { AppIconComponent } from "@/components/icons/iconMap";
 import { buttonClass } from "@/components/ui/button-styles";
 import { tableStyles } from "@/components/ui/table-styles";
@@ -173,25 +173,16 @@ function HierarchyPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
-            {STATS.map((s) => (
-              <div
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
+            {STATS.map((s, i) => (
+              <KpiTile
                 key={s.label}
-                className="flex min-w-0 flex-col gap-1 rounded-lg border border-hairline bg-raised px-3 py-2.5"
-              >
-                <span className="flex items-start justify-between gap-2">
-                  <span className="type-eyebrow text-quaternary">{s.label}</span>
-                  <s.icon className="size-4 shrink-0 text-tertiary" aria-hidden="true" />
-                </span>
-                <span
-                  className={cn(
-                    "type-display-base tabular mt-auto text-foreground",
-                    s.valueClassName,
-                  )}
-                >
-                  {s.value}
-                </span>
-              </div>
+                label={s.label}
+                icon={s.icon}
+                value={s.value}
+                valueClassName={s.valueClassName}
+                className={i < 3 ? "md:col-span-2" : "md:col-span-3 max-md:last:col-span-2"}
+              />
             ))}
           </div>
 

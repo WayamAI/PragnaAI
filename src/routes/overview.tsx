@@ -222,7 +222,7 @@ function Overview() {
 
         {showIntegrations && <IntegrationsPopup onClose={() => setShowIntegrations(false)} />}
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 min-[1800px]:grid-cols-6">
           {KPI.map((k) => (
             <KpiTile
               key={k.label}

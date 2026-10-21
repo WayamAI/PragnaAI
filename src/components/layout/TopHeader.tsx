@@ -140,7 +140,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className="flex w-full gap-3 border-b border-hairline px-4 py-3 text-left outline-none transition-colors duration-[150ms] last:border-b-0 hover:bg-raised focus-visible:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active"
                 >
-                  <n.icon className={`mt-0.5 size-4 shrink-0 ${n.tone}`} />
+                  <n.icon size={16} className="mt-0.5" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <span className="type-label-md truncate text-foreground">{n.title}</span>

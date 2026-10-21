@@ -61,7 +61,11 @@ export const Panel = ({
   </section>
 );
 
-/** KPI tile: eyebrow label, Michroma tabular value, signed delta and hint. */
+/**
+ * KPI tile: icon puck and one-line label (truncated with the full text in the title; on a phone
+ * the label sits under the icon and may take two lines), Michroma tabular
+ * value, signed delta and hint. The header is a fixed height so values share a baseline in a row.
+ */
 export const KpiTile = ({
   label,
   icon: Icon,
@@ -75,7 +79,7 @@ export const KpiTile = ({
   valueClassName,
 }: {
   label: string;
-  /** Top-right 28px icon. */
+  /** 28px icon on a soft brand-tint circle, top left. */
   icon?: AppIconComponent;
   value: ReactNode;
   unit?: string;
@@ -88,9 +92,18 @@ export const KpiTile = ({
 }) => {
   const body = (
     <>
-      <span className="flex items-start justify-between gap-2">
-        <span className="type-eyebrow text-quaternary">{label}</span>
-        {Icon && <Icon size={28} />}
+      <span className="flex flex-col items-start gap-2 sm:h-9 sm:flex-row sm:items-center sm:gap-2.5">
+        {Icon && (
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-tint">
+            <Icon size={28} />
+          </span>
+        )}
+        <span
+          className="type-eyebrow min-w-0 text-quaternary max-sm:line-clamp-2 max-sm:min-h-8 sm:truncate"
+          title={label}
+        >
+          {label}
+        </span>
       </span>
       <span
         className={cn(
@@ -110,7 +123,7 @@ export const KpiTile = ({
     </>
   );
   const base =
-    "flex min-w-0 flex-col gap-1.5 rounded-lg border border-hairline bg-container px-4 py-3.5 text-left";
+    "flex min-w-0 flex-col gap-2 rounded-lg border border-hairline bg-container px-4 py-3.5 text-left";
   return onClick ? (
     <button
       type="button"

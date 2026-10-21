@@ -245,8 +245,8 @@ export const CheckInput = ({
       className={cn(
         "peer size-4 cursor-pointer appearance-none border border-strong bg-action outline-none transition-colors focus-visible:ring-2 focus-visible:ring-active disabled:opacity-40",
         type === "checkbox"
-          ? "rounded-[4px] checked:border-foreground checked:bg-container"
-          : "rounded-full checked:border-foreground checked:bg-[radial-gradient(circle,var(--action-primary-default)_0_36%,transparent_42%)]",
+          ? "rounded-[4px] checked:border-brand checked:bg-brand-tint"
+          : "rounded-full checked:border-brand checked:bg-[radial-gradient(circle,var(--brand-500)_0_36%,transparent_42%)]",
       )}
     />
     {type === "checkbox" && (

@@ -81,7 +81,7 @@ export function AIAssistantPanel() {
                 <button
                   type="button"
                   onClick={() => setMsgs(msgs.slice(0, 1))}
-                  className={buttonClass("ghost", { size: "sm" })}
+                  className={buttonClass("ghost", { size: "sm", className: "text-tertiary" })}
                 >
                   Clear
                 </button>
@@ -103,7 +103,7 @@ export function AIAssistantPanel() {
                   className={cn(
                     "rounded-lg p-3",
                     m.role === "user"
-                      ? "type-body-md ml-auto max-w-[85%] bg-action-primary text-on-color"
+                      ? "type-body-md ml-auto max-w-[85%] bg-brand-gradient text-white"
                       : "type-body-sm mr-auto max-w-[95%] border border-hairline bg-raised font-mono leading-relaxed whitespace-pre-wrap text-secondary-foreground",
                   )}
                 >

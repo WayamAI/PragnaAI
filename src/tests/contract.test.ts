@@ -86,6 +86,56 @@ describe("severity mapping", () => {
   });
 });
 
+describe("brand colour", () => {
+  const css = readFileSync(join(src, "styles", "tokens.css"), "utf8");
+  const light = css.slice(0, css.indexOf('[data-theme="dark"],'));
+  const dark = css.slice(css.indexOf('[data-theme="dark"],'));
+  const hex = (block: string, name: string) =>
+    new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`).exec(block)?.[1] ?? "";
+  const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const lum = (h: string) => {
+    const [r, g, b] = rgb(h).map((v) => {
+      const c = v / 255;
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const contrast = (a: string, b: string) => {
+    const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+    return (hi + 0.05) / (lo + 0.05);
+  };
+  const hue = (h: string) => {
+    const [r, g, b] = rgb(h).map((v) => v / 255);
+    const max = Math.max(r, g, b);
+    const d = max - Math.min(r, g, b);
+    if (d === 0) return 0;
+    const raw = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return (raw * 60 + 360) % 360;
+  };
+
+  it("defines the Wayam brand ramp and a gradient in light, and brand text in dark", () => {
+    expect(hex(light, "brand-500")).toBe("#f0731a");
+    expect(hex(light, "brand-600")).toBe("#dc440c");
+    expect(light).toContain("#dc440c 0%, #f0731a 45%, #fa8d23 75%, #ffa12b 100%");
+    expect(dark).toContain("--brand-text: #ffa12b");
+  });
+
+  it("keeps High amber, not brand orange, and readable in both themes", () => {
+    for (const [block, bg, badgeText] of [
+      [light, "#ffffff", "#ffffff"],
+      [dark, "#101010", "#ffffff"],
+    ] as const) {
+      const content = hex(block, "feedback-warning-content");
+      const badge = /--feedback-warning-badge:\s*(#[0-9a-fA-F]{6})/.exec(block)?.[1] ?? "";
+      expect(hue(content)).toBeGreaterThan(36);
+      expect(hue(content)).toBeLessThan(52);
+      expect(contrast(content, bg)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(badge, badgeText)).toBeGreaterThanOrEqual(4.5);
+    }
+    expect(hue("#f0731a")).toBeLessThan(30);
+  });
+});
+
 describe("theme", () => {
   it("defaults to light and reads the pragnaai-theme key before first paint", () => {
     expect(THEME_STORAGE_KEY).toBe("pragnaai-theme");

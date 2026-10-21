@@ -109,6 +109,13 @@
   --color-neutral-surface: var(--feedback-neutral-background);
   --color-badge: var(--feedback-badge-content);
 
+  /* Brand: bg-brand, text-brand-text, bg-brand-tint, border-brand */
+  --color-brand: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-tint: var(--brand-tint);
+  --color-brand-text: var(--brand-text);
+
   /* Chart series */
   --color-series-1: var(--analytics-series-1);
   --color-series-2: var(--analytics-series-2);
@@ -150,6 +157,10 @@
 /* Chronus type roles. Named type-* (not text-*) on purpose: tailwind-merge in
    cn() reads unknown text-* names as colours and would drop them next to a
    colour class. Compose with a colour, e.g. "type-body-sm text-tertiary". */
+@utility bg-brand-gradient {
+  background-image: var(--brand-gradient);
+}
+
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
@@ -270,7 +281,7 @@
   }
 
   ::selection {
-    background: var(--stroke-active);
+    background: var(--brand-tint);
   }
 
   /* Form controls throughout the app use 12-14px type for a compact desktop

@@ -25,7 +25,20 @@
   /* stroke */
   --stroke-muted: rgba(0, 0, 0, 0.08);
   --stroke-default: rgba(0, 0, 0, 0.14);
-  --stroke-active: rgba(0, 0, 0, 0.24);
+  --stroke-active: rgba(240, 115, 26, 0.65); /* focus ring: brand orange */
+
+  /* brand: Wayam orange. Accent for non-status UI (active nav, primary buttons, focus,
+     links, selected chips, progress, chart series 1). Never used for risk or status. */
+  --brand-50: #fff4ea;
+  --brand-100: #ffe6d2;
+  --brand-300: #ffa12b;
+  --brand-400: #fa8d23;
+  --brand-500: #f0731a;
+  --brand-600: #dc440c;
+  --brand-700: #b33509; /* text on white, 6:1 */
+  --brand-gradient: linear-gradient(135deg, #dc440c 0%, #f0731a 45%, #fa8d23 75%, #ffa12b 100%);
+  --brand-tint: rgba(240, 115, 26, 0.12);
+  --brand-text: var(--brand-700);
 
   /* action */
   --action-primary-default: #101010;
@@ -37,20 +50,30 @@
   --action-tertiary-hover: rgba(0, 0, 0, 0.06);
 
   /* feedback */
-  --feedback-success-content: #2b7046; --feedback-success-background: rgba(63, 174, 105, 0.12); --feedback-success-badge: #2b7046;
-  --feedback-info-content:    #1e61a0; --feedback-info-background:    rgba(44, 150, 219, 0.12); --feedback-info-badge:    #1e61a0;
-  --feedback-warning-content: #c1460f; --feedback-warning-background: rgba(255, 123, 28, 0.12); --feedback-warning-badge: #c1460f;
-  --feedback-error-content:   #c62830; --feedback-error-background:   rgba(255, 65, 73, 0.12);  --feedback-error-badge:   #c62830;
-  --feedback-neutral-content: #464646; --feedback-neutral-background: rgba(0, 0, 0, 0.06);      --feedback-neutral-badge: #737373;
+  --feedback-success-content: #2b7046;
+  --feedback-success-background: rgba(63, 174, 105, 0.12);
+  --feedback-success-badge: #2b7046;
+  --feedback-info-content: #1e61a0;
+  --feedback-info-background: rgba(44, 150, 219, 0.12);
+  --feedback-info-badge: #1e61a0;
+  --feedback-warning-content: #8a5a00;
+  --feedback-warning-background: rgba(245, 176, 45, 0.18);
+  --feedback-warning-badge: #9c6200; /* amber, so High is never confused with brand orange */
+  --feedback-error-content: #c62830;
+  --feedback-error-background: rgba(255, 65, 73, 0.12);
+  --feedback-error-badge: #c62830;
+  --feedback-neutral-content: #464646;
+  --feedback-neutral-background: rgba(0, 0, 0, 0.06);
+  --feedback-neutral-badge: #737373;
   --feedback-badge-content: #ffffff;
 
   /* chart series */
-  --analytics-series-1: #2179be;
-  --analytics-series-2: #318c54;
-  --analytics-series-3: #e95d0f;
+  --analytics-series-1: #f0731a;
+  --analytics-series-2: #3b3b3b;
+  --analytics-series-3: #d9a000;
   --analytics-series-4: #e9343c;
-  --analytics-series-5: #626262;
-  --analytics-series-6: #862aa3;
+  --analytics-series-5: #8a8a8a;
+  --analytics-series-6: #2179be;
 }
 
 [data-theme="dark"],
@@ -72,7 +95,10 @@
 
   --stroke-muted: rgba(255, 255, 255, 0.08);
   --stroke-default: rgba(255, 255, 255, 0.14);
-  --stroke-active: rgba(255, 255, 255, 0.24);
+  --stroke-active: rgba(250, 141, 35, 0.75);
+
+  --brand-tint: rgba(250, 141, 35, 0.16);
+  --brand-text: #ffa12b;
 
   --action-primary-default: #fafafa;
   --action-primary-hover: #e5e5e5;
@@ -82,12 +108,22 @@
   --action-secondary-hover: #323232;
   --action-tertiary-hover: rgba(255, 255, 255, 0.06);
 
-  --feedback-success-content: #8ed8a9; --feedback-success-badge: #275a3b;
-  --feedback-info-content:    #88cef4; --feedback-info-badge:    #1c5083;
-  --feedback-warning-content: #ffb365; --feedback-warning-badge: #9a3814;
-  --feedback-error-content:   #ff969b; --feedback-error-badge:   #a62329;
-  --feedback-neutral-content: #d4d4d4; --feedback-neutral-background: rgba(255, 255, 255, 0.06); --feedback-neutral-badge: #636363;
+  --feedback-success-content: #8ed8a9;
+  --feedback-success-badge: #275a3b;
+  --feedback-info-content: #88cef4;
+  --feedback-info-badge: #1c5083;
+  --feedback-warning-content: #f2c14e;
+  --feedback-warning-background: rgba(245, 176, 45, 0.16);
+  --feedback-warning-badge: #8a5a00;
+  --feedback-error-content: #ff969b;
+  --feedback-error-badge: #a62329;
+  --feedback-neutral-content: #d4d4d4;
+  --feedback-neutral-background: rgba(255, 255, 255, 0.06);
+  --feedback-neutral-badge: #636363;
 
-  --analytics-series-1: #4a9ee0;
-  --analytics-series-6: #b65bd8;
+  --analytics-series-1: #fa8d23;
+  --analytics-series-2: #c9c9c9;
+  --analytics-series-3: #f2c14e;
+  --analytics-series-5: #8a8a8a;
+  --analytics-series-6: #4a9ee0;
 }

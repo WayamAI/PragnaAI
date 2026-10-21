@@ -97,7 +97,9 @@ function Docs() {
                       console.log("[Documents] Re-extract", d.name);
                       toast.success(`Re-extraction queued for ${d.name}`);
                     }}
-                    className={buttonClass("ghost", { className: "px-2" })}
+                    className={buttonClass("ghost", {
+                      className: "px-2 text-secondary-foreground",
+                    })}
                   >
                     <icons.reextract size={16} /> Re-extract
                   </button>

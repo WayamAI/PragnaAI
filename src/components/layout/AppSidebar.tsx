@@ -192,7 +192,7 @@ export function AppSidebar({
                       <span
                         className={cn(
                           puckBase,
-                          active ? "bg-action-primary text-on-color" : puckIdle,
+                          active ? "bg-brand-tint ring-2 ring-inset ring-brand" : puckIdle,
                         )}
                       >
                         <it.icon size={24} />
@@ -285,13 +285,13 @@ function Toggle({ label, defaultOn = false }: { label: string; defaultOn?: boole
         }}
         className={cn(
           "relative h-5 w-9 shrink-0 rounded-full border border-hairline outline-none transition-colors duration-[180ms] focus-visible:ring-2 focus-visible:ring-active",
-          on ? "border-transparent bg-action-primary" : "bg-raised-2",
+          on ? "border-transparent bg-brand" : "bg-raised-2",
         )}
       >
         <span
           className={cn(
             "absolute top-0.5 size-4 rounded-full transition-[left] duration-[180ms]",
-            on ? "left-[18px] bg-on-color" : "left-0.5 bg-quaternary",
+            on ? "left-[18px] bg-white" : "left-0.5 bg-quaternary",
           )}
         />
       </button>

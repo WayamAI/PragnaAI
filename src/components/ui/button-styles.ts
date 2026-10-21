@@ -15,17 +15,17 @@ const base =
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "type-label-sm bg-action-primary px-3 py-1.5 text-on-color hover:bg-action-primary-hover disabled:bg-action-primary-disabled",
+    "type-label-sm bg-brand-gradient px-3 py-1.5 text-white hover:brightness-95 disabled:bg-action-primary-disabled disabled:bg-none disabled:text-on-color",
   secondary:
     "type-label-sm border border-hairline bg-action px-3 py-1.5 text-secondary-foreground hover:border-strong hover:bg-raised-2 hover:text-foreground disabled:opacity-40",
-  ghost: "type-label-sm px-3 py-1.5 text-tertiary hover:text-foreground disabled:opacity-40",
+  ghost: "type-label-sm px-3 py-1.5 text-brand-text hover:bg-brand-tint disabled:opacity-40",
   icon: "size-8 bg-action text-tertiary hover:bg-raised-2 hover:text-secondary-foreground disabled:opacity-40",
   chip: "type-label-sm border px-2.5 py-1",
 };
 
 const chipIdle =
   "border-hairline bg-action text-tertiary hover:border-strong hover:bg-raised-2 hover:text-secondary-foreground";
-const chipActive = "border-transparent bg-action-primary text-on-color";
+const chipActive = "border-brand bg-brand-tint text-brand-text";
 
 /**
  * Chronus button classes, defined once. Use on a native <button> or a router <Link>:

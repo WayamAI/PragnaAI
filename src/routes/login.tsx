@@ -5,8 +5,15 @@ import { login } from "@/lib/auth";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { buttonClass } from "@/components/ui/button-styles";
 import { inputClass, labelClass } from "@/components/ui/input-styles";
+import { icons } from "@/components/icons/iconMap";
 
 const brand = (file: string) => `${import.meta.env.BASE_URL}brand/${file}`;
+
+const INSIDE = [
+  [icons.ai, "AI-suggested failure modes, scored and sourced"],
+  [icons.riskRegister, "A risk register ranked by RPN"],
+  [icons.traceability, "Requirement to verification traceability"],
+] as const;
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -93,6 +100,28 @@ function LoginPage() {
 
         <div className="flex flex-1 flex-col justify-center px-8 pb-12">
           <div className="mx-auto w-full max-w-sm">
+            <div className="mb-8 flex items-center gap-2.5">
+              <img
+                src={brand("wayam-mark-light.svg")}
+                alt=""
+                className="h-auto w-9 shrink-0 dark:hidden"
+              />
+              <img
+                src={brand("wayam-mark-dark.svg")}
+                alt=""
+                className="hidden h-auto w-9 shrink-0 dark:block"
+              />
+              <img
+                src={brand("wayam-wordmark-light.svg")}
+                alt=""
+                className="h-5 w-auto dark:hidden"
+              />
+              <img
+                src={brand("wayam-wordmark-dark.svg")}
+                alt=""
+                className="hidden h-5 w-auto dark:block"
+              />
+            </div>
             <h1 className="type-display-xl text-foreground">Sign in</h1>
             <p className="type-body-md mt-1 text-tertiary">
               Demo mode. Any email and password will work.
@@ -132,6 +161,7 @@ function LoginPage() {
                 disabled={submitting}
                 className={buttonClass("primary", { size: "lg", className: "mt-1 w-full" })}
               >
+                <icons.signIn size={16} />
                 Sign in
               </button>
             </form>
@@ -143,6 +173,20 @@ function LoginPage() {
                 or verified.
               </p>
             </div>
+
+            <ul className="mt-8 flex flex-col gap-3 border-t border-hairline pt-6">
+              {INSIDE.map(([Icon, text]) => (
+                <li
+                  key={text}
+                  className="type-body-md flex items-center gap-3 text-secondary-foreground"
+                >
+                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-tint">
+                    <Icon size={28} />
+                  </span>
+                  {text}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

@@ -3,7 +3,8 @@ import { useState } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { RECENT_REPORTS } from "@/data/misc";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
-import { Panel } from "@/components/ui/primitives";
+import { CheckInput, Panel } from "@/components/ui/primitives";
+import { icons } from "@/components/icons/iconMap";
 import { buttonClass } from "@/components/ui/button-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
@@ -12,15 +13,14 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/reports")({ component: Reports });
 
 const TYPES = [
-  ["Full DFMEA Export", "Excel (.xlsx)", "All failure modes, all columns"],
-  ["Risk Summary Report", "PDF", "Top risks, heatmap, distribution chart"],
-  ["Traceability Matrix", "Excel / PDF", "Requirement-to-verification matrix"],
-  ["AI Suggestions Report", "PDF", "All AI suggestions with confidence scores"],
-  ["Regulatory Package", "ZIP", "Combined: DFMEA + Traceability + Risk Summary"],
-  ["Open Items Report", "PDF", "Mitigations pending, overdue, unlinked items"],
+  ["Full DFMEA export", "Excel (.xlsx)", "All failure modes, all columns"],
+  ["Risk summary report", "PDF", "Top risks, heatmap, distribution chart"],
+  ["Traceability matrix", "Excel / PDF", "Requirement-to-verification matrix"],
+  ["AI suggestions report", "PDF", "All AI suggestions with confidence scores"],
+  ["Regulatory package", "ZIP", "Combined: DFMEA + traceability + risk summary"],
+  ["Open items report", "PDF", "Mitigations pending, overdue, unlinked items"],
 ];
 
-const checkClass = "size-4 shrink-0 accent-action-primary";
 const optionRow = "type-body-md flex items-center gap-2 text-secondary-foreground";
 
 function Reports() {
@@ -31,7 +31,7 @@ function Reports() {
       subtitle="Configure and generate DFMEA exports for submissions, reviews, and audit packages."
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Panel title="Generate Report" className="lg:col-span-7 lg:self-start">
+        <Panel title="Generate Report" icon={icons.reports} className="lg:col-span-7 lg:self-start">
           <div className="flex flex-col gap-2">
             {TYPES.map(([label, fmt, desc], i) => (
               <label
@@ -41,12 +41,12 @@ function Reports() {
                   type === i ? "border-strong bg-raised" : "border-hairline",
                 )}
               >
-                <input
+                <CheckInput
                   type="radio"
                   name="rtype"
                   checked={type === i}
                   onChange={() => setType(i)}
-                  className={cn(checkClass, "mt-0.5")}
+                  className="mt-0.5"
                 />
                 <div className="min-w-0 flex-1">
                   <div className="type-label-md text-foreground">
@@ -62,41 +62,35 @@ function Reports() {
           <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">Scope</h3>
           <div className="flex flex-col gap-2">
             <label className={optionRow}>
-              <input type="radio" name="scope" defaultChecked className={checkClass} /> Full device
-              — all levels
+              <CheckInput type="radio" name="scope" defaultChecked /> Full device · all levels
             </label>
             <label className={optionRow}>
-              <input type="radio" name="scope" className={checkClass} /> By subsystem
+              <CheckInput type="radio" name="scope" /> By subsystem
             </label>
             <label className={optionRow}>
-              <input type="radio" name="scope" className={checkClass} /> Critical risks only (S ≥ 9
-              or RPN ≥ 200)
+              <CheckInput type="radio" name="scope" /> Critical risks only (S ≥ 9 or RPN ≥ 200)
             </label>
             <label className={optionRow}>
-              <input type="radio" name="scope" className={checkClass} /> By owner
+              <CheckInput type="radio" name="scope" /> By owner
             </label>
           </div>
 
           <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">Options</h3>
           <div className="flex flex-col gap-2">
             <label className={optionRow}>
-              <input type="checkbox" defaultChecked className={checkClass} /> Include AI confidence
-              scores
+              <CheckInput type="checkbox" defaultChecked /> Include AI confidence scores
             </label>
             <label className={optionRow}>
-              <input type="checkbox" defaultChecked className={checkClass} /> Include traceability
-              links
+              <CheckInput type="checkbox" defaultChecked /> Include traceability links
             </label>
             <label className={optionRow}>
-              <input type="checkbox" defaultChecked className={checkClass} /> Include residual RPN
-              (post-mitigation)
+              <CheckInput type="checkbox" defaultChecked /> Include residual RPN (post-mitigation)
             </label>
             <label className={optionRow}>
-              <input type="checkbox" className={checkClass} /> Include rejected AI suggestions
+              <CheckInput type="checkbox" /> Include rejected AI suggestions
             </label>
             <label className={optionRow}>
-              <input type="checkbox" defaultChecked className={checkClass} /> Include engineer
-              comments
+              <CheckInput type="checkbox" defaultChecked /> Include engineer comments
             </label>
           </div>
 
@@ -105,13 +99,33 @@ function Reports() {
             onClick={() =>
               toast.success("Report queued. You will receive an email when it's ready.")
             }
-            className={buttonClass("primary", { size: "lg", className: "mt-6" })}
+            className={buttonClass("primary", { size: "sm", className: "mt-6" })}
           >
-            Generate Report
+            <icons.reports size={16} /> Generate report
           </button>
         </Panel>
 
-        <Panel title="Recent Reports" padded={false} className="lg:col-span-5 lg:self-start">
+        <Panel title="Selected Report" icon={icons.export} className="lg:col-span-5 lg:self-start">
+          <div className="flex items-start gap-3">
+            <icons.reports size={44} />
+            <div className="min-w-0">
+              <div className="type-label-md text-foreground">{TYPES[type][0]}</div>
+              <div className="type-caption mt-0.5 font-normal text-tertiary">{TYPES[type][1]}</div>
+            </div>
+          </div>
+          <p className="type-body-md mt-3 text-secondary-foreground">{TYPES[type][2]}.</p>
+          <p className="type-body-sm mt-3 border-t border-hairline pt-3 text-tertiary">
+            Set the scope and options on the left, then generate. You will receive an email when the
+            report is ready.
+          </p>
+        </Panel>
+
+        <Panel
+          title="Recent Reports"
+          icon={icons.history}
+          padded={false}
+          className="lg:col-span-12"
+        >
           <table className={tableStyles.table}>
             <thead>
               <tr>
@@ -127,7 +141,7 @@ function Reports() {
                   <td
                     className={tableStyles.td({
                       primary: true,
-                      className: "max-w-[220px] font-mono !whitespace-normal break-words",
+                      className: "font-mono",
                     })}
                   >
                     {(name as string).replace(/_/g, "_\u200b")}

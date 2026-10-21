@@ -12,12 +12,12 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/knowledge-base")({ component: KB });
 
 const SOURCES = [
-  "All Sources",
+  "All sources",
   "Previous DFMEAs",
-  "FDA MDR Database",
-  "Medical Standards",
-  "CAPA Records",
-  "Lessons Learned",
+  "FDA MDR database",
+  "Medical standards",
+  "CAPA records",
+  "Lessons learned",
 ];
 
 const SUGGESTIONS = [
@@ -30,16 +30,16 @@ const SUGGESTIONS = [
 
 const INDEX = [
   ["Previous DFMEAs", "47 documents"],
-  ["FDA MDR Records", "1,284 indexed"],
-  ["Medical Standards", "23 documents"],
-  ["CAPA Records", "89 records"],
-  ["Lessons Learned", "61 entries"],
-  ["Field Complaints", "142 records"],
+  ["FDA MDR records", "1,284 indexed"],
+  ["Medical standards", "23 documents"],
+  ["CAPA records", "89 records"],
+  ["Lessons learned", "61 entries"],
+  ["Field complaints", "142 records"],
 ];
 
 function KB() {
   const [query, setQuery] = useState("battery charging safety");
-  const [source, setSource] = useState("All Sources");
+  const [source, setSource] = useState("All sources");
 
   const runSearch = (q: string) => {
     console.log("[KnowledgeBase] Search", { query: q, source });
@@ -55,8 +55,8 @@ function KB() {
         <div className="min-w-0 lg:col-span-3">
           <div className="relative">
             <icons.search
-              className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-quaternary"
-              aria-hidden="true"
+              size={16}
+              className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-quaternary"
             />
             <input
               value={query}
@@ -78,7 +78,7 @@ function KB() {
                   setQuery(c);
                   runSearch(c);
                 }}
-                className={buttonClass("chip")}
+                className={buttonClass("chip", { size: "sm" })}
               >
                 {c}
               </button>
@@ -95,7 +95,7 @@ function KB() {
                   console.log("[KnowledgeBase] Source filter", s);
                   toast(`Filtering results by: ${s}`);
                 }}
-                className={buttonClass("chip", { active: source === s })}
+                className={buttonClass("chip", { size: "sm", active: source === s })}
               >
                 {s}
               </button>
@@ -124,7 +124,7 @@ function KB() {
                     }}
                     className={buttonClass("secondary", { size: "sm" })}
                   >
-                    Use in DFMEA workspace
+                    <icons.workspace size={16} /> Use in DFMEA workspace
                   </button>
                   <button
                     type="button"
@@ -134,7 +134,7 @@ function KB() {
                     }}
                     className={buttonClass("ghost", { size: "sm" })}
                   >
-                    View full record
+                    <icons.view size={16} /> View full record
                   </button>
                 </div>
               </section>
@@ -142,7 +142,7 @@ function KB() {
           </div>
         </div>
 
-        <Panel title="Knowledge Base Index" className={cn("lg:self-start")}>
+        <Panel title="Knowledge Base Index" icon={icons.database} className={cn("lg:self-start")}>
           <dl className="type-body-md divide-y divide-hairline">
             {INDEX.map(([l, v]) => (
               <div key={l} className="flex justify-between gap-3 py-2 first:pt-0">

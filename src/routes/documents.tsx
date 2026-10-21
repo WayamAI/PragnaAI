@@ -25,25 +25,27 @@ function Docs() {
           e.preventDefault();
           toast.success("Document queued for extraction.");
         }}
-        className="mb-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-strong bg-raised p-8 text-center"
+        className="mb-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-strong bg-raised px-6 py-5 text-center sm:flex-row sm:justify-start sm:text-left"
       >
-        <icons.upload className="size-6 text-tertiary" aria-hidden="true" />
-        <p className="type-body-md mt-2 text-foreground">
-          Drag and drop engineering documents here, or{" "}
-          <button
-            type="button"
-            onClick={() => {
-              console.log("[Documents] Browse clicked");
-              toast("Opening file picker…");
-            }}
-            className="rounded-sm underline underline-offset-2 outline-none hover:text-secondary-foreground focus-visible:ring-2 focus-visible:ring-active"
-          >
-            browse
-          </button>
-        </p>
-        <p className="type-caption mt-1 font-normal text-quaternary">
-          PDF, DOCX, XLSX, CSV — max 50MB per file
-        </p>
+        <icons.upload size={28} />
+        <div>
+          <p className="type-body-md text-foreground">
+            Drag and drop engineering documents here, or{" "}
+            <button
+              type="button"
+              onClick={() => {
+                console.log("[Documents] Browse clicked");
+                toast("Opening file picker…");
+              }}
+              className="rounded-sm font-medium text-brand-text underline underline-offset-2 outline-none hover:brightness-90 focus-visible:ring-2 focus-visible:ring-active"
+            >
+              browse
+            </button>
+          </p>
+          <p className="type-caption mt-0.5 font-normal text-quaternary">
+            PDF, DOCX, XLSX, CSV · max 50MB per file
+          </p>
+        </div>
       </div>
 
       <div className={tableStyles.wrap}>
@@ -69,7 +71,7 @@ function Docs() {
                 </td>
                 <td className={tableStyles.td({ className: quiet })}>{d.type}</td>
                 <td className={tableStyles.td({ className: quiet })}>{d.version}</td>
-                <td className={tableStyles.td({ className: quiet })}>{d.pages ?? "—"}</td>
+                <td className={tableStyles.td({ className: quiet })}>{d.pages ?? "n/a"}</td>
                 <td className={tableStyles.td()}>
                   <EngineerAvatar name={d.by} />
                 </td>
@@ -86,10 +88,11 @@ function Docs() {
                       toast(`Opening ${d.name}`);
                     }}
                     className={buttonClass("ghost", {
+                      size: "sm",
                       className: "px-2 text-secondary-foreground",
                     })}
                   >
-                    View
+                    <icons.view size={16} /> View
                   </button>
                   <button
                     type="button"
@@ -97,9 +100,12 @@ function Docs() {
                       console.log("[Documents] Re-extract", d.name);
                       toast.success(`Re-extraction queued for ${d.name}`);
                     }}
-                    className={buttonClass("ghost", { className: "px-2" })}
+                    className={buttonClass("ghost", {
+                      size: "sm",
+                      className: "px-2 text-secondary-foreground",
+                    })}
                   >
-                    Re-extract
+                    <icons.reextract size={16} /> Re-extract
                   </button>
                 </td>
               </tr>

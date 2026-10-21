@@ -3,9 +3,9 @@ import { useState } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { REQUIREMENTS } from "@/data/misc";
 import { FAILURE_MODES } from "@/data/dfmea";
-import { Panel, ToneBadge } from "@/components/ui/primitives";
+import { Panel, SelectField, ToneBadge } from "@/components/ui/primitives";
+import { icons } from "@/components/icons/iconMap";
 import { buttonClass } from "@/components/ui/button-styles";
-import { selectClass } from "@/components/ui/input-styles";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/traceability")({ component: Traceability });
@@ -55,11 +55,11 @@ const CHAIN_STATE: Record<ChainTone, string> = {
 const CHAIN: [string, string, ChainTone][] = [
   ["REQ-PWR-001", "Requirement", "success"],
   ["F-BAT-01", "Function", "success"],
-  ["FM-0031", "Failure Mode", "warning"],
-  ["CAUSE-031", "Root Cause", "warning"],
+  ["FM-0031", "Failure mode", "warning"],
+  ["CAUSE-031", "Root cause", "warning"],
   ["MIT-0031-B", "Mitigation", "warning"],
-  ["VT-0031", "Verification Test", "error"],
-  ["VR-2025-012", "Validation Report", "error"],
+  ["VT-0031", "Verification test", "error"],
+  ["VR-2025-012", "Validation report", "error"],
 ];
 
 function Traceability() {
@@ -91,7 +91,8 @@ function Traceability() {
     >
       {view === "matrix" && (
         <Panel
-          title="Coverage matrix"
+          title="Coverage Matrix"
+          icon={icons.traceability}
           action={<ToneBadge tone="error">67 gaps</ToneBadge>}
           padded={false}
         >
@@ -108,9 +109,14 @@ function Traceability() {
                     Requirement
                   </th>
                   {FM_COLUMNS.map(({ id, label }) => (
-                    <th key={id} className="w-24 px-1 pt-2 pb-2 align-bottom">
-                      <div className="mx-auto flex min-h-14 flex-col justify-end rounded-md bg-raised px-1 py-2 text-center">
-                        <span className="type-caption font-mono text-foreground">{id}</span>
+                    <th
+                      key={id}
+                      className="w-24 min-w-24 border-l border-hairline px-1 pt-2 pb-2 align-top"
+                    >
+                      <div className="mx-auto flex h-[76px] flex-col justify-start overflow-hidden rounded-md bg-raised px-1 py-2 text-center">
+                        <span className="type-caption font-mono whitespace-nowrap text-foreground">
+                          {id}
+                        </span>
                         <span className="type-caption mt-1 text-[10px] leading-tight font-normal text-tertiary">
                           {shortLabel(label)}
                         </span>
@@ -129,7 +135,7 @@ function Traceability() {
                     {FM_COLUMNS.map((_, fi) => {
                       const st = cellState(ri, fi);
                       return (
-                        <td key={fi} className="p-0.5">
+                        <td key={fi} className="border-l border-hairline p-0.5">
                           <div className={cn("mx-auto h-5 w-6 rounded", COLOR[st])} />
                         </td>
                       );
@@ -143,12 +149,12 @@ function Traceability() {
       )}
 
       {view === "chain" && (
-        <Panel title="Trace chain">
+        <Panel title="Trace Chain" icon={icons.traceability}>
           <div className="type-body-md mb-4 flex flex-wrap items-center gap-2">
             <span className="text-tertiary">Select a failure mode to trace</span>
-            <select aria-label="Failure mode to trace" className={selectClass}>
-              <option>FM-0031 — Capacity degradation</option>
-            </select>
+            <SelectField aria-label="Failure mode to trace">
+              <option>FM-0031 · Capacity degradation</option>
+            </SelectField>
           </div>
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-7">
             {CHAIN.map(([id, label, tone]) => (

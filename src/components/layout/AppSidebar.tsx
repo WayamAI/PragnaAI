@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type SyntheticEvent } from "react";
 import { toast } from "sonner";
-import type { LucideIcon } from "lucide-react";
+import type { AppIconComponent } from "@/components/icons/iconMap";
 import { icons } from "@/components/icons/iconMap";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme/theme";
@@ -14,9 +14,8 @@ const brand = (file: string) => `${import.meta.env.BASE_URL}brand/${file}`;
 type Flyout = { label: string; count?: string; top: number };
 
 const puckBase =
-  "grid size-9 shrink-0 place-items-center rounded-full transition-colors duration-[180ms] ease-out";
-const puckIdle =
-  "bg-action text-tertiary group-hover:bg-raised-2 group-hover:text-secondary-foreground";
+  "grid size-10 shrink-0 place-items-center rounded-full transition-colors duration-[180ms] ease-out";
+const puckIdle = "bg-action group-hover:bg-raised-2";
 const rowFocus = "outline-none focus-visible:ring-2 focus-visible:ring-active";
 
 export function AppSidebar({
@@ -58,7 +57,12 @@ export function AppSidebar({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  const footerButton = (label: string, Icon: LucideIcon, onClick: () => void, extra?: object) => (
+  const footerButton = (
+    label: string,
+    Icon: AppIconComponent,
+    onClick: () => void,
+    extra?: object,
+  ) => (
     <button
       type="button"
       onClick={onClick}
@@ -67,16 +71,16 @@ export function AppSidebar({
       onFocus={(e) => showFlyout(e, label)}
       onMouseLeave={hideFlyout}
       onBlur={hideFlyout}
-      className={cn("group flex items-center gap-3 rounded-full", rowFocus, !expanded && "lg:w-9")}
+      title={label}
+      className={cn("group flex items-center gap-3 rounded-full", rowFocus)}
       {...extra}
     >
       <span className={cn(puckBase, puckIdle)}>
-        <Icon className="size-[17px]" aria-hidden="true" />
+        <Icon size={24} />
       </span>
       <span
         className={cn(
-          "type-label-sm truncate text-tertiary transition-colors duration-[180ms] group-hover:text-secondary-foreground",
-          railOnly,
+          "type-label-sm truncate text-tertiary transition-colors duration-[180ms] group-hover:text-secondary-foreground lg:hidden",
         )}
       >
         {label}
@@ -143,23 +147,29 @@ export function AppSidebar({
               rowFocus,
             )}
           >
-            <icons.close className="size-4" aria-hidden="true" />
+            <icons.close size={16} />
           </button>
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
-          <nav
-            aria-label="Primary"
-            className={cn("flex flex-col gap-1.5 px-3 py-3", !expanded && "lg:px-[14px]")}
-          >
+          <nav aria-label="Primary" className="flex flex-col px-[14px] py-3">
             {navGroups.map((group, gi) => (
-              <div key={group.label} className="flex flex-col gap-1.5">
+              <div key={group.label} className="flex flex-col gap-1">
                 {gi > 0 && (
                   <div
-                    className={cn("mx-1 my-1 border-t border-hairline", expanded ? "" : "lg:mx-2")}
+                    aria-hidden="true"
+                    className={cn(
+                      "mx-1 mt-2 mb-1 h-px bg-hairline transition-opacity duration-200 lg:mx-0",
+                      expanded && "lg:opacity-0",
+                    )}
                   />
                 )}
-                <div className={cn("type-eyebrow px-1 pt-1 text-quaternary", railOnly)}>
+                <div
+                  className={cn(
+                    "type-eyebrow h-5 overflow-hidden px-3 whitespace-nowrap text-tertiary transition-[height,opacity] duration-200",
+                    !expanded && "lg:h-0 lg:opacity-0",
+                  )}
+                >
                   {group.label}
                 </div>
                 {group.items.map((it) => {
@@ -175,32 +185,38 @@ export function AppSidebar({
                       onMouseLeave={hideFlyout}
                       onBlur={hideFlyout}
                       className={cn(
-                        "group flex items-center gap-3 rounded-full",
+                        "group flex h-11 items-center gap-3 overflow-hidden rounded-full transition-colors duration-200",
                         rowFocus,
-                        !expanded && "lg:w-9",
+                        active && "bg-brand-tint",
                       )}
                     >
                       <span
                         className={cn(
                           puckBase,
-                          active ? "bg-action-primary text-on-color" : puckIdle,
+                          active ? "bg-container ring-2 ring-brand ring-inset" : puckIdle,
                         )}
                       >
-                        <it.icon className="size-[17px]" aria-hidden="true" />
+                        <it.icon size={24} />
                       </span>
                       <span
                         className={cn(
-                          "type-label-sm min-w-0 flex-1 truncate transition-colors duration-[180ms]",
+                          "type-label-sm min-w-0 flex-1 truncate transition-[color,opacity] duration-200",
                           active
-                            ? "text-foreground"
-                            : "text-tertiary group-hover:text-secondary-foreground",
-                          railOnly,
+                            ? "font-semibold text-foreground"
+                            : "text-secondary-foreground group-hover:text-foreground",
+                          !expanded && "lg:opacity-0",
                         )}
                       >
                         {it.title}
                       </span>
                       {it.count && (
-                        <span className={cn("type-caption tabular pr-2 text-quaternary", railOnly)}>
+                        <span
+                          className={cn(
+                            "type-caption tabular mr-2 rounded-full bg-action px-2 text-tertiary transition-opacity duration-200",
+                            active && "bg-container",
+                            !expanded && "lg:opacity-0",
+                          )}
+                        >
                           {it.count}
                         </span>
                       )}
@@ -212,13 +228,8 @@ export function AppSidebar({
           </nav>
         </div>
 
-        {/* Footer: collapse, theme, settings, help */}
-        <div
-          className={cn(
-            "flex shrink-0 flex-col gap-1.5 border-t border-hairline px-3 py-3",
-            !expanded && "lg:px-[14px]",
-          )}
-        >
+        {/* Footer: collapse, theme, settings, help. One row when expanded, a column on the rail. */}
+        <div className="flex shrink-0 flex-col gap-1 border-t border-hairline px-[14px] py-2 lg:flex-row lg:flex-wrap lg:justify-between">
           <div className="hidden lg:block">
             {footerButton(
               expanded ? "Collapse sidebar" : "Expand sidebar",
@@ -229,7 +240,7 @@ export function AppSidebar({
           </div>
           {footerButton(
             theme === "light" ? "Dark theme" : "Light theme",
-            theme === "light" ? icons.themeDark : icons.themeLight,
+            icons.theme,
             toggleTheme,
             { "aria-label": theme === "light" ? "Switch to dark theme" : "Switch to light theme" },
           )}
@@ -237,7 +248,7 @@ export function AppSidebar({
             console.log("[Sidebar] Settings opened");
             setModal("Settings");
           })}
-          {footerButton("Help & Standards", icons.help, () => {
+          {footerButton("Help & standards", icons.help, () => {
             console.log("[Sidebar] Help & Standards opened");
             setModal("Help & Standards");
           })}
@@ -276,13 +287,13 @@ function Toggle({ label, defaultOn = false }: { label: string; defaultOn?: boole
         }}
         className={cn(
           "relative h-5 w-9 shrink-0 rounded-full border border-hairline outline-none transition-colors duration-[180ms] focus-visible:ring-2 focus-visible:ring-active",
-          on ? "border-transparent bg-action-primary" : "bg-raised-2",
+          on ? "border-transparent bg-brand" : "bg-raised-2",
         )}
       >
         <span
           className={cn(
             "absolute top-0.5 size-4 rounded-full transition-[left] duration-[180ms]",
-            on ? "left-[18px] bg-on-color" : "left-0.5 bg-quaternary",
+            on ? "left-[18px] bg-white" : "left-0.5 bg-quaternary",
           )}
         />
       </button>
@@ -355,17 +366,14 @@ function SettingsModal({ onClose }: { onClose: () => void }) {
 }
 
 const STANDARDS_HELP = [
-  [
-    "ISO 14971:2019",
-    "Application of risk management to medical devices — the core DFMEA standard.",
-  ],
+  ["ISO 14971:2019", "Application of risk management to medical devices: the core DFMEA standard."],
   [
     "IEC 62304:2006+A1",
-    "Medical device software life cycle — software failure modes & safety classes.",
+    "Medical device software life cycle: software failure modes & safety classes.",
   ],
-  ["IEC 60601-1", "Basic safety and essential performance — device-level safety requirements."],
-  ["IEC 60601-1-8", "Alarm systems — alarm prioritization and failure modes."],
-  ["IEC 62133-2:2017", "Secondary lithium cells — battery safety requirements."],
+  ["IEC 60601-1", "Basic safety and essential performance: device-level safety requirements."],
+  ["IEC 60601-1-8", "Alarm systems: alarm prioritization and failure modes."],
+  ["IEC 62133-2:2017", "Secondary lithium cells: battery safety requirements."],
 ];
 
 function HelpModal({ onClose }: { onClose: () => void }) {
@@ -384,7 +392,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
             }}
             className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
           >
-            Contact support <icons.external className="size-3" aria-hidden="true" />
+            Contact support <icons.external size={12} />
           </button>
           <button
             type="button"
@@ -434,10 +442,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
                   rowFocus,
                 )}
               >
-                <icons.standard
-                  className="mt-0.5 size-4 shrink-0 text-tertiary"
-                  aria-hidden="true"
-                />
+                <icons.standard size={16} className="mt-0.5 shrink-0 text-tertiary" />
                 <div>
                   <div className="type-label-sm font-mono text-foreground">{id}</div>
                   <div className="type-body-sm text-tertiary">{desc}</div>

@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { ACTIVITY } from "@/data/misc";
 import { INTEGRATIONS } from "@/data/integrations";
-import type { LucideIcon } from "lucide-react";
+import type { AppIconComponent } from "@/components/icons/iconMap";
 import { icons } from "@/components/icons/iconMap";
 import { zoneTint } from "@/components/dashboard/zoneTint";
+import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import {
   KpiTile,
   Panel,
@@ -25,36 +26,56 @@ import {
 import {
   BarChart,
   Bar,
+  CartesianGrid,
+  LabelList,
   XAxis,
   YAxis,
   ResponsiveContainer,
   Tooltip,
   Cell,
-  PieChart,
-  Pie,
 } from "recharts";
 
 export const Route = createFileRoute("/overview")({ component: Overview });
 
-const KPI: { label: string; value: string; unit?: string; sub: string; valueClassName?: string }[] =
-  [
-    { label: "Total DFMEA Items", value: "280", sub: "Across all levels" },
-    {
-      label: "Critical Risks (S≥9)",
-      value: "14",
-      sub: "Require immediate action",
-      valueClassName: "text-error",
-    },
-    { label: "AI Suggestions Pending", value: "23", sub: "Awaiting engineer review" },
-    {
-      label: "Mitigations Pending",
-      value: "31",
-      sub: "Open action items",
-      valueClassName: "text-warning",
-    },
-    { label: "DFMEA Completion", value: "67", unit: "%", sub: "188 of 280 approved" },
-    { label: "Residual RPN Reduced", value: "43", unit: "%", sub: "Avg reduction post-mitigation" },
-  ];
+const KPI: {
+  label: string;
+  icon: AppIconComponent;
+  value: string;
+  unit?: string;
+  sub: string;
+  valueClassName?: string;
+}[] = [
+  { label: "Total DFMEA items", icon: icons.items, value: "280", sub: "Across all levels" },
+  {
+    label: "Critical risks (S≥9)",
+    icon: icons.alert,
+    value: "14",
+    sub: "Require immediate action",
+    valueClassName: "text-error",
+  },
+  { label: "AI suggestions pending", icon: icons.ai, value: "23", sub: "Awaiting engineer review" },
+  {
+    label: "Mitigations pending",
+    icon: icons.pending,
+    value: "31",
+    sub: "Open action items",
+    valueClassName: "text-warning",
+  },
+  {
+    label: "DFMEA completion",
+    icon: icons.completion,
+    value: "67",
+    unit: "%",
+    sub: "188 of 280 approved",
+  },
+  {
+    label: "Residual RPN reduced",
+    icon: icons.reduction,
+    value: "43",
+    unit: "%",
+    sub: "Avg reduction post-mitigation",
+  },
+];
 
 const HEATMAP = [
   {
@@ -106,24 +127,24 @@ function riskZone(ri: number, ci: number) {
 }
 
 const RINGS = [
-  { level: "Product Level", pct: 67, done: 4, total: 6 },
-  { level: "System Level", pct: 64, done: 18, total: 28 },
-  { level: "Subsystem Level", pct: 71, done: 44, total: 62 },
-  { level: "Part / Component", pct: 71, done: 88, total: 124 },
+  { level: "Product level", pct: 67, done: 4, total: 6 },
+  { level: "System level", pct: 64, done: 18, total: 28 },
+  { level: "Subsystem level", pct: 71, done: 44, total: 62 },
+  { level: "Part / component", pct: 71, done: 88, total: 124 },
   { level: "Accessories", pct: 56, done: 18, total: 32 },
-  { level: "Super System", pct: 57, done: 16, total: 28 },
+  { level: "Super system", pct: 57, done: 16, total: 28 },
 ];
 
 const RPN_BUCKETS = [
-  { range: "0-49", count: 98, fill: "var(--text-quaternary)" },
-  { range: "50-99", count: 89, fill: "var(--text-quaternary)" },
-  { range: "100-149", count: 52, fill: "var(--text-quaternary)" },
-  { range: "150-199", count: 27, fill: "var(--text-quaternary)" },
+  { range: "0-49", count: 98, fill: "url(#rpn-bar)" },
+  { range: "50-99", count: 89, fill: "url(#rpn-bar)" },
+  { range: "100-149", count: 52, fill: "url(#rpn-bar)" },
+  { range: "150-199", count: 27, fill: "url(#rpn-bar)" },
   { range: "200+", count: 14, fill: "var(--feedback-error-content)" },
 ];
 
 const AGENTS: {
-  icon: LucideIcon;
+  icon: AppIconComponent;
   name: string;
   status: string;
   tone: Tone;
@@ -144,7 +165,7 @@ const AGENTS: {
     status: "Active",
     tone: "success",
     detail:
-      "Querying FDA MDR database and internal knowledge base — queue: 23 suggestions pending review",
+      "Querying FDA MDR database and internal knowledge base. Queue: 23 suggestions pending review",
     last: "Running",
   },
   {
@@ -159,13 +180,9 @@ const AGENTS: {
 
 function Overview() {
   const [showIntegrations, setShowIntegrations] = useState(false);
-  // Auto-open the data-source popup only once per browser session.
-  useEffect(() => {
-    if (!sessionStorage.getItem("rl-integrations-popup-seen")) {
-      setShowIntegrations(true);
-      sessionStorage.setItem("rl-integrations-popup-seen", "1");
-    }
-  }, []);
+  // The data-source details open on request from the card below. They used to open by
+  // themselves once per session; the old sessionStorage key "rl-integrations-popup-seen" is
+  // no longer read or written.
   const connected = INTEGRATIONS.filter((i) => i.status === "connected").length;
   const highCount = HEATMAP.reduce(
     (sum, row, ri) =>
@@ -175,36 +192,44 @@ function Overview() {
 
   return (
     <PageContainer title="Project Overview" subtitle="CardioGuard 3000 · Rev B · DFMEA-2025-001">
-      <div className="flex flex-col gap-4">
-        {/* Live data-source status banner */}
-        <button
-          onClick={() => setShowIntegrations(true)}
-          className="flex w-full items-center gap-3 rounded-lg border border-hairline bg-container p-3 text-left outline-none transition-colors duration-[150ms] hover:border-strong focus-visible:ring-2 focus-visible:ring-active"
+      <div className="flex flex-col gap-6">
+        {/* Connected Data Sources: inline card, details on request */}
+        <section
+          aria-label="Connected Data Sources"
+          className="flex flex-wrap items-center gap-3 rounded-lg border border-hairline bg-container px-4 py-3"
         >
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-            <icons.integrations className="size-[17px]" aria-hidden="true" />
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-tint">
+            <icons.integrations size={28} />
           </span>
-          <span className="type-body-md flex min-w-0 items-center gap-2">
-            <StatusDot tone="success" />
-            <span className="font-medium whitespace-nowrap text-foreground">
-              {connected} of {INTEGRATIONS.length} data sources live
-            </span>
-            <span className="hidden truncate text-tertiary sm:inline">
-              · Teamcenter (PLM), Jama, Greenlight Guru, FDA MAUDE, SAP, Polarion
-            </span>
-          </span>
-          <span className="type-label-sm ml-auto inline-flex shrink-0 items-center gap-1 text-foreground">
-            View integrations <icons.chevronRight className="size-3" aria-hidden="true" />
-          </span>
-        </button>
+          <div className="min-w-0 flex-1">
+            <h3 className="type-label-md text-foreground">Connected Data Sources</h3>
+            <p className="type-body-sm flex min-w-0 items-center gap-2 text-tertiary">
+              <StatusDot tone="success" />
+              <span className="font-medium whitespace-nowrap text-secondary-foreground">
+                {connected} of {INTEGRATIONS.length} live
+              </span>
+              <span className="hidden truncate sm:inline">
+                · Teamcenter (PLM), Jama, Greenlight Guru, FDA MAUDE, SAP, Polarion
+              </span>
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowIntegrations(true)}
+            className={buttonClass("secondary", { size: "sm" })}
+          >
+            View details <icons.chevronRight size={12} />
+          </button>
+        </section>
 
         {showIntegrations && <IntegrationsPopup onClose={() => setShowIntegrations(false)} />}
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 min-[1800px]:grid-cols-6">
           {KPI.map((k) => (
             <KpiTile
               key={k.label}
               label={k.label}
+              icon={k.icon}
               value={k.value}
               unit={k.unit}
               hint={k.sub}
@@ -214,7 +239,11 @@ function Overview() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-          <Panel title="Risk Distribution Matrix (Initial RPN)" className="lg:col-span-7">
+          <Panel
+            title="Risk Distribution Matrix (Initial RPN)"
+            icon={icons.matrix}
+            className="lg:col-span-7"
+          >
             <p className="type-body-sm mb-3 text-tertiary">
               Each cell counts the failure modes at that{" "}
               <span className="font-medium text-foreground">Severity (S)</span> ×{" "}
@@ -225,14 +254,18 @@ function Overview() {
               on hover). Colour marks the risk zone; the top-right zone is highest priority.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full border-separate border-spacing-1 text-center">
+              <table className="w-full border-collapse text-center">
                 <thead>
                   <tr>
                     <th className="type-eyebrow pb-1 text-left text-quaternary" colSpan={2}>
-                      Severity (S) ↓
+                      <span className="inline-flex items-center gap-1">
+                        Severity (S) <icons.flow size={12} className="rotate-90" />
+                      </span>
                     </th>
                     <th className="type-eyebrow pb-1 text-quaternary" colSpan={5}>
-                      Occurrence (O) →
+                      <span className="inline-flex items-center gap-1">
+                        Occurrence (O) <icons.flow size={12} />
+                      </span>
                     </th>
                     <th className="type-eyebrow pb-1 pl-2 text-quaternary">Avg D</th>
                   </tr>
@@ -254,7 +287,7 @@ function Overview() {
                             key={ci}
                             title={`${row.tier} (${row.row}) × O${ci + 1}: ${v} failure modes · ${z.band} risk zone · avg Detection D≈${row.avgD.toFixed(1)}`}
                             style={{ background: z.bg, color: z.text }}
-                            className="type-label-sm tabular h-11 w-14 rounded-md"
+                            className="type-label-sm tabular h-11 w-14 border border-container"
                           >
                             {v}
                           </td>
@@ -286,7 +319,7 @@ function Overview() {
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="size-3 rounded-sm" style={{ background: ZONE_TINT.Medium.bg }} />{" "}
-                Medium (6–11)
+                Medium (6-11)
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="size-3 rounded-sm" style={{ background: ZONE_TINT.High.bg }} />{" "}
@@ -298,62 +331,70 @@ function Overview() {
             </div>
           </Panel>
 
-          <Panel title="Completion by Level" className="lg:col-span-5">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Panel title="Completion by Level" icon={icons.completion} className="lg:col-span-5">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3">
               {RINGS.map((r) => (
-                <div key={r.level} className="text-center">
-                  <ResponsiveContainer width="100%" height={80}>
-                    <PieChart>
-                      <Pie
-                        data={[{ v: r.pct }, { v: 100 - r.pct }]}
-                        dataKey="v"
-                        innerRadius={22}
-                        outerRadius={32}
-                        startAngle={90}
-                        endAngle={-270}
-                        stroke="none"
-                        isAnimationActive={false}
-                      >
-                        <Cell fill="var(--action-primary-default)" />
-                        <Cell fill="var(--surface-raised-x2)" />
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="type-display-base tabular mt-1 text-foreground">
-                    {r.pct}
-                    <Unit>%</Unit>
-                  </div>
-                  <div className="type-caption font-normal text-tertiary">{r.level}</div>
-                  <div className="type-caption tabular font-normal text-quaternary">
-                    {r.done}/{r.total}
-                  </div>
-                </div>
+                <ProgressRing
+                  key={r.level}
+                  pct={r.pct}
+                  label={r.level}
+                  detail={`${r.done}/${r.total}`}
+                />
               ))}
             </div>
           </Panel>
         </div>
 
-        <Panel title="Failure Mode Distribution by RPN Range">
+        <Panel title="Failure Mode Distribution by RPN Range" icon={icons.chart}>
+          <div className="type-caption mb-3 ml-8 flex flex-wrap items-center gap-4 font-normal text-tertiary">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-2.5 rounded-sm bg-brand-gradient" />
+              Failure modes
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span
+                className="size-2.5 rounded-sm"
+                style={{ background: "var(--feedback-error-content)" }}
+              />
+              Critical range (RPN 200+)
+            </span>
+          </div>
           <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={RPN_BUCKETS}>
+            <BarChart data={RPN_BUCKETS} margin={{ top: 16, right: 8, bottom: 0, left: 0 }}>
+              <defs>
+                <linearGradient id="rpn-bar" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ffa12b" />
+                  <stop offset="100%" stopColor="#f0731a" />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} stroke="var(--stroke-muted)" />
               <XAxis dataKey="range" axisLine={false} tickLine={false} tick={axisTick} />
-              <YAxis axisLine={false} tickLine={false} tick={axisTick} />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={axisTick}
+                width={32}
+                domain={[0, 100]}
+                ticks={[0, 50, 100]}
+              />
               <Tooltip
                 cursor={{ fill: "var(--surface-raised)" }}
                 contentStyle={chartTooltipStyle}
                 labelStyle={chartTooltipLabelStyle}
+                formatter={(v) => [v, "Failure modes"]}
               />
-              <Bar dataKey="count" radius={[4, 4, 4, 4]} isAnimationActive={false}>
+              <Bar dataKey="count" radius={[8, 8, 0, 0]} maxBarSize={56} isAnimationActive={false}>
                 {RPN_BUCKETS.map((b, i) => (
                   <Cell key={i} fill={b.fill} />
                 ))}
+                <LabelList dataKey="count" position="top" style={axisTick} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </Panel>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-          <Panel title="Recent Activity" className="lg:col-span-7">
+          <Panel title="Recent Activity" icon={icons.history} className="lg:col-span-7">
             <ul className="type-body-md divide-y divide-hairline">
               {ACTIVITY.map(([t, who, what], i) => (
                 <li key={i} className="flex gap-3 py-2">
@@ -368,12 +409,12 @@ function Overview() {
             </ul>
           </Panel>
 
-          <Panel title="AI Agent Activity" className="lg:col-span-5">
+          <Panel title="AI Agent Activity" icon={icons.ai} className="lg:col-span-5">
             <div className="flex flex-col gap-3">
               {AGENTS.map((a) => (
                 <div key={a.name} className="rounded-lg border border-hairline bg-raised p-3">
                   <div className="flex items-start gap-2">
-                    <a.icon className="mt-0.5 size-3.5 shrink-0 text-tertiary" aria-hidden="true" />
+                    <a.icon size={16} className="mt-0.5 shrink-0 text-tertiary" />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <div className="type-label-md text-foreground">{a.name}</div>
@@ -392,7 +433,7 @@ function Overview() {
               to="/ai-analysis"
               className={buttonClass("ghost", { size: "sm", className: "mt-3 -ml-3" })}
             >
-              Open AI analysis <icons.chevronRight className="size-3" aria-hidden="true" />
+              Open AI analysis <icons.chevronRight size={12} />
             </Link>
           </Panel>
         </div>
@@ -406,26 +447,26 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
   return (
     <ModalShell
       className="max-w-2xl"
-      icon={<icons.integrations className="size-[17px]" aria-hidden="true" />}
-      title="Connected data sources"
+      icon={<icons.integrations size={24} />}
+      title="Connected Data Sources"
       titleExtra={
         <QuietStatus tone="success" className="font-sans">
           {connected} live
         </QuietStatus>
       }
-      subtitle="PragnaAI pulls data from your PLM, requirements, quality, ERP and regulatory systems — the AI agents turn it into this DFMEA."
+      subtitle="PragnaAI pulls data from your PLM, requirements, quality, ERP and regulatory systems, and the AI agents turn it into this DFMEA."
       onClose={onClose}
       footer={
         <>
           <span className="type-body-sm text-tertiary">
-            Data flows in automatically — no manual re-entry.
+            Data flows in automatically, with no manual re-entry.
           </span>
           <Link
             to="/integrations"
             onClick={onClose}
             className={buttonClass("primary", { size: "sm", className: "shrink-0" })}
           >
-            Manage integrations <icons.chevronRight className="size-3" aria-hidden="true" />
+            Manage integrations <icons.chevronRight size={12} />
           </Link>
         </>
       }
@@ -437,14 +478,14 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
             className="flex items-start gap-3 rounded-lg border border-hairline p-3"
           >
             <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action text-tertiary">
-              <it.icon className="size-[17px]" aria-hidden="true" />
+              <it.icon size={24} />
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
                 <span className="type-label-md truncate text-foreground">{it.name}</span>
                 {it.status === "syncing" ? (
                   <ToneBadge tone="info" className="shrink-0 gap-1">
-                    <icons.sync className="size-3 animate-spin" aria-hidden="true" /> Syncing
+                    <icons.sync size={12} className="animate-spin" /> Syncing
                   </ToneBadge>
                 ) : (
                   <QuietStatus tone="success" className="shrink-0">
@@ -457,7 +498,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
               </div>
               <div className="type-body-sm mt-1 flex flex-wrap items-center gap-1">
                 <span className="text-tertiary">{it.feeds}</span>
-                <icons.flow className="size-3 text-quaternary" aria-hidden="true" />
+                <icons.flow size={12} className="text-quaternary" />
                 <span className="font-medium text-foreground">{it.into}</span>
               </div>
             </div>

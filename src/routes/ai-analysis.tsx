@@ -2,21 +2,20 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { AI_SUGGESTIONS } from "@/data/ai-suggestions";
 import { RiskBadge, badgeForRpn } from "@/components/shared/RiskBadge";
-import { KpiTile } from "@/components/ui/primitives";
+import { KpiTile, SelectField } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button-styles";
-import { selectClass } from "@/components/ui/input-styles";
 import { toast } from "sonner";
 import { icons } from "@/components/icons/iconMap";
 
 export const Route = createFileRoute("/ai-analysis")({ component: AI });
 
 const KPI = [
-  ["Total Generated", "143"],
-  ["Accepted", "89"],
-  ["Edited & Accepted", "12"],
-  ["Pending Review", "23"],
-  ["Rejected", "19"],
-];
+  ["Total generated", "143", icons.ai],
+  ["Accepted", "89", icons.approve],
+  ["Edited & accepted", "12", icons.edit],
+  ["Pending review", "23", icons.pending],
+  ["Rejected", "19", icons.reject],
+] as const;
 
 const scoreChip =
   "type-body-sm tabular rounded-md border border-hairline bg-raised px-2 py-0.5 font-mono text-secondary-foreground";
@@ -28,27 +27,27 @@ function AI() {
       subtitle="Review pending AI-generated failure mode suggestions across the device."
     >
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-        {KPI.map(([l, v]) => (
-          <KpiTile key={l} label={l} value={v} />
+        {KPI.map(([l, v, icon]) => (
+          <KpiTile key={l} label={l} icon={icon} value={v} className="last:max-md:col-span-2" />
         ))}
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        <select aria-label="Subsystem" className={selectClass}>
+        <SelectField aria-label="Subsystem">
           <option>Subsystem: All</option>
-        </select>
-        <select aria-label="Severity" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Severity">
           <option>Severity: any</option>
-        </select>
-        <select aria-label="Confidence" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Confidence">
           <option>Confidence: any</option>
-        </select>
-        <select aria-label="Source" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Source">
           <option>Source: All</option>
-        </select>
-        <select aria-label="Show" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Show">
           <option>Show: Pending only</option>
-        </select>
+        </SelectField>
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -73,7 +72,7 @@ function AI() {
                 </div>
               </div>
               <div className="mt-3 flex items-start gap-2">
-                <icons.ai className="mt-0.5 size-4 shrink-0 text-tertiary" aria-hidden="true" />
+                <icons.ai size={16} className="mt-0.5 shrink-0 text-tertiary" />
                 <h3 className="type-label-md min-w-0 text-foreground">
                   <span className="mr-2 font-mono font-normal text-tertiary">{s.id}</span>
                   {s.title}
@@ -91,7 +90,7 @@ function AI() {
               <p className="type-caption mt-1 font-normal text-quaternary italic">
                 Source: {s.ref}
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                 <button
                   type="button"
                   onClick={() =>
@@ -99,28 +98,28 @@ function AI() {
                   }
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Accept
+                  <icons.approve size={16} /> Accept
                 </button>
                 <button
                   type="button"
                   onClick={() => toast(`Editing ${s.id}...`)}
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Edit and accept
+                  <icons.edit size={16} /> Edit and accept
                 </button>
                 <button
                   type="button"
                   onClick={() => toast.error(`${s.id} rejected.`)}
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Reject
+                  <icons.reject size={16} /> Reject
                 </button>
                 <button
                   type="button"
                   onClick={() => toast(`${s.id} flagged for team review.`)}
                   className={buttonClass("secondary", { size: "sm" })}
                 >
-                  Flag for team
+                  <icons.flag size={16} /> Flag for team
                 </button>
               </div>
             </section>

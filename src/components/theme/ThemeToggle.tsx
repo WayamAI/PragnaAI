@@ -4,7 +4,6 @@ import { useTheme } from "./theme";
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
   const toDark = theme === "light";
-  const Icon = toDark ? icons.themeDark : icons.themeLight;
   return (
     <button
       type="button"
@@ -12,7 +11,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       aria-label={toDark ? "Switch to dark theme" : "Switch to light theme"}
       className={className}
     >
-      <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+      <icons.theme size={16} className="shrink-0" />
       <span>{toDark ? "Dark theme" : "Light theme"}</span>
     </button>
   );

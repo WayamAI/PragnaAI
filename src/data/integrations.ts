@@ -1,7 +1,4 @@
-import {
-  Boxes, ClipboardList, ShieldCheck, Database, Landmark, FlaskConical,
-  type LucideIcon,
-} from "lucide-react";
+import { icons, type AppIconComponent } from "@/components/icons/iconMap";
 
 export type IntegrationStatus = "connected" | "syncing";
 
@@ -9,13 +6,13 @@ export type Integration = {
   name: string;
   vendor: string;
   category: string;
-  icon: LucideIcon;
+  icon: AppIconComponent;
   status: IntegrationStatus;
   lastSync: string;
   endpoint: string;
-  feeds: string;        // what data comes in
-  into: string;         // what part of the DFMEA it drives
-  records: string;      // headline record counts
+  feeds: string; // what data comes in
+  into: string; // what part of the DFMEA it drives
+  records: string; // headline record counts
 };
 
 /**
@@ -27,7 +24,7 @@ export const INTEGRATIONS: Integration[] = [
     name: "Siemens Teamcenter",
     vendor: "Siemens Digital Industries",
     category: "PLM",
-    icon: Boxes,
+    icon: icons.plm,
     status: "connected",
     lastSync: "Today 11:42",
     endpoint: "teamcenter.medicore.local/tc",
@@ -39,7 +36,7 @@ export const INTEGRATIONS: Integration[] = [
     name: "Jama Connect",
     vendor: "Jama Software",
     category: "Requirements / ALM",
-    icon: ClipboardList,
+    icon: icons.requirements,
     status: "connected",
     lastSync: "Today 10:18",
     endpoint: "medicore.jamacloud.com",
@@ -51,7 +48,7 @@ export const INTEGRATIONS: Integration[] = [
     name: "Greenlight Guru",
     vendor: "Greenlight Guru",
     category: "QMS",
-    icon: ShieldCheck,
+    icon: icons.qms,
     status: "connected",
     lastSync: "Today 09:55",
     endpoint: "medicore.greenlight.guru",
@@ -63,7 +60,7 @@ export const INTEGRATIONS: Integration[] = [
     name: "FDA MAUDE / MDR",
     vendor: "U.S. FDA (public)",
     category: "Regulatory database",
-    icon: Landmark,
+    icon: icons.regulatory,
     status: "connected",
     lastSync: "Today 08:30",
     endpoint: "api.fda.gov/device/event",
@@ -75,7 +72,7 @@ export const INTEGRATIONS: Integration[] = [
     name: "SAP S/4HANA",
     vendor: "SAP",
     category: "ERP",
-    icon: Database,
+    icon: icons.database,
     status: "syncing",
     lastSync: "Syncing now…",
     endpoint: "sap.medicore.local",
@@ -87,7 +84,7 @@ export const INTEGRATIONS: Integration[] = [
     name: "Polarion Test Mgmt",
     vendor: "Siemens",
     category: "Verification / Test",
-    icon: FlaskConical,
+    icon: icons.verification,
     status: "connected",
     lastSync: "Today 07:12",
     endpoint: "polarion.medicore.local",

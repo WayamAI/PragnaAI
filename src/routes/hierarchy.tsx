@@ -1,82 +1,138 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { HIERARCHY, BATTERY_FUNCTIONS, type HierarchyNode } from "@/data/hierarchy";
 import { StatusDot, StatusBadge } from "@/components/shared/StatusBadge";
 import { BATTERY_ROWS } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
-import { Panel } from "@/components/ui/primitives";
+import { KpiTile, Panel, SearchInput } from "@/components/ui/primitives";
+import type { AppIconComponent } from "@/components/icons/iconMap";
 import { buttonClass } from "@/components/ui/button-styles";
-import { inputClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 import { icons } from "@/components/icons/iconMap";
 import { toast } from "sonner";
+import { ancestorNames, initialOpen, toggleOpen, visibleRows } from "@/lib/tree";
 
 export const Route = createFileRoute("/hierarchy")({ component: HierarchyPage });
 
-const STATS: { label: string; value: string; valueClassName?: string }[] = [
-  { label: "Functions", value: "4" },
-  { label: "Failure modes", value: "18" },
-  { label: "Critical", value: "2", valueClassName: "text-error" },
-  { label: "Mitigations pending", value: "4", valueClassName: "text-warning" },
-  { label: "RPN range", value: "18-216" },
+const STATS: { label: string; icon: AppIconComponent; value: string; valueClassName?: string }[] = [
+  { label: "Functions", icon: icons.functions, value: "4" },
+  { label: "Failure modes", icon: icons.failureMode, value: "18" },
+  { label: "Critical", icon: icons.alert, value: "2", valueClassName: "text-error" },
+  { label: "Mitigations pending", icon: icons.pending, value: "4", valueClassName: "text-warning" },
+  { label: "RPN range", icon: icons.range, value: "18-216" },
 ];
 
-function TreeNode({
-  node,
-  depth,
+/** WAI-ARIA tree: click selects (and opens), chevron toggles, arrows move, one tab stop. */
+function DeviceTree({
   selectedId,
   onSelect,
 }: {
-  node: HierarchyNode;
-  depth: number;
   selectedId: string;
   onSelect: (n: HierarchyNode) => void;
 }) {
-  const [open, setOpen] = useState(depth < 2 || node.id === "power" || node.id === "battery-pack");
-  const hasChildren = !!node.children?.length;
-  const isSel = node.id === selectedId;
+  const [open, setOpen] = useState(() => initialOpen(HIERARCHY));
+  const [focusId, setFocusId] = useState(selectedId);
+  const itemRefs = useRef(new Map<string, HTMLDivElement>());
+  const rows = visibleRows(HIERARCHY, open);
+
+  const toggle = (id: string, to?: boolean) => setOpen((cur) => toggleOpen(cur, id, to));
+  const focusRow = (id: string) => {
+    setFocusId(id);
+    itemRefs.current.get(id)?.focus();
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>, i: number) => {
+    const { node, parentId } = rows[i];
+    const hasChildren = !!node.children?.length;
+    const isOpen = open.has(node.id);
+    switch (e.key) {
+      case "ArrowDown":
+        if (rows[i + 1]) focusRow(rows[i + 1].node.id);
+        break;
+      case "ArrowUp":
+        if (rows[i - 1]) focusRow(rows[i - 1].node.id);
+        break;
+      case "Home":
+        focusRow(rows[0].node.id);
+        break;
+      case "End":
+        focusRow(rows[rows.length - 1].node.id);
+        break;
+      case "ArrowRight":
+        if (hasChildren && !isOpen) toggle(node.id, true);
+        else if (hasChildren) focusRow(rows[i + 1].node.id);
+        break;
+      case "ArrowLeft":
+        if (hasChildren && isOpen) toggle(node.id, false);
+        else if (parentId) focusRow(parentId);
+        break;
+      case "Enter":
+      case " ":
+        onSelect(node);
+        if (hasChildren && !isOpen) toggle(node.id, true);
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
+  };
+
   return (
-    <div>
-      <button
-        type="button"
-        onClick={() => {
-          onSelect(node);
-          if (hasChildren) setOpen(!open);
-        }}
-        aria-current={isSel ? "true" : undefined}
-        aria-expanded={hasChildren ? open : undefined}
-        className={cn(
-          "type-body-md flex min-h-8 w-full items-center gap-1.5 rounded-md py-1 pr-2 text-left outline-none transition-colors duration-[150ms] hover:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active",
-          isSel ? "bg-raised-2 font-medium text-foreground" : "text-secondary-foreground",
-        )}
-        style={{ paddingLeft: 6 + depth * 14 }}
-      >
-        {hasChildren ? (
-          open ? (
-            <icons.chevronDown className="size-3 shrink-0 text-quaternary" aria-hidden="true" />
-          ) : (
-            <icons.chevronRight className="size-3 shrink-0 text-quaternary" aria-hidden="true" />
-          )
-        ) : (
-          <span className="w-3 shrink-0" />
-        )}
-        <StatusDot status={node.status} />
-        <span className="flex-1 truncate">{node.name}</span>
-        <span className="type-caption shrink-0 font-normal text-quaternary">{node.kind}</span>
-      </button>
-      {open &&
-        hasChildren &&
-        node.children!.map((c) => (
-          <TreeNode
-            key={c.id}
-            node={c}
-            depth={depth + 1}
-            selectedId={selectedId}
-            onSelect={onSelect}
-          />
-        ))}
+    <div role="tree" aria-label="Device tree">
+      {rows.map(({ node, depth }, i) => {
+        const hasChildren = !!node.children?.length;
+        const isOpen = open.has(node.id);
+        const isSel = node.id === selectedId;
+        return (
+          <div
+            key={node.id}
+            ref={(el) => {
+              if (el) itemRefs.current.set(node.id, el);
+              else itemRefs.current.delete(node.id);
+            }}
+            role="treeitem"
+            aria-level={depth + 1}
+            aria-selected={isSel}
+            aria-expanded={hasChildren ? isOpen : undefined}
+            tabIndex={node.id === focusId ? 0 : -1}
+            onFocus={() => setFocusId(node.id)}
+            onKeyDown={(e) => onKeyDown(e, i)}
+            onClick={() => {
+              onSelect(node);
+              if (hasChildren && !isOpen) toggle(node.id, true);
+            }}
+            className={cn(
+              "type-body-md flex min-h-8 w-full cursor-pointer items-center gap-1.5 rounded-md py-1 pr-2 text-left outline-none transition-colors duration-[150ms] hover:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active",
+              isSel ? "bg-raised-2 font-medium text-foreground" : "text-secondary-foreground",
+            )}
+            style={{ paddingLeft: 6 + depth * 14 }}
+          >
+            {hasChildren ? (
+              <span
+                aria-hidden="true"
+                className="grid size-4 shrink-0 place-items-center rounded-sm hover:bg-raised-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggle(node.id);
+                }}
+              >
+                {isOpen ? (
+                  <icons.chevronDown size={12} className="text-quaternary" />
+                ) : (
+                  <icons.chevronRight size={12} className="text-quaternary" />
+                )}
+              </span>
+            ) : (
+              <span className="size-4 shrink-0" />
+            )}
+            <StatusDot status={node.status} />
+            <span className="flex-1 truncate">{node.name}</span>
+            <span className="type-caption shrink-0 font-normal text-quaternary">{node.kind}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -94,14 +150,14 @@ function HierarchyPage() {
       subtitle="CardioGuard 3000 · Navigate the device tree and DFMEA status per node."
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Panel title="Device tree" className="lg:col-span-4 lg:self-start">
-          <input
+        <Panel title="Device Tree" icon={icons.hierarchy} className="lg:col-span-4 lg:self-start">
+          <SearchInput
             placeholder="Search components"
             aria-label="Search components"
-            className={inputClass("sm", "mb-3")}
+            wrapperClassName="mb-3"
           />
           <div className="max-h-[70vh] overflow-y-auto">
-            <TreeNode node={HIERARCHY} depth={0} selectedId={sel.id} onSelect={setSel} />
+            <DeviceTree selectedId={sel.id} onSelect={setSel} />
           </div>
         </Panel>
 
@@ -109,42 +165,48 @@ function HierarchyPage() {
           <div className="mb-4">
             <h2 className="type-display-lg text-foreground">{sel.name}</h2>
             <p className="type-body-md mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-tertiary">
-              <span>{sel.kind} · Power Management System · DFMEA Status:</span>
+              <span>
+                {sel.kind} · {(ancestorNames(HIERARCHY, sel.id) ?? []).join(" › ") || "Top level"} ·
+                DFMEA status:
+              </span>
               <StatusBadge status={sel.status} />
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
-            {STATS.map((s) => (
-              <div
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
+            {STATS.map((s, i) => (
+              <KpiTile
                 key={s.label}
-                className="flex min-w-0 flex-col gap-1 rounded-lg border border-hairline bg-raised px-3 py-2.5"
-              >
-                <span className="type-eyebrow text-quaternary">{s.label}</span>
-                <span className={cn("type-display-base tabular text-foreground", s.valueClassName)}>
-                  {s.value}
-                </span>
-              </div>
+                label={s.label}
+                icon={s.icon}
+                value={s.value}
+                valueClassName={s.valueClassName}
+                className={i < 3 ? "md:col-span-2" : "md:col-span-3 max-md:last:col-span-2"}
+              />
             ))}
           </div>
 
-          <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">Identified Functions</h3>
+          <h3 className="type-eyebrow mt-6 mb-2 text-quaternary">
+            Identified Functions · Battery Pack
+          </h3>
           <ul className="type-body-md mb-6 divide-y divide-hairline rounded-lg border border-hairline bg-raised px-3">
             {BATTERY_FUNCTIONS.map((f) => (
               <li key={f.id} className="flex gap-3 py-2 text-secondary-foreground">
-                <span className="type-body-sm shrink-0 font-mono text-foreground">{f.id}</span>
+                <span className="type-body-sm w-14 shrink-0 font-mono text-foreground">{f.id}</span>
                 {f.text}
               </li>
             ))}
           </ul>
 
-          <h3 className="type-eyebrow mb-2 text-quaternary">Failure Modes · First 6 of 18</h3>
+          <h3 className="type-eyebrow mb-2 text-quaternary">
+            Failure Modes · Battery Pack, First 6 of 18
+          </h3>
           <div className={tableStyles.wrap}>
             <table className={tableStyles.table}>
               <thead>
                 <tr>
                   <th className={tableStyles.th()}>FM ID</th>
-                  <th className={tableStyles.th()}>Failure Mode</th>
+                  <th className={tableStyles.th()}>Failure mode</th>
                   <th className={tableStyles.th({ numeric: true })}>S</th>
                   <th className={tableStyles.th({ numeric: true })}>O</th>
                   <th className={tableStyles.th({ numeric: true })}>D</th>
@@ -195,7 +257,7 @@ function HierarchyPage() {
 
           <div className="mt-4 flex flex-wrap gap-2">
             <Link to="/workspace" className={buttonClass("primary", { size: "sm" })}>
-              Open DFMEA workspace
+              <icons.workspace size={16} /> Open DFMEA workspace
             </Link>
             <button
               type="button"
@@ -205,7 +267,7 @@ function HierarchyPage() {
               }}
               className={buttonClass("secondary", { size: "sm" })}
             >
-              <icons.ai className="size-3.5" aria-hidden="true" /> Analyze this component
+              <icons.ai size={16} /> Analyze this component
             </button>
           </div>
         </Panel>

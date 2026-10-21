@@ -5,18 +5,29 @@ import { FAILURE_MODES } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
-import { KpiTile } from "@/components/ui/primitives";
-import { inputClass, selectClass } from "@/components/ui/input-styles";
+import { CheckInput, KpiTile, SearchInput, SelectField } from "@/components/ui/primitives";
+import type { AppIconComponent } from "@/components/icons/iconMap";
+import { icons } from "@/components/icons/iconMap";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/risk-register")({ component: RiskRegister });
 
-const KPI: { label: string; value: string; valueClassName?: string }[] = [
-  { label: "Total Risks", value: "280" },
-  { label: "Critical (S≥9 or RPN≥200)", value: "14", valueClassName: "text-error" },
-  { label: "High (RPN 100–199)", value: "47", valueClassName: "text-warning" },
-  { label: "Mitigations Overdue", value: "7" },
+const KPI: { label: string; icon: AppIconComponent; value: string; valueClassName?: string }[] = [
+  { label: "Total risks", icon: icons.riskRegister, value: "280" },
+  {
+    label: "Critical (S≥9 or RPN≥200)",
+    icon: icons.alert,
+    value: "14",
+    valueClassName: "text-error",
+  },
+  {
+    label: "High (RPN 100-199)",
+    icon: icons.severity,
+    value: "47",
+    valueClassName: "text-warning",
+  },
+  { label: "Mitigations overdue", icon: icons.overdue, value: "7" },
 ];
 
 // Low-value columns go quiet (tertiary text) but stay in the table.
@@ -37,6 +48,7 @@ function RiskRegister() {
           <KpiTile
             key={k.label}
             label={k.label}
+            icon={k.icon}
             value={k.value}
             valueClassName={k.valueClassName}
           />
@@ -44,39 +56,38 @@ function RiskRegister() {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <input
+        <SearchInput
           placeholder="Search risks"
           aria-label="Search risks"
-          className={inputClass("sm", "min-w-[180px] flex-1")}
+          wrapperClassName="min-w-[180px] flex-1"
         />
-        <select aria-label="Level" className={selectClass}>
+        <SelectField aria-label="Level">
           <option>Level: All</option>
-        </select>
-        <select aria-label="Risk" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Risk">
           <option>Risk: All</option>
-        </select>
-        <select aria-label="Status" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Status">
           <option>Status: All</option>
-        </select>
+        </SelectField>
         <label className="type-label-sm ml-auto inline-flex items-center gap-2 text-secondary-foreground">
-          <input
+          <CheckInput
             type="checkbox"
             checked={showResidual}
             onChange={(e) => setShowResidual(e.target.checked)}
-            className="size-4 accent-action-primary"
           />
           Show residual RPN
         </label>
       </div>
 
-      <div className={cn(tableStyles.wrap, "mt-3")}>
+      <div className={cn(tableStyles.wrap, "mt-4")}>
         <table className={tableStyles.table}>
           <thead>
             <tr>
               <th className={tableStyles.th()}>Risk ID</th>
-              <th className={tableStyles.th()}>Level</th>
+              <th className={tableStyles.th({ className: "hidden 2xl:table-cell" })}>Level</th>
               <th className={tableStyles.th()}>Component</th>
-              <th className={tableStyles.th()}>Failure Mode</th>
+              <th className={tableStyles.th()}>Failure mode</th>
               <th className={tableStyles.th({ numeric: true })}>S</th>
               <th className={tableStyles.th({ numeric: true })}>O</th>
               <th className={tableStyles.th({ numeric: true })}>D</th>
@@ -112,20 +123,28 @@ function RiskRegister() {
                     className={tableStyles.td({
                       primary: true,
                       className: cn(
-                        "border-l-2 font-mono",
-                        critical ? "border-l-error" : "border-l-transparent",
+                        "font-mono",
+                        critical && "shadow-[inset_2px_0_0_var(--feedback-error-content)]",
                       ),
                     })}
                   >
                     {r.id}
                   </td>
-                  <td className={tableStyles.td({ className: quiet })}>{r.level}</td>
-                  <td className={tableStyles.td({ className: quiet })}>{r.component}</td>
+                  <td className={tableStyles.td({ className: cn("hidden 2xl:table-cell", quiet) })}>
+                    {r.level}
+                  </td>
+                  <td
+                    className={tableStyles.td({
+                      className: cn("max-w-[150px] whitespace-normal", quiet),
+                    })}
+                  >
+                    {r.component}
+                  </td>
                   <td
                     className={tableStyles.td({
                       primary: true,
                       truncate: true,
-                      className: "max-w-[240px]",
+                      className: "max-w-[200px]",
                     })}
                   >
                     {r.failureMode}
@@ -154,7 +173,7 @@ function RiskRegister() {
                       className: cn("font-mono", quiet),
                     })}
                   >
-                    {r.residualRpn ?? "—"}
+                    {r.residualRpn ?? "n/a"}
                   </td>
                   <td className={tableStyles.td()}>
                     <RiskBadge level={badgeForRpn(rpn, r.s)} />

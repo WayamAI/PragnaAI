@@ -1,21 +1,21 @@
 export const STANDARDS = [
-  { id: "ISO 14971:2019", title: "Medical devices - Application of risk management", relevance: "Core risk management standard for all DFMEAs" },
-  { id: "IEC 62304:2006+A1:2015", title: "Medical device software - Software life cycle processes", relevance: "Software failure modes, safety classification" },
+  { id: "ISO 14971:2019", title: "Medical devices · Application of risk management", relevance: "Core risk management standard for all DFMEAs" },
+  { id: "IEC 62304:2006+A1:2015", title: "Medical device software · Software life cycle processes", relevance: "Software failure modes, safety classification" },
   { id: "IEC 60601-1:2005+A1:2012", title: "Basic safety and essential performance", relevance: "Device-level safety requirements" },
   { id: "IEC 60601-1-2:2014+A1:2020", title: "Electromagnetic disturbances", relevance: "EMC and EMI failure modes" },
   { id: "IEC 60601-1-8:2006+A1:2012", title: "Alarm systems", relevance: "Alarm failure modes, prioritization" },
   { id: "IEC 60601-2-25:2011+A1:2015", title: "ECG equipment", relevance: "ECG-specific performance requirements" },
   { id: "IEC 60601-2-30:2009+A1:2013", title: "NIBP equipment", relevance: "Blood pressure monitoring requirements" },
   { id: "IEC 60601-2-61:2011+A1:2015", title: "Pulse oximeter equipment", relevance: "SpO2 module failure modes" },
-  { id: "IEC 62133-2:2017", title: "Secondary lithium cells - Safety", relevance: "Battery safety requirements" },
-  { id: "ISO 13485:2016", title: "Quality management systems - Medical devices", relevance: "Manufacturing and quality failure modes" },
-  { id: "ISO 10993-5:2009", title: "Biological evaluation - Cytotoxicity", relevance: "Consumable and electrode biocompatibility" },
+  { id: "IEC 62133-2:2017", title: "Secondary lithium cells · Safety", relevance: "Battery safety requirements" },
+  { id: "ISO 13485:2016", title: "Quality management systems · Medical devices", relevance: "Manufacturing and quality failure modes" },
+  { id: "ISO 10993-5:2009", title: "Biological evaluation · Cytotoxicity", relevance: "Consumable and electrode biocompatibility" },
   { id: "FDA MDR Database", title: "Manufacturer and User Facility Device Experience", relevance: "Historical failure reports" },
 ];
 
 export const ACTIVITY = [
   ["14:31", "R. Sharma", "accepted AI suggestion FM-0142 (Battery Pack, S=8)"],
-  ["14:18", "P. Kaul", "edited failure mode FM-0089 — changed O from 4 to 3"],
+  ["14:18", "P. Kaul", "edited failure mode FM-0089, changed O from 4 to 3"],
   ["13:55", "T. Iyer", "added mitigation MIT-0067 for FM-0067 (Enclosure seal failure)"],
   ["13:40", "A. Rodrigues", "rejected AI suggestion FM-AI-031 (Duplicate detected)"],
   ["13:22", "S. Mehta", "approved 6 DFMEA rows in Power Management subsystem"],
@@ -62,12 +62,12 @@ export const REQUIREMENTS = [
 ] as const;
 
 export const KB_RESULTS = [
-  { source: "Previous DFMEA", similarity: 94, title: "CardioGuard 2000 DFMEA 2021 - FM-CG2-088", body: "\"Battery overtemperature during fast charge due to NTC sensor drift\"\nSeverity: 9 | Occurrence: 3 | RPN: 81 | Status: Mitigated\nMitigation applied: Dual-NTC cross-validation; charge halt on disagreement > 5C" },
-  { source: "FDA MDR Database", similarity: 91, title: "MDR Report 3006712 - 2022-11-03", body: "Manufacturer: Apex Medical Devices | Device: PortaCard II (Class II)\nEvent: Battery thermal event during charging in ICU. Root cause: NTC calibration drift causing BMS to underestimate pack temperature by 12C. No patient injury reported." },
-  { source: "Medical Standards", similarity: 88, title: "IEC 62133-2:2017 - Section 7.3.5", body: "\"Thermal protection requirements for secondary lithium cells in portable applications\"\nRelevant clause: Cells shall incorporate thermal protection that activates before cell temperature exceeds manufacturer-specified maximum operating temperature." },
-  { source: "CAPA Records", similarity: 85, title: "CAPA-2023-0041 - CardioGuard 2000 Field Issue", body: "Root cause: Battery health indicator algorithm did not account for cold-temperature capacity derating. 34 units returned with \"short battery life\" complaint in Nordic region. Corrective action: SoC algorithm updated to include temperature-compensated capacity table." },
-  { source: "Lessons Learned", similarity: 82, title: "LL-2023-012 - Power Management Design Review", body: "\"Always validate BMS IC trip time against worst-case inrush current at startup. BMS false trips caused by startup inrush were the most common field return reason for the PulseCheck 100 product line (2019-2022). Recommend inrush limiter on all new designs from PMS Rev 2 onwards.\"" },
-  { source: "FDA MDR Database", similarity: 79, title: "MDR Report 3004521 - 2023-02-17", body: "Manufacturer: MedCore Innovations | Device: VitalWatch III (Class II)\nEvent: Thermal event during overnight charging. Charging IC failed short, bypassing BMS protection. Device rendered non-functional. No patient harm." },
+  { source: "Previous DFMEA", similarity: 94, title: "CardioGuard 2000 DFMEA 2021 · FM-CG2-088", body: "\"Battery overtemperature during fast charge due to NTC sensor drift\"\nSeverity: 9 | Occurrence: 3 | RPN: 81 | Status: Mitigated\nMitigation applied: Dual-NTC cross-validation; charge halt on disagreement > 5C" },
+  { source: "FDA MDR database", similarity: 91, title: "MDR Report 3006712 · 2022-11-03", body: "Manufacturer: Apex Medical Devices | Device: PortaCard II (Class II)\nEvent: Battery thermal event during charging in ICU. Root cause: NTC calibration drift causing BMS to underestimate pack temperature by 12C. No patient injury reported." },
+  { source: "Medical standards", similarity: 88, title: "IEC 62133-2:2017 · Section 7.3.5", body: "\"Thermal protection requirements for secondary lithium cells in portable applications\"\nRelevant clause: Cells shall incorporate thermal protection that activates before cell temperature exceeds manufacturer-specified maximum operating temperature." },
+  { source: "CAPA records", similarity: 85, title: "CAPA-2023-0041 · CardioGuard 2000 Field Issue", body: "Root cause: Battery health indicator algorithm did not account for cold-temperature capacity derating. 34 units returned with \"short battery life\" complaint in Nordic region. Corrective action: SoC algorithm updated to include temperature-compensated capacity table." },
+  { source: "Lessons learned", similarity: 82, title: "LL-2023-012 · Power Management Design Review", body: "\"Always validate BMS IC trip time against worst-case inrush current at startup. BMS false trips caused by startup inrush were the most common field return reason for the PulseCheck 100 product line (2019-2022). Recommend inrush limiter on all new designs from PMS Rev 2 onwards.\"" },
+  { source: "FDA MDR database", similarity: 79, title: "MDR Report 3004521 · 2023-02-17", body: "Manufacturer: MedCore Innovations | Device: VitalWatch III (Class II)\nEvent: Thermal event during overnight charging. Charging IC failed short, bypassing BMS protection. Device rendered non-functional. No patient harm." },
 ];
 
 export const RECENT_REPORTS = [

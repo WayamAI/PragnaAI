@@ -7,6 +7,7 @@ import { logout } from "@/lib/auth";
 import { toast } from "sonner";
 import { buttonClass } from "@/components/ui/button-styles";
 import { useOverlayDismiss } from "@/hooks/use-overlay-dismiss";
+import { openAssistant } from "@/lib/assistant";
 import { findNav } from "./nav";
 
 type Panel = "notifications" | "help" | null;
@@ -14,21 +15,18 @@ type Panel = "notifications" | "help" | null;
 const NOTIFICATIONS = [
   {
     icon: icons.alert,
-    tone: "text-error",
     title: "7 mitigations overdue",
-    detail: "Oldest: MIT-0033-A (BMS watchdog validation) — 55 days late.",
+    detail: "Oldest: MIT-0033-A (BMS watchdog validation), 55 days late.",
     time: "just now",
   },
   {
     icon: icons.ai,
-    tone: "text-tertiary",
     title: "23 AI suggestions pending review",
     detail: "New batch generated for Battery Pack and Signal Processing.",
     time: "2h ago",
   },
   {
     icon: icons.reports,
-    tone: "text-tertiary",
     title: "Report ready to download",
     detail: "Risk Summary Report (PDF) finished generating.",
     time: "5h ago",
@@ -38,17 +36,17 @@ const NOTIFICATIONS = [
 const HELP_LINKS = [
   {
     icon: icons.standard,
-    title: "DFMEA Quick Start Guide",
+    title: "DFMEA quick start guide",
     detail: "How to add failure modes, score S/O/D, and approve rows.",
   },
   {
     icon: icons.standard,
-    title: "ISO 14971 — Risk Management",
+    title: "ISO 14971 · Risk Management",
     detail: "The core medical-device risk management standard.",
   },
   {
     icon: icons.standard,
-    title: "IEC 62304 — Software Life Cycle",
+    title: "IEC 62304 · Software Life Cycle",
     detail: "Software failure modes and safety classification.",
   },
   {
@@ -59,7 +57,7 @@ const HELP_LINKS = [
 ];
 
 const iconButton =
-  "relative flex size-8 items-center justify-center rounded-full bg-action text-tertiary outline-none transition-colors duration-[180ms] ease-out hover:bg-raised-2 hover:text-secondary-foreground focus-visible:ring-2 focus-visible:ring-active";
+  "relative flex size-9 items-center justify-center rounded-full outline-none transition-colors duration-[180ms] ease-out hover:bg-raised-2 focus-visible:ring-2 focus-visible:ring-active";
 
 export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
   const [panel, setPanel] = useState<Panel>(null);
@@ -79,7 +77,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
     <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-hairline bg-page px-4 sm:px-5">
       <div className="flex min-w-0 items-center gap-3">
         <button onClick={onMenuClick} aria-label="Open menu" className={`${iconButton} lg:hidden`}>
-          <icons.menu className="size-4" aria-hidden="true" />
+          <icons.menu size={16} />
         </button>
         <div className="hidden min-w-0 sm:block">
           <div className="type-eyebrow truncate text-quaternary">{nav?.group ?? "PragnaAI"}</div>
@@ -88,20 +86,28 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
         <button
           onClick={() => {
             console.log("[TopHeader] Switch project clicked");
-            toast("Project switcher — only CardioGuard 3000 available in this demo.");
+            toast("Project switcher: only CardioGuard 3000 available in this demo.");
           }}
-          className="type-label-sm hidden h-8 items-center gap-2 rounded-full border border-hairline bg-action px-3 text-secondary-foreground outline-none transition-colors duration-[180ms] ease-out hover:border-strong hover:bg-raised-2 hover:text-foreground focus-visible:ring-2 focus-visible:ring-active md:inline-flex"
+          aria-label="Switch project"
+          className="hidden h-9 min-w-0 items-center gap-2 rounded-full px-3 outline-none transition-colors duration-[180ms] ease-out hover:bg-raised-2 focus-visible:ring-2 focus-visible:ring-active md:inline-flex"
         >
-          <span className="text-tertiary">Project:</span>
-          <span>CardioGuard 3000</span>
-          <span className="text-quaternary">|</span>
-          <span>Rev B</span>
-          <span className="text-quaternary">|</span>
-          <span className="tabular">DFMEA-2025-001</span>
-          <icons.chevronDown className="size-3 text-quaternary" aria-hidden="true" />
+          <span className="type-label-md truncate text-foreground">CardioGuard 3000</span>
+          <span className="type-label-sm tabular truncate text-quaternary">
+            Rev B · DFMEA-2025-001
+          </span>
+          <icons.chevronDown size={12} />
         </button>
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-1">
+        <button
+          type="button"
+          onClick={openAssistant}
+          aria-label="AI assistant"
+          title="AI assistant (Ctrl/Cmd+K)"
+          className={iconButton}
+        >
+          <icons.ai size={20} />
+        </button>
         <div className="relative">
           <button
             onClick={() => toggle("notifications")}
@@ -110,8 +116,8 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             aria-haspopup="dialog"
             aria-expanded={panel === "notifications"}
           >
-            <icons.notifications className="size-4" aria-hidden="true" />
-            <span className="type-caption tabular absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-error-surface text-error">
+            <icons.notifications size={20} />
+            <span className="type-caption tabular absolute top-0 right-0 flex size-4 items-center justify-center rounded-full bg-error-badge text-badge">
               3
             </span>
           </button>
@@ -127,7 +133,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
                 >
-                  Mark all as read
+                  <icons.approve size={12} className="shrink-0" /> Mark all as read
                 </button>
               }
             >
@@ -140,10 +146,10 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className="flex w-full gap-3 border-b border-hairline px-4 py-3 text-left outline-none transition-colors duration-[150ms] last:border-b-0 hover:bg-raised focus-visible:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active"
                 >
-                  <n.icon className={`mt-0.5 size-4 shrink-0 ${n.tone}`} aria-hidden="true" />
+                  <n.icon size={16} className="mt-0.5" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="type-label-md truncate text-foreground">{n.title}</span>
+                      <span className="type-label-md text-foreground">{n.title}</span>
                       <span className="type-caption tabular shrink-0 font-normal text-quaternary">
                         {n.time}
                       </span>
@@ -164,7 +170,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
             aria-haspopup="dialog"
             aria-expanded={panel === "help"}
           >
-            <icons.help className="size-4" aria-hidden="true" />
+            <icons.help size={20} />
           </button>
           {panel === "help" && (
             <Dropdown
@@ -178,7 +184,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className={buttonClass("ghost", { size: "sm", className: "-ml-3" })}
                 >
-                  Open documentation <icons.external className="size-3" aria-hidden="true" />
+                  Open documentation <icons.external size={12} />
                 </button>
               }
             >
@@ -191,7 +197,7 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
                   }}
                   className="flex w-full gap-3 border-b border-hairline px-4 py-3 text-left outline-none transition-colors duration-[150ms] last:border-b-0 hover:bg-raised focus-visible:bg-raised focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-active"
                 >
-                  <h.icon className="mt-0.5 size-4 shrink-0 text-tertiary" aria-hidden="true" />
+                  <h.icon size={16} className="mt-0.5 shrink-0 text-tertiary" />
                   <div className="min-w-0 flex-1">
                     <div className="type-label-md truncate text-foreground">{h.title}</div>
                     <p className="type-body-sm mt-0.5 text-tertiary">{h.detail}</p>
@@ -202,15 +208,13 @@ export function TopHeader({ onMenuClick }: { onMenuClick?: () => void } = {}) {
           )}
         </div>
 
-        <div className="flex h-8 items-center gap-2 rounded-full border border-hairline bg-action px-1 sm:pr-3">
+        <span className="type-label-sm hidden px-1 text-quaternary lg:block">MediCore Systems</span>
+        <div className="flex h-9 items-center gap-2 px-1">
           <EngineerAvatar name={CURRENT_USER.name} />
           <span className="type-label-sm hidden text-foreground sm:block">{CURRENT_USER.name}</span>
         </div>
-        <span className="type-label-sm hidden h-8 items-center rounded-full border border-hairline bg-action px-3 text-tertiary md:inline-flex">
-          MediCore Systems
-        </span>
         <button onClick={handleLogout} aria-label="Log out" title="Log out" className={iconButton}>
-          <icons.logout className="size-4" aria-hidden="true" />
+          <icons.logout size={16} />
         </button>
       </div>
     </header>
@@ -249,7 +253,7 @@ function Dropdown({
             className={buttonClass("icon", { className: "size-7" })}
             aria-label="Close"
           >
-            <icons.close className="size-3.5" aria-hidden="true" />
+            <icons.close size={16} />
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">{children}</div>

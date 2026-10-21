@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -13,6 +13,7 @@ import { navGroups, navItems, findNav } from "@/components/layout/nav";
 import { severityTone } from "@/lib/severity";
 import { THEME_INIT_SCRIPT, THEME_STORAGE_KEY } from "@/components/theme/theme";
 import { icons } from "@/components/icons/iconMap";
+import { AppIcon, FLAT_FALLBACKS, ICON_NAMES, TIERS } from "@/components/icons/AppIcon";
 
 const src = join(process.cwd(), "src");
 const read = (p: string) => readFileSync(join(src, p), "utf8");
@@ -82,6 +83,56 @@ describe("severity mapping", () => {
       Medium: "info",
       Low: "neutral",
     });
+  });
+});
+
+describe("brand colour", () => {
+  const css = readFileSync(join(src, "styles", "tokens.css"), "utf8");
+  const light = css.slice(0, css.indexOf('[data-theme="dark"],'));
+  const dark = css.slice(css.indexOf('[data-theme="dark"],'));
+  const hex = (block: string, name: string) =>
+    new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`).exec(block)?.[1] ?? "";
+  const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const lum = (h: string) => {
+    const [r, g, b] = rgb(h).map((v) => {
+      const c = v / 255;
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const contrast = (a: string, b: string) => {
+    const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+    return (hi + 0.05) / (lo + 0.05);
+  };
+  const hue = (h: string) => {
+    const [r, g, b] = rgb(h).map((v) => v / 255);
+    const max = Math.max(r, g, b);
+    const d = max - Math.min(r, g, b);
+    if (d === 0) return 0;
+    const raw = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return (raw * 60 + 360) % 360;
+  };
+
+  it("defines the Wayam brand ramp and a gradient in light, and brand text in dark", () => {
+    expect(hex(light, "brand-500")).toBe("#f0731a");
+    expect(hex(light, "brand-600")).toBe("#dc440c");
+    expect(light).toContain("#dc440c 0%, #f0731a 45%, #fa8d23 75%, #ffa12b 100%");
+    expect(dark).toContain("--brand-text: #ffa12b");
+  });
+
+  it("keeps High amber, not brand orange, and readable in both themes", () => {
+    for (const [block, bg, badgeText] of [
+      [light, "#ffffff", "#ffffff"],
+      [dark, "#101010", "#ffffff"],
+    ] as const) {
+      const content = hex(block, "feedback-warning-content");
+      const badge = /--feedback-warning-badge:\s*(#[0-9a-fA-F]{6})/.exec(block)?.[1] ?? "";
+      expect(hue(content)).toBeGreaterThan(36);
+      expect(hue(content)).toBeLessThan(52);
+      expect(contrast(content, bg)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(badge, badgeText)).toBeGreaterThanOrEqual(4.5);
+    }
+    expect(hue("#f0731a")).toBeLessThan(30);
   });
 });
 
@@ -217,13 +268,53 @@ describe("risk zones", () => {
 });
 
 describe("icon map", () => {
-  it("gives every meaning its own icon (only ai and aiAnalysis share one)", () => {
-    const byComponent = new Map<unknown, string[]>();
+  const publicDir = join(process.cwd(), "public", "images", "icons");
+  const walk = (dir: string): string[] =>
+    readdirSync(join(src, dir), { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name).split("\\").join("/")],
+    );
+
+  it("gives every meaning its own picture (only the listed aliases share one)", () => {
+    const byPicture = new Map<string, string[]>();
     for (const [key, component] of Object.entries(icons)) {
-      byComponent.set(component, [...(byComponent.get(component) ?? []), key]);
+      const id = `${component.iconName}|${component.transform ?? ""}`;
+      byPicture.set(id, [...(byPicture.get(id) ?? []), key]);
     }
-    const shared = [...byComponent.values()].filter((keys) => keys.length > 1);
-    expect(shared).toEqual([["aiAnalysis", "ai"]]);
+    const shared = [...byPicture.values()].filter((keys) => keys.length > 1);
+    expect(shared.map((keys) => [...keys].sort()).sort()).toEqual([
+      ["ai", "aiAnalysis"],
+      ["chart", "range"],
+      ["items", "workspace"],
+    ]);
+  });
+
+  it("uses every picture at least once and resolves every key to existing files", () => {
+    const used = new Set(Object.values(icons).map((c) => c.iconName));
+    for (const name of ICON_NAMES) expect(used.has(name)).toBe(true);
+    for (const name of ICON_NAMES) {
+      for (const tier of TIERS) {
+        for (const x of [1, 2]) {
+          expect(existsSync(join(publicDir, `${name}-${tier}@${x}x.png`))).toBe(true);
+        }
+      }
+    }
+    for (const name of FLAT_FALLBACKS) {
+      expect(existsSync(join(publicDir, "fallback", `${name}.svg`))).toBe(true);
+    }
+  });
+
+  it("renders a decorative image with a 1x and 2x source, and a flat SVG at 16px for fallbacks", () => {
+    const html = renderToStaticMarkup(createElement(AppIcon, { name: "search", size: 28 }));
+    expect(html).toContain('alt=""');
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain("search-28@1x.png 1x, ");
+    expect(html).toContain("search-28@2x.png 2x");
+    expect(renderToStaticMarkup(createElement(AppIcon, { name: "chevron", size: 12 }))).toContain(
+      "fallback/chevron.svg",
+    );
+    expect(renderToStaticMarkup(createElement(AppIcon, { name: "chevron", size: 20 }))).toContain(
+      "chevron-20@1x.png",
+    );
   });
 
   it("draws every nav item with its icon-map entry", () => {
@@ -231,20 +322,127 @@ describe("icon map", () => {
     for (const item of navItems) expect(mapped.has(item.icon)).toBe(true);
   });
 
-  it("imports lucide-react only in the icon map, ui primitives and the integrations data file", () => {
-    const allowed = ["components/icons/iconMap.ts", "data/integrations.ts"];
+  it("imports no icon library anywhere in src and has no lucide stylesheet rule", () => {
+    const offenders = walk(".")
+      .filter((f) => /\.(ts|tsx)$/.test(f) && !f.startsWith("tests/"))
+      .filter((f) => /from\s+"lucide-react"/.test(read(f)));
+    expect(offenders).toEqual([]);
+    expect(read("styles.css")).not.toContain("lucide");
+  });
+});
+
+describe("login gate", () => {
+  const store = new Map<string, string>();
+  const stubWindow = () => {
+    (globalThis as { window?: unknown }).window = {
+      localStorage: {
+        getItem: (k: string) => store.get(k) ?? null,
+        setItem: (k: string, v: string) => void store.set(k, v),
+        removeItem: (k: string) => void store.delete(k),
+      },
+    };
+  };
+
+  it("redirects a fresh visit to /login for every protected path", async () => {
+    const { shouldRedirectToLogin } = await import("@/lib/auth");
+    stubWindow();
+    store.clear();
+    for (const p of ["/", "/overview", "/workspace", "/hierarchy"]) {
+      expect(shouldRedirectToLogin(p)).toBe(true);
+    }
+    expect(shouldRedirectToLogin("/login")).toBe(false);
+  });
+
+  it("lets a signed-in visitor through, and gates again after sign-out", async () => {
+    const { shouldRedirectToLogin, login, logout } = await import("@/lib/auth");
+    stubWindow();
+    store.clear();
+    login("a@b.co", "x");
+    expect(store.has("pragnaai_auth")).toBe(true);
+    expect(shouldRedirectToLogin("/overview")).toBe(false);
+    logout();
+    expect(shouldRedirectToLogin("/overview")).toBe(true);
+  });
+
+  it("never redirects on the server", async () => {
+    const { shouldRedirectToLogin } = await import("@/lib/auth");
+    delete (globalThis as { window?: unknown }).window;
+    expect(shouldRedirectToLogin("/overview")).toBe(false);
+  });
+
+  it("registers the guard on the root route", () => {
+    expect(read("routes/__root.tsx")).toContain("shouldRedirectToLogin(location.pathname)");
+  });
+});
+
+describe("copy", () => {
+  it("has no em dashes anywhere in src", () => {
+    const dash = String.fromCharCode(0x2014);
+    const walk = (dir: string): string[] =>
+      readdirSync(join(src, dir), { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)],
+      );
+    const offenders = walk(".")
+      .filter((f) => /\.(ts|tsx|md|css)$/.test(f))
+      .filter((f) => read(f).includes(dash));
+    expect(offenders).toEqual([]);
+  });
+});
+
+describe("device tree", () => {
+  it("opens the first two levels and the Battery Pack branch, then expands and collapses", async () => {
+    const { HIERARCHY } = await import("@/data/hierarchy");
+    const { initialOpen, visibleRows, toggleOpen } = await import("@/lib/tree");
+    const open = initialOpen(HIERARCHY);
+    const ids = () => visibleRows(HIERARCHY, open).map((r) => r.node.id);
+    expect(open.has("cg3000") && open.has("power") && open.has("battery-pack")).toBe(true);
+    expect(ids()).toContain("li-ion");
+    expect(ids()).not.toContain("photodiode");
+
+    const expanded = toggleOpen(open, "spo2");
+    expect(visibleRows(HIERARCHY, expanded).map((r) => r.node.id)).toContain("photodiode");
+    expect(open.has("spo2")).toBe(false); // input untouched
+
+    const collapsed = toggleOpen(expanded, "spo2");
+    expect(visibleRows(HIERARCHY, collapsed).map((r) => r.node.id)).not.toContain("photodiode");
+    expect(visibleRows(HIERARCHY, toggleOpen(open, "cg3000", false))).toHaveLength(1);
+  });
+
+  it("derives the path from the data, not a hardcoded system name", async () => {
+    const { HIERARCHY } = await import("@/data/hierarchy");
+    const { ancestorNames, visibleRows, initialOpen } = await import("@/lib/tree");
+    expect(ancestorNames(HIERARCHY, "battery-pack")).toEqual([
+      "CardioGuard 3000",
+      "Power Management System",
+    ]);
+    expect(ancestorNames(HIERARCHY, "photodiode")).toEqual([
+      "CardioGuard 3000",
+      "Patient Interface System",
+      "SpO2 Module",
+    ]);
+    const rows = visibleRows(HIERARCHY, initialOpen(HIERARCHY));
+    expect(rows.find((r) => r.node.id === "bms")?.parentId).toBe("battery-pack");
+  });
+
+  it("marks the tree up with ARIA roles", () => {
+    const page = read("routes/hierarchy.tsx");
+    expect(page).toContain('role="tree"');
+    expect(page).toContain('role="treeitem"');
+    expect(page).toContain("aria-expanded");
+  });
+});
+
+describe("copy separators", () => {
+  it("uses a middle dot, not a spaced hyphen, as a separator in strings", () => {
     const walk = (dir: string): string[] =>
       readdirSync(join(src, dir), { withFileTypes: true }).flatMap((e) =>
         e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name).split("\\").join("/")],
       );
-    const offenders = walk(".")
-      .filter((f) => /\.(ts|tsx)$/.test(f))
-      .filter((f) => !f.startsWith("components/ui/") && !allowed.includes(f))
-      .filter((f) => /^import\s+(?!type\s)[^;]*?from\s+"lucide-react"/m.test(read(f)));
+    const files = walk(".").filter(
+      (f) => /\.(ts|tsx)$/.test(f) && !f.startsWith("tests/") && f !== "routeTree.gen.ts",
+    );
+    const offenders = files.filter((f) => /"[^"\n]* - [^"\n]*"/.test(read(f)));
     expect(offenders).toEqual([]);
-  });
-
-  it("sets one global stroke width of 1.75", () => {
-    expect(read("styles.css")).toMatch(/svg\.lucide\s*\{\s*stroke-width:\s*1\.75;/);
+    expect(read("components/layout/AIAssistantPanel.tsx")).not.toContain(" - ");
   });
 });

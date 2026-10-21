@@ -5,9 +5,8 @@ import { BATTERY_ROWS, type FailureMode } from "@/data/dfmea";
 import { RiskBadge, RpnCell, badgeForRpn } from "@/components/shared/RiskBadge";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EngineerAvatar } from "@/components/shared/EngineerAvatar";
-import { EmptyState } from "@/components/ui/primitives";
+import { EmptyState, SearchInput, SelectField } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button-styles";
-import { inputClass, selectClass } from "@/components/ui/input-styles";
 import { tableStyles } from "@/components/ui/table-styles";
 import { cn } from "@/lib/utils";
 import { icons } from "@/components/icons/iconMap";
@@ -82,7 +81,7 @@ function Workspace() {
             }}
             className={buttonClass("primary", { size: "sm" })}
           >
-            <icons.add className="size-3.5" aria-hidden="true" /> Add failure mode
+            <icons.add size={16} /> Add failure mode
           </button>
           <button
             type="button"
@@ -92,7 +91,7 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <icons.ai className="size-3.5" aria-hidden="true" /> Suggest for this component
+            <icons.ai size={16} /> Suggest for this component
           </button>
           <button
             type="button"
@@ -102,7 +101,7 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <icons.export className="size-3.5" aria-hidden="true" /> Export
+            <icons.export size={16} /> Export
           </button>
           <button
             type="button"
@@ -112,51 +111,48 @@ function Workspace() {
             }}
             className={buttonClass("secondary", { size: "sm" })}
           >
-            <icons.approve className="size-3.5" aria-hidden="true" /> Approve all reviewed
+            <icons.approve size={16} /> Approve all reviewed
           </button>
         </>
       }
     >
       <div className="flex flex-wrap gap-2">
-        <input
+        <SearchInput
           placeholder="Search failure modes"
           aria-label="Search failure modes"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className={inputClass("sm", "min-w-[180px] flex-1")}
+          wrapperClassName="min-w-[180px] flex-1"
         />
-        <select
-          aria-label="Risk"
-          value={risk}
-          onChange={(e) => setRisk(e.target.value)}
-          className={selectClass}
-        >
+        <SelectField aria-label="Risk" value={risk} onChange={(e) => setRisk(e.target.value)}>
           <option value="">Risk: All</option>
           <option>Critical</option>
           <option>High</option>
           <option>Medium</option>
           <option>Low</option>
-        </select>
-        <select aria-label="Status" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Status">
           <option>Status: All</option>
-        </select>
-        <select aria-label="Owner" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Owner">
           <option>Owner: All</option>
-        </select>
-        <select aria-label="Source" className={selectClass}>
+        </SelectField>
+        <SelectField aria-label="Source">
           <option>Source: All</option>
-        </select>
+        </SelectField>
       </div>
 
-      <div className={cn(tableStyles.wrap, "mt-3")}>
+      <div className={cn(tableStyles.wrap, "mt-4")}>
         <table className={tableStyles.table}>
           <thead>
             <tr>
               <th className={tableStyles.th({ className: "left-0 z-20" })}>FM ID</th>
               <th className={tableStyles.th()}>Component</th>
-              <th className={tableStyles.th()}>Function</th>
-              <th className={tableStyles.th()}>Failure Mode</th>
-              <th className={tableStyles.th()}>Effect (Patient)</th>
+              <th className={tableStyles.th({ className: "hidden 2xl:table-cell" })}>Function</th>
+              <th className={tableStyles.th()}>Failure mode</th>
+              <th className={tableStyles.th({ className: "hidden 2xl:table-cell" })}>
+                Effect (patient)
+              </th>
               <th className={tableStyles.th({ numeric: true })}>S</th>
               <th className={tableStyles.th({ numeric: true })}>O</th>
               <th className={tableStyles.th({ numeric: true })}>D</th>
@@ -186,11 +182,17 @@ function Workspace() {
                   >
                     {r.id}
                   </td>
-                  <td className={tableStyles.td({ className: quiet })}>{r.component}</td>
+                  <td
+                    className={tableStyles.td({
+                      className: cn("max-w-[140px] whitespace-normal", quiet),
+                    })}
+                  >
+                    {r.component}
+                  </td>
                   <td
                     className={tableStyles.td({
                       truncate: true,
-                      className: cn("max-w-[180px]", quiet),
+                      className: cn("hidden max-w-[140px] 2xl:table-cell", quiet),
                     })}
                   >
                     {r.function}
@@ -198,8 +200,7 @@ function Workspace() {
                   <td
                     className={tableStyles.td({
                       primary: true,
-                      truncate: true,
-                      className: "max-w-[220px]",
+                      className: "min-w-[200px] whitespace-normal",
                     })}
                   >
                     {r.failureMode}
@@ -207,7 +208,7 @@ function Workspace() {
                   <td
                     className={tableStyles.td({
                       truncate: true,
-                      className: cn("max-w-[180px]", quiet),
+                      className: cn("hidden max-w-[140px] 2xl:table-cell", quiet),
                     })}
                   >
                     {r.effectPatient}
@@ -235,11 +236,12 @@ function Workspace() {
                   </td>
                   <td
                     className={tableStyles.td({
-                      truncate: true,
-                      className: cn("max-w-[220px]", quiet),
+                      className: cn("max-w-[220px] min-w-[160px] whitespace-normal", quiet),
                     })}
                   >
-                    {r.mitigation}
+                    <span className="line-clamp-2" title={r.mitigation}>
+                      {r.mitigation}
+                    </span>
                   </td>
                   <td className={tableStyles.td()}>
                     <EngineerAvatar name={r.owner} />
@@ -281,17 +283,17 @@ function Workspace() {
                 className={buttonClass("icon", { className: "shrink-0" })}
                 aria-label="Close"
               >
-                <icons.close className="size-4" aria-hidden="true" />
+                <icons.close size={16} />
               </button>
             </div>
             <div className="flex flex-col gap-4 p-4">
               <Field label="Component" value={sel.component} />
               <Field label="Function" value={sel.function} />
-              <Field label="Effect (Local)" value={sel.effectLocal} />
-              <Field label="Effect (System)" value={sel.effectSystem} />
-              <Field label="Effect (Patient)" value={sel.effectPatient} />
+              <Field label="Effect (local)" value={sel.effectLocal} />
+              <Field label="Effect (system)" value={sel.effectSystem} />
+              <Field label="Effect (patient)" value={sel.effectPatient} />
               <Field label="Cause" value={sel.cause} />
-              <Field label="Current Controls" value={sel.controls} />
+              <Field label="Current controls" value={sel.controls} />
               <Field label="Mitigation" value={sel.mitigation} />
               <div className="grid grid-cols-4 gap-3 rounded-lg border border-hairline bg-raised px-3 py-2.5">
                 <Field label="S" value={sel.s.toString()} />
@@ -300,7 +302,7 @@ function Workspace() {
                 <Field label="RPN" value={(sel.s * sel.o * sel.d).toString()} />
               </div>
               <Field label="Standard" value={sel.standard} />
-              <Field label="Owner / Due" value={`${sel.owner} · ${sel.due}`} />
+              <Field label="Owner / due" value={`${sel.owner} · ${sel.due}`} />
             </div>
           </aside>
         </div>

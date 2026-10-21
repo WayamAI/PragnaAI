@@ -109,9 +109,14 @@ function Traceability() {
                     Requirement
                   </th>
                   {FM_COLUMNS.map(({ id, label }) => (
-                    <th key={id} className="w-24 border-l border-hairline px-1 pt-2 pb-2 align-top">
-                      <div className="mx-auto flex h-[72px] flex-col justify-start rounded-md bg-raised px-1 py-2 text-center">
-                        <span className="type-caption font-mono text-foreground">{id}</span>
+                    <th
+                      key={id}
+                      className="w-24 min-w-24 border-l border-hairline px-1 pt-2 pb-2 align-top"
+                    >
+                      <div className="mx-auto flex h-[76px] flex-col justify-start overflow-hidden rounded-md bg-raised px-1 py-2 text-center">
+                        <span className="type-caption font-mono whitespace-nowrap text-foreground">
+                          {id}
+                        </span>
                         <span className="type-caption mt-1 text-[10px] leading-tight font-normal text-tertiary">
                           {shortLabel(label)}
                         </span>

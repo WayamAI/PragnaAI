@@ -142,7 +142,7 @@ function Workspace() {
         </SelectField>
       </div>
 
-      <div className={cn(tableStyles.wrap, "mt-3")}>
+      <div className={cn(tableStyles.wrap, "mt-4")}>
         <table className={tableStyles.table}>
           <thead>
             <tr>

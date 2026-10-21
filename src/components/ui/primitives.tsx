@@ -21,7 +21,7 @@ export const Unit = ({ children, className }: { children: ReactNode; className?:
   <span className={cn("ml-0.5 font-sans text-[0.7em] tracking-normal", className)}>{children}</span>
 );
 
-/** Content card: 8px radius, hairline border, no shadow, optional eyebrow header. */
+/** Content card: 8px radius, hairline border, no shadow, optional eyebrow header on a raised band. */
 export const Panel = ({
   title,
   icon: Icon,
@@ -47,7 +47,7 @@ export const Panel = ({
     )}
   >
     {title && (
-      <header className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-hairline px-4">
+      <header className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-hairline bg-raised px-4">
         <h3 className="type-eyebrow flex min-w-0 items-center gap-2 text-quaternary">
           {Icon && <Icon size={20} />}
           <span className="truncate">{title}</span>

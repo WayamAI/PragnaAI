@@ -197,7 +197,7 @@ function Overview() {
 
   return (
     <PageContainer title="Project Overview" subtitle="CardioGuard 3000 · Rev B · DFMEA-2025-001">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         {/* Live data-source status banner */}
         <button
           onClick={() => setShowIntegrations(true)}
@@ -222,7 +222,7 @@ function Overview() {
 
         {showIntegrations && <IntegrationsPopup onClose={() => setShowIntegrations(false)} />}
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 min-[1800px]:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 min-[1800px]:grid-cols-6">
           {KPI.map((k) => (
             <KpiTile
               key={k.label}

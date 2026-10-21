@@ -29,7 +29,7 @@ function AI() {
     >
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {KPI.map(([l, v, icon]) => (
-          <KpiTile key={l} label={l} icon={icon} value={v} />
+          <KpiTile key={l} label={l} icon={icon} value={v} className="last:max-md:col-span-2" />
         ))}
       </div>
 
@@ -91,7 +91,7 @@ function AI() {
               <p className="type-caption mt-1 font-normal text-quaternary italic">
                 Source: {s.ref}
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                 <button
                   type="button"
                   onClick={() =>

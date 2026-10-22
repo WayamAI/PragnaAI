@@ -1,4 +1,4 @@
-# Rename inventory: PragnaAI -> TATVAM
+# Rename inventory: PragnaAI -> Tatvam
 
 | file:line | text | class |
 |---|---|---|

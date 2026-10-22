@@ -454,7 +454,7 @@ function IntegrationsPopup({ onClose }: { onClose: () => void }) {
           {connected} live
         </QuietStatus>
       }
-      subtitle="TATVAM pulls data from your PLM, requirements, quality, ERP and regulatory systems, and the AI agents turn it into this DFMEA."
+      subtitle="Tatvam pulls data from your PLM, requirements, quality, ERP and regulatory systems, and the AI agents turn it into this DFMEA."
       onClose={onClose}
       footer={
         <>

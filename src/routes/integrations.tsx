@@ -57,7 +57,7 @@ function Integrations() {
             {connected} of {INTEGRATIONS.length} systems connected
           </div>
           <p className="type-body-sm mt-1 text-tertiary">
-            TATVAM pulls product structure, requirements, field-quality and regulatory data from
+            Tatvam pulls product structure, requirements, field-quality and regulatory data from
             these systems, then the AI agents turn them into failure modes, S/O/D scores and
             traceability.
           </p>

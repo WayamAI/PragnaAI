@@ -467,7 +467,7 @@ describe("product name", () => {
     "pragnaai:open-assistant",
   ];
 
-  it("shows TATVAM, with no visible PragnaAI text left in src/", () => {
+  it("shows Tatvam, with no visible TATVAM or PragnaAI text left in src/", () => {
     const offenders = walk("")
       .filter((f) => /\.(tsx?|css)$/.test(f) && !f.startsWith("tests"))
       .filter((f) => {
@@ -476,10 +476,22 @@ describe("product name", () => {
           .filter((l) => !/^\s*(\/\/|\/?\*)/.test(l))
           .join("\n");
         const rest = INTERNAL_IDS.reduce((t, id) => t.split(id).join(""), text);
-        return /pragna/i.test(rest);
+        return /pragna/i.test(rest) || /TATVAM/.test(rest);
       });
     expect(offenders).toEqual([]);
-    expect(read("routes/__root.tsx")).toContain('title: "TATVAM"');
-    expect(read("components/layout/AppSidebar.tsx")).toContain(">TATVAM<");
+    expect(read("routes/__root.tsx")).toContain('title: "Tatvam"');
+    expect(read("components/layout/AppSidebar.tsx")).toContain(">Tatvam<");
+  });
+
+  it("styles the login brand with its own tokens, not the uppercase eyebrow", () => {
+    const login = read("routes/login.tsx");
+    expect(login).toContain("type-display-brand");
+    expect(login).toContain("type-tagline");
+    expect(login).not.toMatch(/type-eyebrow[^"]*">\s*Tatvam/);
+    const css = read("styles.css");
+    expect(css).toMatch(
+      /@utility type-display-brand[^}]*?font-size: 1.75rem[^}]*?font-size: 2.25rem/,
+    );
+    expect(css).toMatch(/@utility type-tagline[^}]*?font-size: 0.875rem[^}]*?line-height: 1.25rem/);
   });
 });

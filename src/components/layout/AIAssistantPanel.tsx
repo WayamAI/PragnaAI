@@ -73,7 +73,7 @@ export function AIAssistantPanel() {
             <div className="flex h-14 shrink-0 items-center justify-between border-b border-hairline px-4">
               <h2 id={titleId} className="type-label-md flex items-center gap-2 text-foreground">
                 <icons.ai size={16} className="text-tertiary" />
-                TATVAM Assistant
+                Tatvam Assistant
               </h2>
               <div className="flex items-center gap-1">
                 <button

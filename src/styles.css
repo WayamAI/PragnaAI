@@ -243,6 +243,24 @@
   letter-spacing: -0.02em;
 }
 
+@utility type-display-brand {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  @media (min-width: 1024px) {
+    font-size: 2.25rem;
+  }
+}
+
+@utility type-tagline {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);

@@ -88,13 +88,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PragnaAI" },
+      { title: "Tatvam" },
       {
         name: "description",
         content: "AI-assisted DFMEA platform for medical device risk analysis.",
       },
       { name: "author", content: "" },
-      { property: "og:title", content: "PragnaAI" },
+      { property: "og:title", content: "Tatvam" },
       {
         property: "og:description",
         content: "AI-assisted DFMEA platform for medical device risk analysis.",

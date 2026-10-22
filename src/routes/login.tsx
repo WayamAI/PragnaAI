@@ -73,8 +73,8 @@ function LoginPage() {
           <img src={brand("wayam-wordmark-dark.svg")} alt="" className="h-5 w-auto" />
         </div>
         <div className="relative max-w-xl">
-          <p className="type-eyebrow text-white/80">PragnaAI</p>
-          <p className="type-display-2xl mt-3">
+          <p className="type-display-brand text-white">Tatvam</p>
+          <p className="type-tagline mt-2 max-w-xs text-white">
             AI-assisted DFMEA for medical device risk analysis.
           </p>
         </div>
@@ -86,12 +86,12 @@ function LoginPage() {
           <div className="flex items-center gap-2.5 lg:invisible">
             <img
               src={brand("wayam-mark-light.svg")}
-              alt="PragnaAI"
+              alt="Tatvam"
               className="h-auto w-8 dark:hidden"
             />
             <img
               src={brand("wayam-mark-dark.svg")}
-              alt="PragnaAI"
+              alt="Tatvam"
               className="hidden h-auto w-8 dark:block"
             />
           </div>
